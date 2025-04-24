@@ -46,11 +46,29 @@ $configMappings = @{
     # Terminal configurations
     "config\kitty"                = "dot_config\kitty"
     "config\wezterm"              = "dot_config\wezterm"
+    "config\alacritty"            = "dot_config\alacritty"
+    "config\windows-terminal\settings.json" = "AppData\Local\Microsoft\Windows Terminal\settings.json"
     
     # Shell configurations
     "config\nushell"              = "dot_config\nushell"
     "config\powershell\user_profile.ps1" = "Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
     "config\powershell\github-dark.omp.json" = "AppData\Local\Programs\oh-my-posh\themes\github-dark.omp.json"
+    
+    # Git configuration
+    "config\git\gitconfig"        = "dot_gitconfig"
+    "config\git\gitignore_global" = "dot_gitignore_global"
+    
+    # SSH configuration
+    "config\ssh\config"           = ".ssh\config"
+    
+    # Starship configuration
+    "config\starship\starship.toml" = "dot_config\starship.toml"
+    
+    # Lazygit configuration
+    "config\lazygit"              = "dot_config\lazygit"
+    
+    # FZF configuration
+    "config\fzf\fzf.config"       = "dot_config\fzf\config"
     
     # Other configurations
     "config\wget"                 = "dot_config\wget"

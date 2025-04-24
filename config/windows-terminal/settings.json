@@ -34,6 +34,7 @@
       "backgroundImageOpacity": 0.15,
       "backgroundImage": "%USERPROFILE%\\Pictures\\Wallpapers\\forest\\belinda-fewings-mwEwys0CWog-unsplash.jpg",
       "backgroundImageStretchMode": "fill",
+      "experimental.pixelShaderPath": "",
       "cursorShape": "bar",
       "cursorHeight": 20,
       "cursorColor": "#58a6ff",
@@ -172,6 +173,10 @@
     {
       "command": { "action": "adjustOpacity", "delta": -0.05 },
       "keys": "ctrl+alt+["
+    },
+    {
+      "command": "resetOpacity",
+      "keys": "ctrl+alt+\\"
     },
 
     // Clipboard

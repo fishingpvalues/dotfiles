@@ -20,7 +20,7 @@ config.font = wezterm.font_with_fallback {
 config.font_size = 12.0
 config.line_height = 1.1
 
--- Window appearance
+-- Window appearance with blur effect
 config.window_background_opacity = 0.85
 config.window_decorations = "TITLE | RESIZE"
 config.window_padding = {
@@ -29,6 +29,10 @@ config.window_padding = {
   top = 10,
   bottom = 10,
 }
+-- Enable blur effect on Windows and other platforms that support it
+config.win32_system_backdrop = "Acrylic" -- Windows 11 acrylic effect
+config.macos_window_background_blur = 20 -- macOS blur
+config.native_macos_fullscreen_mode = true
 config.window_close_confirmation = 'AlwaysPrompt'
 config.inactive_pane_hsb = {
   saturation = 0.8,

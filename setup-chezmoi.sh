@@ -68,9 +68,29 @@ fi
 # Terminal configurations
 config_mappings["config/kitty"]=".config/kitty"
 config_mappings["config/wezterm"]=".config/wezterm"
+config_mappings["config/alacritty"]=".config/alacritty"
 
 # Shell configurations
 config_mappings["config/nushell"]=".config/nushell"
+
+# Git configuration
+config_mappings["config/git/gitconfig"]=".gitconfig"
+config_mappings["config/git/gitignore_global"]=".gitignore_global"
+
+# SSH configuration
+config_mappings["config/ssh/config"]=".ssh/config"
+
+# Tmux configuration
+config_mappings["config/tmux/tmux.conf"]=".tmux.conf"
+
+# Starship configuration
+config_mappings["config/starship/starship.toml"]=".config/starship.toml"
+
+# Lazygit configuration
+config_mappings["config/lazygit"]=".config/lazygit"
+
+# FZF configuration
+config_mappings["config/fzf/fzf.config"]=".config/fzf/config"
 
 # Other configurations
 config_mappings["config/wget"]=".config/wget"

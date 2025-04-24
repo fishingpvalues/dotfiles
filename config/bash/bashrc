@@ -63,6 +63,18 @@ alias py2='python2'
 alias pip='pip3'
 alias k='kubectl'
 
+# Git aliases
+alias g='git'
+alias gst='git status'
+alias gl='git pull'
+alias gp='git push'
+alias gd='git diff'
+alias gc='git commit'
+alias gco='git checkout'
+alias ga='git add'
+alias gb='git branch'
+alias glog='git log'
+
 # Set default editor to neovim or vim if available
 if command -v nvim >/dev/null 2>&1; then
   export EDITOR='nvim'

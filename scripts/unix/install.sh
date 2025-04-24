@@ -504,7 +504,8 @@ install_oh_my_zsh() {
   fi
 
   # Install zsh plugins and themes
-  ZSH_CUSTOM=${ZSH_CUSTOM:-~/.oh-my-zsh/custom}
+  # Ensure ZSH_CUSTOM is defined; if not, set a default location
+  ZSH_CUSTOM=${ZSH_CUSTOM:-"$HOME/.oh-my-zsh/custom"}
   
   # Install Powerlevel10k theme
   if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
