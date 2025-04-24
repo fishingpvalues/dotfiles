@@ -1,0 +1,52 @@
+# Documentation and meta files
+README.md
+LICENSE
+CHEZMOI.md
+Makefile
+.github/
+.git/
+
+# Scripts and setup
+*.sh
+*.ps1
+bin/
+
+# Media files
+media/
+
+# Platform-specific files
+
+# Windows-specific files - ignore on Unix
+{{- if ne .chezmoi.os "windows" }}
+config/windows-terminal/
+config/powershell/
+scripts/windows/
+{{- end }}
+
+# Unix-specific files - ignore on Windows
+{{- if eq .chezmoi.os "windows" }}
+config/bash/
+config/zsh/
+config/kitty/
+scripts/unix/
+{{- end }}
+
+# macOS-specific files - ignore on non-macOS
+{{- if ne .chezmoi.os "darwin" }}
+.DS_Store
+Library/
+{{- end }}
+
+# Editor-specific files that shouldn't be part of dotfiles
+.vscode/
+.idea/
+.vs/
+*.sublime-*
+
+# Runtime and cache files
+*.log
+*.cache
+*.tmp
+
+# Keep wallpapers out of direct management
+media/wallpapers/

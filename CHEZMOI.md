@@ -1,0 +1,274 @@
+# Chezmoi Dotfiles Management Guide
+
+This guide explains how to use [chezmoi](https://www.chezmoi.io/) to manage your dotfiles across multiple machines and operating systems.
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Installation](#installation)
+- [Basic Commands](#basic-commands)
+- [Configuration Structure](#configuration-structure)
+- [Templates and Variables](#templates-and-variables)
+- [Secret Management](#secret-management)
+- [OS-Specific Configuration](#os-specific-configuration)
+- [Advanced Usage](#advanced-usage)
+- [Troubleshooting](#troubleshooting)
+
+## Getting Started
+
+Chezmoi is a powerful dotfiles manager that helps you:
+
+- Track changes to your configuration files
+- Synchronize configuration across multiple machines
+- Use templates to customize configuration per machine
+- Securely handle sensitive information
+- Work across different operating systems
+
+## Installation
+
+This repository includes setup scripts for all major operating systems:
+
+### Windows
+
+```powershell
+# Clone the repository
+git clone https://github.com/yourusername/dotfiles.git
+cd dotfiles
+
+# Run the setup script
+powershell -ExecutionPolicy Bypass -File setup-chezmoi.ps1
+```
+
+### macOS/Linux
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/dotfiles.git
+cd dotfiles
+
+# Run the setup script
+chmod +x setup-chezmoi.sh
+./setup-chezmoi.sh
+```
+
+### Arch Linux
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/dotfiles.git
+cd dotfiles
+
+# Run the Arch-specific setup script
+chmod +x setup-chezmoi-arch.sh
+./setup-chezmoi-arch.sh
+```
+
+## Basic Commands
+
+After installation, you can use the following commands to manage your dotfiles:
+
+### View Status
+
+Check the status of your dotfiles to see what would change if you applied:
+
+```bash
+chezmoi status
+```
+
+### Edit a File
+
+Edit a file managed by chezmoi:
+
+```bash
+chezmoi edit ~/.bashrc
+# or
+chezmoi edit $HOME/.config/nvim/init.lua
+```
+
+### Add a File
+
+Add a new dotfile to chezmoi's management:
+
+```bash
+chezmoi add ~/.config/new-config-file
+```
+
+### Apply Changes
+
+Apply the changes to your home directory:
+
+```bash
+# First check what would change
+chezmoi diff
+
+# Then apply the changes
+chezmoi apply
+```
+
+### Update from Git Repository
+
+Pull the latest changes from your Git repository and apply them:
+
+```bash
+chezmoi update
+```
+
+## Configuration Structure
+
+The repository is organized to work with chezmoi's expected structure:
+
+```
+dotfiles/
+├── .chezmoi.toml         # Chezmoi configuration
+├── bin/                  # Contains chezmoi binary
+├── config/               # Your actual configuration files
+│   ├── bash/             # Bash shell configuration
+│   ├── nvim/             # Neovim configuration
+│   ├── vscode/           # VS Code settings
+│   └── ...               # Other tool configurations
+├── setup-chezmoi.ps1     # Windows setup script
+├── setup-chezmoi.sh      # macOS/Linux setup script
+└── setup-chezmoi-arch.sh # Arch Linux specific setup
+```
+
+When you run the setup scripts, they will:
+1. Map your config files to their appropriate locations in chezmoi's source state
+2. Install chezmoi if it's not already installed
+3. Add chezmoi to your PATH
+4. Configure chezmoi to work with your dotfiles repository
+
+## Templates and Variables
+
+Chezmoi supports Go templates to customize configuration based on the system. The `.chezmoi.toml` file defines variables used in templates.
+
+### Example Template
+
+```toml
+# .chezmoi.toml
+[data]
+    email = "your.email@example.com"
+    name = "Your Name"
+```
+
+Then in a file (like `.gitconfig`), you can use:
+
+```gitconfig
+# dot_gitconfig.tmpl
+[user]
+    name = {{ .name }}
+    email = {{ .email }}
+```
+
+### OS-Specific Templates
+
+You can create templates that apply different configurations based on the operating system:
+
+```bash
+# Template example with OS-specific configuration
+{{- if eq .chezmoi.os "darwin" }}
+# macOS specific settings
+export PATH="/opt/homebrew/bin:$PATH"
+{{- else if eq .chezmoi.os "linux" }}
+# Linux specific settings
+export PATH="$HOME/.local/bin:$PATH" 
+{{- else if eq .chezmoi.os "windows" }}
+# Windows specific settings
+{{- end }}
+```
+
+## OS-Specific Configuration
+
+The setup scripts handle OS detection and apply the appropriate configurations:
+
+- **Windows**: Uses the setup-chezmoi.ps1 script
+- **macOS/Linux**: Uses the setup-chezmoi.sh script
+- **Arch Linux**: Uses the setup-chezmoi-arch.sh script
+
+## Advanced Usage
+
+### Using .chezmoiignore
+
+You can create a `.chezmoiignore` file to specify files that chezmoi should ignore:
+
+```
+# Ignore these files
+README.md
+LICENSE
+*.swp
+```
+
+### Using .chezmoiremove
+
+Files listed in `.chezmoiremove` will be removed when running `chezmoi apply`:
+
+```
+# Remove these files when applying changes
+.old_config
+.deprecated_tool_config
+```
+
+### External Tools Integration
+
+Chezmoi can integrate with:
+
+- **Pass/Bitwarden/1Password**: For managing secrets
+- **Git**: For version control
+- **GPG**: For encryption
+
+## Secret Management
+
+You can securely manage secrets using age encryption:
+
+```bash
+# Generate a key
+chezmoi age generate --output ~/.config/chezmoi/key.txt
+
+# Encrypt a file
+chezmoi age encrypt --output ~/.local/share/chezmoi/encrypted_file.txt.age /path/to/secret/file.txt
+```
+
+Then in your `.chezmoi.toml`:
+
+```toml
+encryption = "age"
+[age]
+    identity = "~/.config/chezmoi/key.txt"
+    recipient = "age1..."
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Changes not applying**: Run `chezmoi diff` to see what would change, then `chezmoi apply -v` for verbose output.
+
+2. **Conflicts with existing files**: Use `chezmoi merge` to resolve conflicts.
+
+3. **Command not found**: Make sure chezmoi is in your PATH. The setup scripts should add it automatically.
+
+4. **Template errors**: Check your template syntax and ensure variables are defined in `.chezmoi.toml`.
+
+### Getting Help
+
+If you encounter issues:
+
+```bash
+# Get help for any command
+chezmoi help [command]
+
+# Check version
+chezmoi --version
+
+# Get verbose output
+chezmoi [command] -v
+```
+
+## Resources
+
+- [Chezmoi Documentation](https://www.chezmoi.io/user-guide/command-overview/)
+- [Chezmoi Template Guide](https://www.chezmoi.io/user-guide/templating/)
+- [Chezmoi GitHub Repo](https://github.com/twpayne/chezmoi)
+
+---
+
+With this guide and the setup scripts, you can manage your dotfiles efficiently across multiple machines and operating systems with chezmoi.

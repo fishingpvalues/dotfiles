@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+
+# If not running interactively, don't do anything
+case $- in
+  *i*) ;;
+    *) return;;
+esac
+
+# History settings
+HISTCONTROL=ignoreboth
+HISTSIZE=10000
+HISTFILESIZE=20000
+shopt -s histappend
+shopt -s checkwinsize
+shopt -s globstar
+shopt -s autocd
+
+# Make less more friendly for non-text input files
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# Set a fancy prompt
+if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+  PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+  PS1='\u@\h:\w\$ '
+fi
+
+# Use starship prompt if available
+if command -v starship &> /dev/null; then
+  eval "$(starship init bash)"
+fi
+
+# Enable color support
+if [ -x /usr/bin/dircolors ]; then
+  test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+  alias ls='ls --color=auto'
+  alias dir='dir --color=auto'
+  alias grep='grep --color=auto'
+  alias fgrep='fgrep --color=auto'
+  alias egrep='egrep --color=auto'
+fi
+
+# Colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# Some useful aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias mkdir='mkdir -p'
+alias h='history'
+alias j='jobs -l'
+alias path='echo -e ${PATH//:/\\n}'
+alias psgrep='ps aux | grep -v grep | grep '
+alias open='xdg-open'
+alias vim='nvim'
+alias vi='nvim'
+alias py='python3'
+alias py2='python2'
+alias pip='pip3'
+alias k='kubectl'
+
+# Set default editor to neovim or vim if available
+if command -v nvim >/dev/null 2>&1; then
+  export EDITOR='nvim'
+  export VISUAL='nvim'
+elif command -v vim >/dev/null 2>&1; then
+  export EDITOR='vim'
+  export VISUAL='vim'
+else
+  export EDITOR='nano'
+  export VISUAL='nano'
+fi
+
+# Enable bash completion
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# NVM setup (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Pyenv setup (Python version manager)
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+# FZF setup for fuzzy searching
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# Load local bash settings if they exist
+if [ -f ~/.bashrc.local ]; then
+  source ~/.bashrc.local
+fi
+
+# Load work-specific settings if they exist
+if [ -f ~/.bashrc.work ]; then
+  source ~/.bashrc.work
+fi

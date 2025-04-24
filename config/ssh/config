@@ -1,0 +1,92 @@
+# Global SSH Configuration
+# Performance and security optimized settings
+
+# Global defaults for all hosts
+Host *
+    # Connection settings
+    AddKeysToAgent yes
+    AddressFamily any
+    ConnectTimeout 10
+    ConnectionAttempts 3
+    ServerAliveInterval 60
+    ServerAliveCountMax 10
+    TCPKeepAlive yes
+    
+    # Security settings
+    ForwardAgent no
+    HashKnownHosts yes
+    HostKeyAlgorithms ssh-ed25519-cert-v01@openssh.com,ssh-rsa-cert-v01@openssh.com,ssh-ed25519,ssh-rsa
+    KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+    MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+    Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com
+    PasswordAuthentication no
+    ChallengeResponseAuthentication no
+    
+    # Performance settings
+    Compression yes
+    ControlMaster auto
+    ControlPath ~/.ssh/control/%r@%h:%p
+    ControlPersist 10m
+    
+    # Visual settings
+    VisualHostKey yes
+
+# GitHub
+Host github.com
+    User git
+    IdentityFile ~/.ssh/github
+    IdentitiesOnly yes
+    PreferredAuthentications publickey
+
+# GitLab
+Host gitlab.com
+    User git
+    IdentityFile ~/.ssh/gitlab
+    IdentitiesOnly yes
+    PreferredAuthentications publickey
+
+# Personal servers
+Host homeserver
+    HostName homeserver.local
+    User admin
+    Port 22
+    IdentityFile ~/.ssh/homeserver
+    ForwardX11 no
+    ForwardAgent no
+
+# AWS instances
+Host aws-*
+    User ec2-user
+    IdentityFile ~/.ssh/aws_key.pem
+    ServerAliveInterval 60
+
+# Template for jump hosts
+Host jumphost
+    HostName jump.example.com
+    User jumpuser
+    IdentityFile ~/.ssh/jumphost
+    ForwardAgent no
+
+# Example of using a jump host to access internal servers
+Host internal-*
+    ProxyJump jumphost
+    User internaluser
+    IdentityFile ~/.ssh/internal
+
+# Example host group with shared settings
+Host dev-*
+    User devuser
+    IdentityFile ~/.ssh/dev_key
+    ForwardAgent yes
+
+# Include additional configs (place your machine-specific configs in this file)
+Include ~/.ssh/config.local
+
+# Set specific options for slow connections
+Host slow-*
+    Compression yes
+    TCPKeepAlive yes
+    ServerAliveInterval 30
+    ServerAliveCountMax 10
+    Ciphers aes128-ctr
+    MACs hmac-sha2-256

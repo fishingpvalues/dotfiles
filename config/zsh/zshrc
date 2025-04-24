@@ -1,0 +1,313 @@
+# .zshrc - ZSH configuration file
+
+# Enable Powerlevel10k instant prompt for faster startup. Should stay at the top of .zshrc
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Path to your oh-my-zsh installation
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set the Zsh theme to Powerlevel10k
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# History settings
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt SHARE_HISTORY          # share history between sessions
+setopt EXTENDED_HISTORY       # add timestamps to history
+setopt HIST_EXPIRE_DUPS_FIRST # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt HIST_IGNORE_DUPS       # ignore duplicated commands
+setopt HIST_IGNORE_ALL_DUPS   # don't record duplicates in history
+setopt HIST_FIND_NO_DUPS      # don't display duplicates during searches
+setopt HIST_IGNORE_SPACE      # ignore commands that start with space
+setopt HIST_SAVE_NO_DUPS      # don't write duplicate entries in the history file
+setopt HIST_REDUCE_BLANKS     # remove superfluous blanks from history items
+setopt INC_APPEND_HISTORY     # save commands are added to the history immediately
+
+# Speed-optimized plugins (carefully selected for balance)
+plugins=(
+  git                 # Git integration (low overhead, high value)
+  zsh-autosuggestions # Command suggestions based on history
+  fast-syntax-highlighting # Faster syntax highlighting than zsh-syntax-highlighting
+  fzf                 # Fuzzy finder (loaded only when used)
+  history-substring-search # History search (lightweight)
+  direnv              # Directory-specific environment variables
+  vi-mode             # Vim keybindings
+  zsh-interactive-cd  # Better directory navigation with tab completion
+  autojump            # Jump to directories with j command (faster than z)
+)
+
+# Load Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# Basic auto/tab completion - precompiled for faster loading
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+
+# Environment variables
+export EDITOR='nvim'
+export VISUAL='nvim'
+export PAGER='less'
+
+# Aliases
+alias ls='ls --color=auto'
+alias ll='ls -la'
+alias la='ls -A'
+alias l='ls -CF'
+alias grep='grep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip -color=auto'
+alias vim='nvim'
+alias vi='nvim'
+alias cd..='cd ..'
+
+# Git aliases
+alias g='git'
+alias gs='git status'
+alias gl='git pull'
+alias gp='git push'
+alias gd='git diff'
+alias gc='git commit'
+alias gco='git checkout'
+alias ga='git add'
+alias gb='git branch'
+alias glog='git log'
+
+# Better terminal commands (if available)
+if command -v exa &> /dev/null; then
+  alias ls='exa'
+  alias ll='exa --long --header --icons --git'
+  alias la='exa --all'
+  alias lt='exa --tree --level=2'
+fi
+
+if command -v bat &> /dev/null; then
+  alias cat='bat'
+fi
+
+# OS-specific aliases
+if [[ "$(uname)" == "Darwin" ]]; then
+  # macOS specific aliases
+  alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+  alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
+  
+  # If brew exists, add its sbin to PATH
+  if command -v brew &> /dev/null; then
+    export PATH="$(brew --prefix)/sbin:$PATH"
+  fi
+elif [[ "$(uname)" == "Linux" ]]; then
+  # Linux specific aliases
+  if command -v pacman &> /dev/null; then
+    # Arch Linux
+    alias pacman='sudo pacman'
+    alias update='sudo pacman -Syu'
+    alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
+  elif command -v apt-get &> /dev/null; then
+    # Debian/Ubuntu
+    alias update='sudo apt update && sudo apt upgrade'
+    alias install='sudo apt install'
+    alias remove='sudo apt remove'
+    alias cleanup='sudo apt autoremove'
+  fi
+fi
+
+# Directory navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+
+# Enhanced navigation with fzf
+if command -v fzf &> /dev/null; then
+  export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --inline-info"
+  export FZF_DEFAULT_COMMAND="fd --type f --hidden --exclude .git"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
+  
+  # Load fzf keybindings and completion (lazy loading)
+  fzf_load() {
+    if [ -f ~/.fzf.zsh ]; then
+      source ~/.fzf.zsh
+    elif [ -f /usr/share/fzf/key-bindings.zsh ]; then
+      source /usr/share/fzf/key-bindings.zsh
+      source /usr/share/fzf/completion.zsh
+    elif [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
+      source /usr/share/doc/fzf/examples/key-bindings.zsh
+      source /usr/share/doc/fzf/examples/completion.zsh
+    fi
+  }
+  
+  # Lazy-load FZF only when needed
+  fzf-file-widget() { fzf_load; zle fzf-file-widget }
+  zle -N fzf-file-widget
+  bindkey '^T' fzf-file-widget
+  
+  fzf-cd-widget() { fzf_load; zle fzf-cd-widget }
+  zle -N fzf-cd-widget
+  bindkey '^G' fzf-cd-widget
+  
+  fzf-history-widget() { fzf_load; zle fzf-history-widget }
+  zle -N fzf-history-widget
+  bindkey '^R' fzf-history-widget
+fi
+
+# Load direnv if installed (with caching for performance)
+if command -v direnv &> /dev/null; then
+  export DIRENV_WARN_TIMEOUT=100s
+  eval "$(direnv hook zsh)"
+fi
+
+# Add local bin to path
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Extract function
+extract() {
+  if [ -f "$1" ] ; then
+    case "$1" in
+      *.tar.bz2)   tar xjf "$1"     ;;
+      *.tar.gz)    tar xzf "$1"     ;;
+      *.bz2)       bunzip2 "$1"     ;;
+      *.rar)       unrar x "$1"     ;;
+      *.gz)        gunzip "$1"      ;;
+      *.tar)       tar xf "$1"      ;;
+      *.tbz2)      tar xjf "$1"     ;;
+      *.tgz)       tar xzf "$1"     ;;
+      *.zip)       unzip "$1"       ;;
+      *.Z)         uncompress "$1"  ;;
+      *.7z)        7z x "$1"        ;;
+      *)           echo "'$1' cannot be extracted via extract()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+# Enhanced find file function
+function ff() { find . -type f -name "*$1*"; }
+
+# Enable vi-mode for Zsh with reduced latency
+bindkey -v
+export KEYTIMEOUT=1
+
+# Add key bindings for history search
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+
+# System information (only run if terminal is interactive to speed up startup)
+if [[ -o interactive ]]; then
+  if command -v neofetch &> /dev/null; then
+    neofetch
+  elif command -v macchina &> /dev/null; then
+    macchina
+  fi
+fi
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Directory navigation
+setopt AUTO_CD               # cd by typing directory name if it's not a command
+setopt AUTO_PUSHD            # make cd push the old directory onto the directory stack
+setopt PUSHD_IGNORE_DUPS     # ignore duplicate pushd entries
+setopt PUSHD_SILENT          # don't print the directory stack after pushd or popd
+
+# Changing/making/removing directory
+setopt AUTO_NAME_DIRS
+
+# ZSH Customization
+DISABLE_AUTO_TITLE="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
+
+# Autoloads
+autoload -U colors && colors      # load zsh's color system
+
+# Completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive completion
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"    # colored completion
+zstyle ':completion:*' rehash true                         # automatically find new executables
+zstyle ':completion:*' menu select                         # menu-style completion
+zstyle ':completion:*' verbose yes                         # verbose completion
+zstyle ':completion:*:*:*:*:*' menu select
+
+# Path modifications
+# Add your custom paths here
+path+=(
+  $HOME/.local/bin
+)
+# Remove duplicates from PATH
+typeset -U path
+
+# Default editor - prefer nvim
+if command -v nvim >/dev/null 2>&1; then
+  export EDITOR='nvim'
+  export VISUAL='nvim'
+  alias vim='nvim'
+  alias vi='nvim'
+elif command -v vim >/dev/null 2>&1; then
+  export EDITOR='vim'
+  export VISUAL='vim'
+fi
+
+# Aliases
+alias mkdir='mkdir -p'
+alias md='mkdir'
+alias rd='rmdir'
+alias h='history'
+alias py='python3'
+alias py2='python2'
+alias dotfiles='cd $HOME/.local/share/chezmoi'
+alias dotedit='chezmoi edit'
+alias dotapply='chezmoi apply'
+alias k='kubectl'
+alias tf='terraform'
+
+# Plugins
+# The following block loads plugins from custom_plugins and oh-my-zsh plugins
+# You will need to install plugins first with your preferred plugin manager
+
+# Zsh plugin manager (if using zimfw, zinit, antibody, etc.)
+# Uncomment the appropriate block for your plugin manager
+
+# For zinit
+if [ -f "$HOME/.zinit/bin/zinit.zsh" ]; then
+  source "$HOME/.zinit/bin/zinit.zsh"
+  zinit light zsh-users/zsh-autosuggestions
+  zinit light zsh-users/zsh-syntax-highlighting
+  zinit light zdharma/fast-syntax-highlighting
+  zinit light zsh-users/zsh-completions
+  zinit light zdharma/history-search-multi-word
+fi
+
+# Node Version Manager (nvm) setup
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# Python version manager (pyenv) setup
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+# Starship prompt
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+else
+  # If starship is not available, use a simple prompt
+  PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
+fi
+
+# Load local, work, and machine-specific configurations if they exist
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+[ -f ~/.zshrc.work ] && source ~/.zshrc.work
+[ -f ~/.zshrc.$(hostname) ] && source ~/.zshrc.$(hostname)

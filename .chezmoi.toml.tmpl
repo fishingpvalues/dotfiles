@@ -1,0 +1,73 @@
+# This is a template for your chezmoi configuration file
+# It will be filled with your personal information during setup
+
+# User information
+[data]
+    name = {{ promptString "name" "Your Full Name" | quote }}
+    email = {{ promptString "email" "your.email@example.com" | quote }}
+    github_username = {{ promptString "github_username" "yourusername" | quote }}
+
+    # Operating system detection
+    {{- $osID := .chezmoi.os }}
+    {{- if hasKey .chezmoi.osRelease "id" }}
+    {{-   $osID = .chezmoi.osRelease.id }}
+    {{- end }}
+
+    # OS-specific settings
+    {{- if eq .chezmoi.os "darwin" }}
+    is_macos = true
+    is_linux = false
+    is_windows = false
+    {{- else if eq .chezmoi.os "linux" }}
+    is_macos = false
+    is_linux = true
+    is_windows = false
+    {{- else if eq .chezmoi.os "windows" }}
+    is_macos = false
+    is_linux = false
+    is_windows = true
+    {{- end }}
+
+    # Linux distribution detection
+    {{- if and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id") }}
+    {{-   if eq .chezmoi.osRelease.id "arch" }}
+    is_arch = true
+    {{-   else if eq .chezmoi.osRelease.id "debian" }}
+    is_debian = true
+    {{-   else if eq .chezmoi.osRelease.id "ubuntu" }}
+    is_ubuntu = true
+    {{-   else if eq .chezmoi.osRelease.id "fedora" }}
+    is_fedora = true
+    {{-   end }}
+    {{- end }}
+
+    # Home directory
+    {{- if eq .chezmoi.os "windows" }}
+    home_dir = {{ .chezmoi.homeDir | replace "\\" "/" | quote }}
+    {{- else }}
+    home_dir = {{ .chezmoi.homeDir | quote }}
+    {{- end }}
+
+    # Work vs Personal machine
+    is_work_machine = {{ promptBool "is_work_machine" "Is this a work machine" }}
+    install_extras = {{ promptBool "install_extras" "Install extra development tools" }}
+
+    # Terminal preferences
+    use_nerd_font = {{ promptBool "use_nerd_font" "Use Nerd Font (for icons in terminal)" }}
+
+    # Colors and themes
+    {{- $colorSchemes := list "github-dark" "dracula" "nord" "solarized-dark" "solarized-light" "gruvbox" "catppuccin" }}
+    color_scheme = {{ promptString "color_scheme" "github-dark" $colorSchemes | quote }}
+
+[edit]
+    command = "nvim"
+
+# Git settings
+[merge]
+    command = "nvim"
+    args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+
+# For encrypted secrets if needed
+#[age]
+#    identity = "~/.config/chezmoi/key.txt"
+#    recipient = "age1..."

@@ -1,0 +1,21 @@
+[data]
+    email = "your.email@example.com"  # Replace with your actual email
+    name = "Your Name"  # Replace with your actual name
+
+[sourceVCS]
+    autoCommit = true  # Automatically commit after modifications
+    autoPush = false   # Don't automatically push (safer)
+
+[diff]
+    command = "code"
+    args = ["--diff", "{{.Destination}}", "{{.Target}}"]
+
+# Define OS-specific settings
+[data.windows]
+    homeDir = "C:\\Users\\{{- .chezmoi.username }}"
+
+[data.linux]
+    homeDir = "/home/{{- .chezmoi.username }}"
+
+[data.darwin]
+    homeDir = "/Users/{{- .chezmoi.username }}"

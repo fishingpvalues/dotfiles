@@ -1,0 +1,201 @@
+# Alacritty Configuration with GitHub Dark Theme and Transparency
+# For terminal transparency and GPU acceleration
+
+env:
+  TERM: xterm-256color
+
+window:
+  # Window dimensions
+  dimensions:
+    columns: 100
+    lines: 30
+
+  # Window padding
+  padding:
+    x: 10
+    y: 10
+    
+  # Window decorations (full, none, transparent, buttonless)
+  decorations: full
+  
+  # Startup Mode (Windowed, Maximized, Fullscreen)
+  startup_mode: Windowed
+  
+  # Dynamic title
+  dynamic_title: true
+  
+  # Window opacity (0.0 = transparent, 1.0 = opaque)
+  opacity: 0.85
+
+  # Window class
+  class:
+    instance: Alacritty
+    general: Alacritty
+
+  # Resize increments
+  resize_increments: false
+
+# Scrolling
+scrolling:
+  history: 10000
+  multiplier: 3
+
+# Font configuration
+font:
+  normal:
+    family: CaskaydiaCove NF
+    style: Regular
+  bold:
+    family: CaskaydiaCove NF
+    style: Bold
+  italic:
+    family: CaskaydiaCove NF
+    style: Italic
+  bold_italic:
+    family: CaskaydiaCove NF
+    style: Bold Italic
+  size: 12
+  offset:
+    x: 0
+    y: 0
+  glyph_offset:
+    x: 0
+    y: 0
+
+# Shell settings
+shell:
+  program: pwsh.exe  # Change to your preferred shell
+  args:
+    - -NoLogo
+
+# Draw bold text with bright colors
+draw_bold_text_with_bright_colors: false
+
+# GitHub Dark Theme Colors
+colors:
+  # Default colors
+  primary:
+    background: '#0d1117'
+    foreground: '#c9d1d9'
+
+  # Normal colors
+  normal:
+    black:   '#484f58'
+    red:     '#ff7b72'
+    green:   '#3fb950'
+    yellow:  '#d29922'
+    blue:    '#58a6ff'
+    magenta: '#bc8cff'
+    cyan:    '#39c5cf'
+    white:   '#b1bac4'
+
+  # Bright colors
+  bright:
+    black:   '#6e7681'
+    red:     '#ffa198'
+    green:   '#56d364'
+    yellow:  '#e3b341'
+    blue:    '#79c0ff'
+    magenta: '#d2a8ff'
+    cyan:    '#56d4dd'
+    white:   '#f0f6fc'
+
+  # Selection colors
+  selection:
+    text: '#ffffff'
+    background: '#264f78'
+    
+  # Cursor colors
+  cursor:
+    text: '#0d1117'
+    cursor: '#58a6ff'
+
+# Cursor settings
+cursor:
+  style:
+    shape: Block
+    blinking: On
+  blink_interval: 750
+  unfocused_hollow: true
+  thickness: 0.15
+
+# Live config reload
+live_config_reload: true
+
+# Mouse settings
+mouse:
+  double_click:
+    threshold: 300
+  triple_click:
+    threshold: 300
+  hide_when_typing: true
+
+# Mouse bindings
+mouse_bindings:
+  - { mouse: Middle, action: PasteSelection }
+
+# Key bindings
+key_bindings:
+  # Common keybindings
+  - { key: V,        mods: Control|Shift, action: Paste            }
+  - { key: C,        mods: Control|Shift, action: Copy             }
+  - { key: Insert,   mods: Shift,         action: PasteSelection   }
+  - { key: Key0,     mods: Control,       action: ResetFontSize    }
+  - { key: Equals,   mods: Control,       action: IncreaseFontSize }
+  - { key: Minus,    mods: Control,       action: DecreaseFontSize }
+  
+  # Support for Alt+key bindings
+  - { key: A,        mods: Alt,     chars: "\x1ba"                 }
+  - { key: B,        mods: Alt,     chars: "\x1bb"                 }
+  - { key: C,        mods: Alt,     chars: "\x1bc"                 }
+  - { key: D,        mods: Alt,     chars: "\x1bd"                 }
+  - { key: E,        mods: Alt,     chars: "\x1be"                 }
+  - { key: F,        mods: Alt,     chars: "\x1bf"                 }
+  - { key: G,        mods: Alt,     chars: "\x1bg"                 }
+  - { key: H,        mods: Alt,     chars: "\x1bh"                 }
+  - { key: I,        mods: Alt,     chars: "\x1bi"                 }
+  - { key: J,        mods: Alt,     chars: "\x1bj"                 }
+  - { key: K,        mods: Alt,     chars: "\x1bk"                 }
+  - { key: L,        mods: Alt,     chars: "\x1bl"                 }
+  - { key: M,        mods: Alt,     chars: "\x1bm"                 }
+  - { key: N,        mods: Alt,     chars: "\x1bn"                 }
+  - { key: O,        mods: Alt,     chars: "\x1bo"                 }
+  - { key: P,        mods: Alt,     chars: "\x1bp"                 }
+  - { key: Q,        mods: Alt,     chars: "\x1bq"                 }
+  - { key: R,        mods: Alt,     chars: "\x1br"                 }
+  - { key: S,        mods: Alt,     chars: "\x1bs"                 }
+  - { key: T,        mods: Alt,     chars: "\x1bt"                 }
+  - { key: U,        mods: Alt,     chars: "\x1bu"                 }
+  - { key: V,        mods: Alt,     chars: "\x1bv"                 }
+  - { key: W,        mods: Alt,     chars: "\x1bw"                 }
+  - { key: X,        mods: Alt,     chars: "\x1bx"                 }
+  - { key: Y,        mods: Alt,     chars: "\x1by"                 }
+  - { key: Z,        mods: Alt,     chars: "\x1bz"                 }
+  
+  # Transparency control (custom keybindings)
+  - { key: RBracket, mods: Control|Alt, command: { program: "alacritty", args: ["msg", "config", "window.opacity", "0.05+"] } }
+  - { key: LBracket, mods: Control|Alt, command: { program: "alacritty", args: ["msg", "config", "window.opacity", "0.05-"] } }
+  - { key: Backslash, mods: Control|Alt, command: { program: "alacritty", args: ["msg", "config", "window.opacity", "0.85"] } }
+
+# Debug options
+debug:
+  render_timer: false
+  persistent_logging: false
+  log_level: Warn
+  print_events: false
+
+# Save window size and position
+# Handled by WinApps config for Windows
+# window.remember_window_size: true
+
+# Set window title
+window.title: Alacritty
+
+# Adjust visual bell duration
+bell:
+  animation: EaseOutExpo
+  duration: 0
+  color: '#c9d1d9'
+
+# Allow terminal applications to change Alacritty's window title
+dynamic_title: true
