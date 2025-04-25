@@ -63,3 +63,37 @@ dist/
 *.so
 *.dylib
 *.out
+
+# Additional IDE files
+.history/
+.settings/
+*.sublime-workspace
+*.sublime-project
+.project
+.classpath
+
+# Package managers
+yarn-error.log
+.pnpm-store/
+.npm/
+
+# Build and Compile
+build/
+out/
+target/
+
+# Testing and Coverage
+coverage/
+.nyc_output/
+junit.xml
+test-results/
+
+# Misc
+*.bak
+*.swp
+*.swo
+*~
+.env.*
+!.env.example
+.vercel
+.netlify
