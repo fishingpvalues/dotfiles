@@ -1,180 +1,192 @@
-#!/usr/bin/env/pwsh
-# setup-chezmoi.ps1 - Script to configure chezmoi for the current dotfiles structure
+#!/usr/bin/env pwsh
+# Cross-platform setup script for chezmoi dotfiles
+# Supports Windows, macOS, and Linux
 
-# Set the current directory as the source state for chezmoi
+# Stop on errors
+$ErrorActionPreference = "Stop"
+
+# Get the current directory as the source state for chezmoi
 $DOTFILES_DIR = $PSScriptRoot
-$CHEZMOI_DIR = "$DOTFILES_DIR\.chezmoi"
-$CHEZMOI_BIN = "$DOTFILES_DIR\bin\chezmoi.exe"
+$CHEZMOI_DIR = Join-Path $DOTFILES_DIR ".chezmoi"
+$CHEZMOI_BIN = Join-Path $DOTFILES_DIR "bin" "chezmoi"
+
+if ($IsWindows) {
+    $CHEZMOI_BIN += ".exe"
+}
+
+Write-Host "Setting up chezmoi in $DOTFILES_DIR"
+
+# Create bin directory if it doesn't exist
+if (-not (Test-Path (Join-Path $DOTFILES_DIR "bin"))) {
+    New-Item -ItemType Directory -Path (Join-Path $DOTFILES_DIR "bin") | Out-Null
+}
 
 # Install chezmoi if not already installed
 if (-not (Test-Path $CHEZMOI_BIN)) {
-    Write-Host "Installing chezmoi..." -ForegroundColor Cyan
-    # Create bin directory if it doesn't exist
-    if (-not (Test-Path "$DOTFILES_DIR\bin")) {
-        New-Item -ItemType Directory -Path "$DOTFILES_DIR\bin" -Force | Out-Null
+    Write-Host "Installing chezmoi..."
+    try {
+        if ($IsWindows) {
+            $tempFile = Join-Path $env:TEMP "chezmoi.exe"
+            Invoke-WebRequest -Uri "https://github.com/twpayne/chezmoi/releases/latest/download/chezmoi_windows_amd64.exe" -OutFile $tempFile
+            Move-Item $tempFile $CHEZMOI_BIN
+        } else {
+            $installScript = if ($IsMacOS) {
+                "https://raw.githubusercontent.com/twpayne/chezmoi/master/assets/scripts/install.sh"
+            } else {
+                "https://get.chezmoi.io/lb"
+            }
+            $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+            New-Item -ItemType Directory -Path $tempDir | Out-Null
+            Push-Location $tempDir
+            try {
+                Invoke-WebRequest -Uri $installScript -OutFile "install.sh"
+                chmod +x install.sh
+                ./install.sh -b (Join-Path $DOTFILES_DIR "bin")
+            } finally {
+                Pop-Location
+                Remove-Item -Recurse -Force $tempDir
+            }
+        }
+    } catch {
+        Write-Error "Failed to download chezmoi: $_"
+        exit 1
     }
-    # Download and install chezmoi
-    & ([scriptblock]::Create((Invoke-RestMethod -Uri 'https://get.chezmoi.io/ps1'))) -BinDir "$DOTFILES_DIR\bin"
 }
 
 # Create chezmoi directories if they don't exist
 if (-not (Test-Path $CHEZMOI_DIR)) {
-    New-Item -ItemType Directory -Path $CHEZMOI_DIR -Force | Out-Null
+    New-Item -ItemType Directory -Path $CHEZMOI_DIR | Out-Null
 }
 
-# Check if chezmoi is already initialized
-if (-not (Test-Path "$CHEZMOI_DIR\config")) {
+# Initialize chezmoi if not already initialized
+if (-not (Test-Path (Join-Path $CHEZMOI_DIR "config"))) {
     & $CHEZMOI_BIN init --source=$DOTFILES_DIR
 }
 
-# Map config directories to their destination paths
-$configMappings = @{
-    # Bash configuration
-    "config\bash\bashrc"          = "dot_bashrc"
-    
-    # ZSH configuration
-    "config\zsh\zshrc"            = "dot_zshrc"
-    "config\zsh\p10k.zsh"         = "dot_p10k.zsh"
-    
-    # Neovim configuration
-    "config\nvim"                 = "dot_config\nvim"
-    
-    # VS Code configuration
-    "config\vscode\settings.json" = "AppData\Roaming\Code\User\settings.json"
-    "config\vscode\keybindings.json" = "AppData\Roaming\Code\User\keybindings.json"
-    
-    # Terminal configurations
-    "config\kitty"                = "dot_config\kitty"
-    "config\wezterm"              = "dot_config\wezterm"
-    "config\alacritty"            = "dot_config\alacritty"
-    "config\windows-terminal\settings.json" = "AppData\Local\Microsoft\Windows Terminal\settings.json"
-    
-    # Shell configurations
-    "config\nushell"              = "dot_config\nushell"
-    "config\powershell\user_profile.ps1" = "Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
-    "config\powershell\github-dark.omp.json" = "AppData\Local\Programs\oh-my-posh\themes\github-dark.omp.json"
-    
-    # Git configuration
-    "config\git\gitconfig"        = "dot_gitconfig"
-    "config\git\gitignore_global" = "dot_gitignore_global"
-    
-    # SSH configuration
-    "config\ssh\config"           = ".ssh\config"
-    
-    # Starship configuration
-    "config\starship\starship.toml" = "dot_config\starship.toml"
-    
-    # Lazygit configuration
-    "config\lazygit"              = "dot_config\lazygit"
-    
-    # FZF configuration
-    "config\fzf\fzf.config"       = "dot_config\fzf\config"
-    
-    # Other configurations
-    "config\wget"                 = "dot_config\wget"
-    "config\curl"                 = "dot_config\curl"
+# Define config mappings based on OS
+$configMappings = @{}
+
+if ($IsWindows) {
+    $configMappings = @{
+        "config\windows-terminal" = "AppData\Local\Microsoft\Windows Terminal"
+        "config\powershell" = "Documents\PowerShell"
+        "config\vscode\settings.json" = "AppData\Roaming\Code\User\settings.json"
+        "config\vscode\keybindings.json" = "AppData\Roaming\Code\User\keybindings.json"
+        "config\git\gitconfig" = ".gitconfig"
+        "config\git\gitignore_global" = ".gitignore_global"
+        "config\wezterm" = ".config\wezterm"
+        "config\alacritty" = "AppData\Roaming\alacritty"
+        "config\lazygit" = "AppData\Local\lazygit"
+        "config\starship\starship.toml" = ".config\starship.toml"
+    }
+} elseif ($IsMacOS) {
+    $configMappings = @{
+        "config\vscode\settings.json" = "Library/Application Support/Code/User/settings.json"
+        "config\vscode\keybindings.json" = "Library/Application Support/Code/User/keybindings.json"
+        "config\git\gitconfig" = ".gitconfig"
+        "config\git\gitignore_global" = ".gitignore_global"
+        "config\kitty" = ".config/kitty"
+        "config\wezterm" = ".config/wezterm"
+        "config\alacritty" = ".config/alacritty"
+        "config\zsh" = ".config/zsh"
+        "config\bash" = ".config/bash"
+        "config\starship\starship.toml" = ".config/starship.toml"
+        "config\lazygit" = ".config/lazygit"
+    }
+} else {
+    $configMappings = @{
+        "config\vscode\settings.json" = ".config/Code/User/settings.json"
+        "config\vscode\keybindings.json" = ".config/Code/User/keybindings.json"
+        "config\git\gitconfig" = ".gitconfig"
+        "config\git\gitignore_global" = ".gitignore_global"
+        "config\kitty" = ".config/kitty"
+        "config\wezterm" = ".config/wezterm"
+        "config\alacritty" = ".config/alacritty"
+        "config\i3" = ".config/i3"
+        "config\sway" = ".config/sway"
+        "config\waybar" = ".config/waybar"
+        "config\rofi" = ".config/rofi"
+        "config\zsh" = ".config/zsh"
+        "config\bash" = ".config/bash"
+        "config\starship\starship.toml" = ".config/starship.toml"
+        "config\lazygit" = ".config/lazygit"
+    }
 }
 
-# Create chezmoi source directory
-Write-Host "Setting up chezmoi source directory..." -ForegroundColor Cyan
+# Create source directory
+Write-Host "Setting up chezmoi source directory..."
 
-# Create the .local/share/chezmoi directory where chezmoi expects data
-$sourceDir = "$env:USERPROFILE\.local\share\chezmoi"
-if (-not (Test-Path $sourceDir)) {
-    New-Item -ItemType Directory -Path $sourceDir -Force | Out-Null
-}
+# Process each config mapping
+foreach ($sourcePath in $configMappings.Keys) {
+    $targetPath = $configMappings[$sourcePath]
+    $fullSourcePath = Join-Path $DOTFILES_DIR $sourcePath
+    $fullTargetPath = Join-Path $HOME $targetPath
 
-# Map files to their chezmoi locations
-foreach ($mapping in $configMappings.GetEnumerator()) {
-    $sourcePath = Join-Path $DOTFILES_DIR $mapping.Key
-    $targetPath = Join-Path $env:USERPROFILE $mapping.Value
-    
-    if (Test-Path $sourcePath) {
-        # Add the file/directory to chezmoi
-        Write-Host "Adding $($mapping.Key) to chezmoi..." -ForegroundColor Green
-        
-        # For directories, we need to make sure the parent directory exists
-        if ((Get-Item $sourcePath -ErrorAction SilentlyContinue).PSIsContainer) {
-            $targetDir = Split-Path $targetPath -Parent
-            if (-not (Test-Path $targetDir)) {
-                New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
-            }
-            
-            # Copy the directory to the target
-            Copy-Item -Path $sourcePath -Destination $targetPath -Recurse -Force -ErrorAction SilentlyContinue
-        } else {
-            # For files, copy directly
-            $targetDir = Split-Path $targetPath -Parent
-            if (-not (Test-Path $targetDir)) {
-                New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
-            }
-            
-            # Copy the file to the target
-            Copy-Item -Path $sourcePath -Destination $targetPath -Force -ErrorAction SilentlyContinue
+    if (Test-Path $fullSourcePath) {
+        Write-Host "Adding $sourcePath to chezmoi..."
+
+        # Create target directory if needed
+        $targetDir = Split-Path -Parent $fullTargetPath
+        if (-not (Test-Path $targetDir)) {
+            New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
         }
-        
-        # Add the file to chezmoi
-        & $CHEZMOI_BIN add $targetPath
+
+        # Copy files
+        try {
+            if (Test-Path -PathType Container $fullSourcePath) {
+                Copy-Item -Path $fullSourcePath -Destination $fullTargetPath -Recurse -Force -ErrorAction SilentlyContinue
+            } else {
+                Copy-Item -Path $fullSourcePath -Destination $fullTargetPath -Force -ErrorAction SilentlyContinue
+            }
+        } catch {
+            Write-Warning "Could not copy $sourcePath : $_"
+        }
+
+        # Add to chezmoi
+        & $CHEZMOI_BIN add $fullTargetPath
     } else {
-        Write-Host "Warning: Source path $sourcePath does not exist" -ForegroundColor Yellow
+        Write-Warning "Source path $fullSourcePath does not exist"
     }
 }
 
-# Generate chezmoi config file if it doesn't exist
-if (-not (Test-Path "$DOTFILES_DIR\.chezmoi.toml")) {
-    Write-Host "Creating .chezmoi.toml configuration file..." -ForegroundColor Cyan
-    @'
-[data]
-    email = "your.email@example.com"  # Replace with your actual email
-    name = "Your Name"  # Replace with your actual name
+# Add chezmoi to PATH
+if ($IsWindows) {
+    $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    if (-not $userPath.Contains($DOTFILES_DIR)) {
+        [Environment]::SetEnvironmentVariable(
+            "Path",
+            "$userPath;$DOTFILES_DIR\bin",
+            "User"
+        )
+        $env:Path = "$env:Path;$DOTFILES_DIR\bin"
+    }
+} else {
+    $shellConfigFile = if ($IsMacOS) {
+        if (Test-Path "~/.zshrc") { "~/.zshrc" } else { "~/.bashrc" }
+    } else {
+        "~/.bashrc"
+    }
 
-[sourceVCS]
-    autoCommit = true  # Automatically commit after modifications
-    autoPush = false   # Don't automatically push (safer)
-
-[diff]
-    command = "code"
-    args = ["--diff", "{{.Destination}}", "{{.Target}}"]
-
-# Define OS-specific settings
-[data.windows]
-    homeDir = "C:\\Users\\{{- .chezmoi.username }}"
-
-[data.linux]
-    homeDir = "/home/{{- .chezmoi.username }}"
-
-[data.darwin]
-    homeDir = "/Users/{{- .chezmoi.username }}"
-'@ | Out-File -FilePath "$DOTFILES_DIR\.chezmoi.toml" -Encoding utf8
-}
-
-# Add .chezmoi.toml to chezmoi management
-if (Test-Path "$DOTFILES_DIR\.chezmoi.toml") {
-    & $CHEZMOI_BIN add "$DOTFILES_DIR\.chezmoi.toml"
-}
-
-# Add chezmoi to PATH permanently for the current user
-$persistentPath = [Environment]::GetEnvironmentVariable("Path", "User")
-if (-not ($persistentPath -like "*$DOTFILES_DIR\bin*")) {
-    [Environment]::SetEnvironmentVariable("Path", "$persistentPath;$DOTFILES_DIR\bin", "User")
-    Write-Host "Added chezmoi to your user PATH environment variable" -ForegroundColor Green
-}
-
-# Add chezmoi to PATH for current session
-$env:Path = "$DOTFILES_DIR\bin;$env:Path"
-
-# Install Oh My Posh if not already installed
-if (-not (Get-Command oh-my-posh -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing Oh My Posh..." -ForegroundColor Cyan
-    if (Test-Path "$DOTFILES_DIR\scripts\windows\install-oh-my-posh.ps1") {
-        & "$DOTFILES_DIR\scripts\windows\install-oh-my-posh.ps1"
+    if (-not (Select-String -Path $shellConfigFile -Pattern "$DOTFILES_DIR/bin" -Quiet)) {
+        Add-Content -Path $shellConfigFile -Value "`n# Add chezmoi to PATH`nexport PATH=`"`$PATH:$DOTFILES_DIR/bin`""
     }
 }
 
-Write-Host "Chezmoi setup complete!" -ForegroundColor Green
-Write-Host "You can now use chezmoi commands to manage your dotfiles:" -ForegroundColor Cyan
-Write-Host "  chezmoi cd      - Navigate to the source directory" -ForegroundColor Yellow
-Write-Host "  chezmoi edit    - Edit a file managed by chezmoi" -ForegroundColor Yellow
-Write-Host "  chezmoi apply   - Apply changes to your home directory" -ForegroundColor Yellow
-Write-Host "  chezmoi diff    - Show the differences between the source and destination files" -ForegroundColor Yellow
-Write-Host "  chezmoi status  - Show the status of files in the working directory" -ForegroundColor Yellow
+# Install packages if requested
+$installPackages = Read-Host "Would you like to install recommended packages? (y/N)"
+if ($installPackages -eq "y") {
+    & (Join-Path $DOTFILES_DIR "scripts" "install-packages.ps1")
+}
+
+Write-Host "`nChezmoi setup complete!"
+Write-Host "You can now use chezmoi commands to manage your dotfiles:"
+Write-Host "  chezmoi cd      - Navigate to the source directory"
+Write-Host "  chezmoi edit    - Edit a file managed by chezmoi"
+Write-Host "  chezmoi apply   - Apply changes to your home directory"
+Write-Host "  chezmoi diff    - Show the differences between the source and destination files"
+Write-Host "  chezmoi status  - Show the status of files in the working directory"
+
+if (-not $IsWindows) {
+    Write-Host "`nTo use chezmoi from a new terminal, run:"
+    Write-Host "  source $shellConfigFile"
+}

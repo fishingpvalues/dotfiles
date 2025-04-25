@@ -18,20 +18,34 @@
     is_macos = true
     is_linux = false
     is_windows = false
+    vscode_path = "Library/Application Support/Code/User"
+    package_manager = "brew"
     {{- else if eq .chezmoi.os "linux" }}
     is_macos = false
     is_linux = true
     is_windows = false
+    vscode_path = ".config/Code/User"
+    {{-   if eq .chezmoi.osRelease.id "arch" }}
+    package_manager = "pacman"
+    {{-   else if eq .chezmoi.osRelease.id "debian" }}
+    package_manager = "apt"
+    {{-   else if eq .chezmoi.osRelease.id "fedora" }}
+    package_manager = "dnf"
+    {{-   end }}
     {{- else if eq .chezmoi.os "windows" }}
     is_macos = false
     is_linux = false
     is_windows = true
+    vscode_path = "AppData/Roaming/Code/User"
+    package_manager = "scoop"
     {{- end }}
 
     # Linux distribution detection
     {{- if and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id") }}
     {{-   if eq .chezmoi.osRelease.id "arch" }}
     is_arch = true
+    use_aur = {{ promptBool "use_aur" "Use AUR (Arch User Repository)" }}
+    aur_helper = {{ promptString "aur_helper" "yay" (list "yay" "paru" "aurman") | quote }}
     {{-   else if eq .chezmoi.osRelease.id "debian" }}
     is_debian = true
     {{-   else if eq .chezmoi.osRelease.id "ubuntu" }}
@@ -41,12 +55,20 @@
     {{-   end }}
     {{- end }}
 
-    # Home directory
+    # Home directory with proper path handling
     {{- if eq .chezmoi.os "windows" }}
     home_dir = {{ .chezmoi.homeDir | replace "\\" "/" | quote }}
     {{- else }}
     home_dir = {{ .chezmoi.homeDir | quote }}
     {{- end }}
+
+    # Development environment
+    use_docker = {{ promptBool "use_docker" "Use Docker for development" }}
+    use_kubernetes = {{ promptBool "use_kubernetes" "Use Kubernetes" }}
+    use_virtualenv = {{ promptBool "use_virtualenv" "Use Python virtual environments" }}
+    use_node = {{ promptBool "use_node" "Use Node.js" }}
+    use_rust = {{ promptBool "use_rust" "Use Rust" }}
+    use_go = {{ promptBool "use_go" "Use Go" }}
 
     # Work vs Personal machine
     is_work_machine = {{ promptBool "is_work_machine" "Is this a work machine" }}
@@ -54,18 +76,52 @@
 
     # Terminal preferences
     use_nerd_font = {{ promptBool "use_nerd_font" "Use Nerd Font (for icons in terminal)" }}
+    nerd_font = {{ promptString "nerd_font" "JetBrainsMono" (list "JetBrainsMono" "FiraCode" "Hack" "CascadiaCode" "SourceCodePro") | quote }}
+    {{- if eq .chezmoi.os "windows" }}
+    default_terminal = {{ promptString "default_terminal" "windows-terminal" (list "windows-terminal" "alacritty" "wezterm") | quote }}
+    {{- else }}
+    default_terminal = {{ promptString "default_terminal" "kitty" (list "kitty" "alacritty" "wezterm") | quote }}
+    {{- end }}
 
+    # Shell preferences
+    {{- if eq .chezmoi.os "windows" }}
+    default_shell = {{ promptString "default_shell" "pwsh" (list "pwsh" "powershell" "bash" "zsh") | quote }}
+    {{- else }}
     # Colors and themes
     {{- $colorSchemes := list "github-dark" "dracula" "nord" "solarized-dark" "solarized-light" "gruvbox" "catppuccin" }}
     color_scheme = {{ promptString "color_scheme" "github-dark" $colorSchemes | quote }}
 
+    # Editor preferences
+    {{- if eq .chezmoi.os "windows" }}
+    editor = {{ promptString "editor" "code" (list "code" "nvim" "notepad++") | quote }}
+    {{- else }}
+    editor = {{ promptString "editor" "nvim" (list "nvim" "code" "vim") | quote }}
+    {{- end }}
+
 [edit]
-    command = "nvim"
+    command = "{{ .editor }}"
 
 # Git settings
 [merge]
-    command = "nvim"
+    command = "{{ .editor }}"
+    {{- if eq .editor "nvim" }}
     args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+    {{- else if eq .editor "code" }}
+    args = ["--wait", "--diff", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+    {{- end }}
+
+[diff]
+    command = "{{ .editor }}"
+    {{- if eq .editor "nvim" }}
+    args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+    {{- else if eq .editor "code" }}
+    args = ["--wait", "--diff", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+    {{- end }}
+
+# Version control settings
+[sourceVCS]
+    autoCommit = true
+    autoPush = false
 
 # For encrypted secrets if needed
 #[age]
