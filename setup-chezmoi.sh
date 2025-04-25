@@ -1,7 +1,28 @@
 #!/usr/bin/env bash
 # setup-chezmoi.sh - Script to configure chezmoi for the current dotfiles structure on Unix systems
 
-set -e # Exit on error
+set -euo pipefail # Exit on error, undefined variables, and pipe failures
+IFS=$'\n\t'      # Stricter word splitting
+
+# Function to handle errors
+error_handler() {
+    local line_no=$1
+    local command=$2
+    local error_code=${3:-1}
+    echo "Error on line ${line_no}: command '${command}' exited with status ${error_code}"
+}
+
+trap 'error_handler ${LINENO} "${BASH_COMMAND}" $?' ERR
+
+# Function to create backup
+create_backup() {
+    local path="$1"
+    if [ -e "$path" ]; then
+        local backup_path="${path}.backup.$(date +%Y%m%d_%H%M%S)"
+        echo "Creating backup of ${path} to ${backup_path}"
+        cp -R "$path" "$backup_path"
+    fi
+}
 
 # Set the current directory as the source state for chezmoi
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -13,7 +34,7 @@ OS="$(uname -s)"
 case "${OS}" in
     Linux*)     MACHINE=linux;;
     Darwin*)    MACHINE=darwin;;
-    *)          MACHINE="UNKNOWN:${OS}"
+    *)          echo "Unsupported OS: ${OS}"; exit 1;;
 esac
 
 echo "Detected OS: ${MACHINE}"
@@ -25,19 +46,23 @@ if [ ! -f "${CHEZMOI_BIN}" ]; then
     
     # Download and install chezmoi
     if command -v curl &> /dev/null; then
-        sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "${DOTFILES_DIR}/bin"
+        sh -c "$(curl -fsSL get.chezmoi.io)" -- -b "${DOTFILES_DIR}/bin"
     elif command -v wget &> /dev/null; then
         sh -c "$(wget -qO- get.chezmoi.io)" -- -b "${DOTFILES_DIR}/bin"
     else
         echo "Error: Neither curl nor wget found. Please install one of them and try again."
         exit 1
     fi
+    
+    # Verify installation
+    if [ ! -x "${CHEZMOI_BIN}" ]; then
+        echo "Error: chezmoi installation failed"
+        exit 1
+    fi
 fi
 
 # Create chezmoi directories if they don't exist
-if [ ! -d "${CHEZMOI_DIR}" ]; then
-    mkdir -p "${CHEZMOI_DIR}"
-fi
+mkdir -p "${CHEZMOI_DIR}"
 
 # Check if chezmoi is already initialized
 if [ ! -f "${CHEZMOI_DIR}/config" ]; then
@@ -46,64 +71,58 @@ fi
 
 # Map config directories to their destination paths
 declare -A config_mappings
-# Bash configuration
-config_mappings["config/bash/bashrc"]=".bashrc"
 
-# ZSH configuration
-config_mappings["config/zsh/zshrc"]=".zshrc"
-config_mappings["config/zsh/p10k.zsh"]=".p10k.zsh"
+# Function to safely add config mapping
+add_config_mapping() {
+    local source="$1"
+    local target="$2"
+    if [ -e "${DOTFILES_DIR}/${source}" ]; then
+        config_mappings["${source}"]="${target}"
+    fi
+}
 
-# Neovim configuration
-config_mappings["config/nvim"]=".config/nvim"
+# Shell configurations
+add_config_mapping "config/bash/bashrc" ".bashrc"
+add_config_mapping "config/zsh/zshrc" ".zshrc"
+add_config_mapping "config/zsh/p10k.zsh" ".p10k.zsh"
+add_config_mapping "config/nushell" ".config/nushell"
+
+# Editor configurations
+add_config_mapping "config/nvim" ".config/nvim"
 
 # VS Code configuration
 if [ "${MACHINE}" = "darwin" ]; then
-    config_mappings["config/vscode/settings.json"]="Library/Application Support/Code/User/settings.json"
-    config_mappings["config/vscode/keybindings.json"]="Library/Application Support/Code/User/keybindings.json"
+    add_config_mapping "config/vscode/settings.json" "Library/Application Support/Code/User/settings.json"
+    add_config_mapping "config/vscode/keybindings.json" "Library/Application Support/Code/User/keybindings.json"
 elif [ "${MACHINE}" = "linux" ]; then
-    config_mappings["config/vscode/settings.json"]=".config/Code/User/settings.json"
-    config_mappings["config/vscode/keybindings.json"]=".config/Code/User/keybindings.json"
+    add_config_mapping "config/vscode/settings.json" ".config/Code/User/settings.json"
+    add_config_mapping "config/vscode/keybindings.json" ".config/Code/User/keybindings.json"
 fi
 
 # Terminal configurations
-config_mappings["config/kitty"]=".config/kitty"
-config_mappings["config/wezterm"]=".config/wezterm"
-config_mappings["config/alacritty"]=".config/alacritty"
-
-# Shell configurations
-config_mappings["config/nushell"]=".config/nushell"
+add_config_mapping "config/kitty" ".config/kitty"
+add_config_mapping "config/wezterm" ".config/wezterm"
+add_config_mapping "config/alacritty" ".config/alacritty"
 
 # Git configuration
-config_mappings["config/git/gitconfig"]=".gitconfig"
-config_mappings["config/git/gitignore_global"]=".gitignore_global"
+add_config_mapping "config/git/gitconfig" ".gitconfig"
+add_config_mapping "config/git/gitignore_global" ".gitignore_global"
 
-# SSH configuration
-config_mappings["config/ssh/config"]=".ssh/config"
-
-# Tmux configuration
-config_mappings["config/tmux/tmux.conf"]=".tmux.conf"
-
-# Starship configuration
-config_mappings["config/starship/starship.toml"]=".config/starship.toml"
-
-# Lazygit configuration
-config_mappings["config/lazygit"]=".config/lazygit"
-
-# FZF configuration
-config_mappings["config/fzf/fzf.config"]=".config/fzf/config"
-
-# Other configurations
-config_mappings["config/wget"]=".config/wget"
-config_mappings["config/curl"]=".config/curl"
+# Other tools configuration
+add_config_mapping "config/ssh/config" ".ssh/config"
+add_config_mapping "config/tmux/tmux.conf" ".tmux.conf"
+add_config_mapping "config/starship/starship.toml" ".config/starship.toml"
+add_config_mapping "config/lazygit" ".config/lazygit"
+add_config_mapping "config/fzf/fzf.config" ".config/fzf/config"
+add_config_mapping "config/wget" ".config/wget"
+add_config_mapping "config/curl" ".config/curl"
 
 # Create chezmoi source directory
 echo "Setting up chezmoi source directory..."
 
 # Create the .local/share/chezmoi directory where chezmoi expects data
 SOURCE_DIR="${HOME}/.local/share/chezmoi"
-if [ ! -d "${SOURCE_DIR}" ]; then
-    mkdir -p "${SOURCE_DIR}"
-fi
+mkdir -p "${SOURCE_DIR}"
 
 # Map files to their chezmoi locations
 for source_path in "${!config_mappings[@]}"; do
@@ -112,33 +131,26 @@ for source_path in "${!config_mappings[@]}"; do
     full_target_path="${HOME}/${target_path}"
     
     if [ -e "${full_source_path}" ]; then
-        # Add the file/directory to chezmoi
-        echo "Adding ${source_path} to chezmoi..."
+        echo "Processing ${source_path}..."
         
-        # For directories, we need to make sure the parent directory exists
+        # Create backup of existing files
+        create_backup "${full_target_path}"
+        
+        # Create target directory
+        target_dir="$(dirname "${full_target_path}")"
+        mkdir -p "${target_dir}"
+        
+        # Copy files/directories
         if [ -d "${full_source_path}" ]; then
-            target_dir="$(dirname "${full_target_path}")"
-            if [ ! -d "${target_dir}" ]; then
-                mkdir -p "${target_dir}"
-            fi
-            
-            # Copy the directory to the target
             cp -R "${full_source_path}" "${full_target_path}" 2>/dev/null || true
         else
-            # For files, copy directly
-            target_dir="$(dirname "${full_target_path}")"
-            if [ ! -d "${target_dir}" ]; then
-                mkdir -p "${target_dir}"
-            fi
-            
-            # Copy the file to the target
             cp "${full_source_path}" "${full_target_path}" 2>/dev/null || true
         fi
         
-        # Add the file to chezmoi
-        "${CHEZMOI_BIN}" add "${full_target_path}" || true
-    else
-        echo "Warning: Source path ${full_source_path} does not exist"
+        # Add to chezmoi
+        "${CHEZMOI_BIN}" add "${full_target_path}" 2>/dev/null || {
+            echo "Warning: Failed to add ${full_target_path} to chezmoi"
+        }
     fi
 done
 
@@ -158,6 +170,10 @@ if [ ! -f "${DOTFILES_DIR}/.chezmoi.toml" ]; then
     command = "code"
     args = ["--diff", "{{.Destination}}", "{{.Target}}"]
 
+[merge]
+    command = "code"
+    args = ["--wait", "--merge", "{{.Destination}}", "{{.Source}}", "{{.Target}}"]
+
 # Define OS-specific settings
 [data.windows]
     homeDir = "C:\\Users\\{{- .chezmoi.username }}"
@@ -167,39 +183,54 @@ if [ ! -f "${DOTFILES_DIR}/.chezmoi.toml" ]; then
 
 [data.darwin]
     homeDir = "/Users/{{- .chezmoi.username }}"
+
+[edit]
+    command = "code"
+    args = ["--wait"]
 EOF
 fi
 
 # Add .chezmoi.toml to chezmoi management
 if [ -f "${DOTFILES_DIR}/.chezmoi.toml" ]; then
-    "${CHEZMOI_BIN}" add "${DOTFILES_DIR}/.chezmoi.toml" || true
+    "${CHEZMOI_BIN}" add "${DOTFILES_DIR}/.chezmoi.toml" 2>/dev/null || true
 fi
 
-# Add chezmoi to PATH by adding it to shell config files
-if [ "${MACHINE}" = "darwin" ] || [ "${MACHINE}" = "linux" ]; then
-    # Add to .bashrc if it exists
-    if [ -f "${HOME}/.bashrc" ]; then
-        if ! grep -q "# chezmoi PATH" "${HOME}/.bashrc"; then
-            echo "" >> "${HOME}/.bashrc"
-            echo "# chezmoi PATH" >> "${HOME}/.bashrc"
-            echo "export PATH=\"\${PATH}:${DOTFILES_DIR}/bin\"" >> "${HOME}/.bashrc"
-            echo "Added chezmoi to PATH in .bashrc"
-        fi
-    fi
+# Function to safely modify shell config
+modify_shell_config() {
+    local config_file="$1"
+    local comment="$2"
+    local command="$3"
     
-    # Add to .zshrc if it exists
-    if [ -f "${HOME}/.zshrc" ]; then
-        if ! grep -q "# chezmoi PATH" "${HOME}/.zshrc"; then
-            echo "" >> "${HOME}/.zshrc"
-            echo "# chezmoi PATH" >> "${HOME}/.zshrc"
-            echo "export PATH=\"\${PATH}:${DOTFILES_DIR}/bin\"" >> "${HOME}/.zshrc"
-            echo "Added chezmoi to PATH in .zshrc"
+    if [ -f "${config_file}" ]; then
+        # Create backup
+        create_backup "${config_file}"
+        
+        # Add to shell config if not already present
+        if ! grep -q "${comment}" "${config_file}"; then
+            {
+                echo ""
+                echo "${comment}"
+                echo "${command}"
+            } >> "${config_file}"
+            echo "Updated ${config_file}"
         fi
     fi
+}
+
+# Add chezmoi to PATH in shell configs
+if [ "${MACHINE}" = "darwin" ] || [ "${MACHINE}" = "linux" ]; then
+    modify_shell_config "${HOME}/.bashrc" "# chezmoi PATH" "export PATH=\"\${PATH}:${DOTFILES_DIR}/bin\""
+    modify_shell_config "${HOME}/.zshrc" "# chezmoi PATH" "export PATH=\"\${PATH}:${DOTFILES_DIR}/bin\""
 fi
 
 # Add to current session's PATH
 export PATH="${PATH}:${DOTFILES_DIR}/bin"
+
+# Verify installation
+echo "Verifying installation..."
+if ! "${CHEZMOI_BIN}" verify; then
+    echo "Warning: Some files differ from their targets. Run 'chezmoi diff' to see the differences."
+fi
 
 echo "Chezmoi setup complete!"
 echo "You can now use chezmoi commands to manage your dotfiles:"

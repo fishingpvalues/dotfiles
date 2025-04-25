@@ -30,845 +30,18 @@ sudo -v
 # Keep-alive: update existing `sudo` time stamp until `.macos` has finished
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
-###############################################################################
-# Shell & Terminal Setup                                                     #
-###############################################################################
-
-# Install Oh My Zsh
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-  echo "Installing Oh My Zsh..."
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-fi
-
-# Install Powerlevel10k theme for Oh My Zsh
-if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
-  echo "Installing Powerlevel10k theme..."
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
-fi
-
-# Install zsh plugins
-if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions" ]; then
-  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-fi
-
-if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting" ]; then
-  git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
-fi
-
-# Setup zsh configuration
-cat > $HOME/.zshrc << 'EOL'
-# Enable Powerlevel10k instant prompt
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-# Path to oh-my-zsh installation
-export ZSH="$HOME/.oh-my-zsh"
-
-# Set theme to powerlevel10k
-ZSH_THEME="powerlevel10k/powerlevel10k"
-
-# Plugins
-plugins=(
-  git
-  docker
-  kubectl
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-  fzf
-  ripgrep
-  python
-  rust
-)
-
-source $ZSH/oh-my-zsh.sh
-
-# User configuration
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.cargo/bin:$PATH"
-
-# Aliases
-alias ls="exa --icons --group-directories-first"
-alias ll="exa --icons --group-directories-first -l"
-alias la="exa --icons --group-directories-first -la"
-alias cat="bat"
-alias cd="z"
-alias top="btop"
-alias vim="nvim"
-alias lg="lazygit"
-alias ld="lazydocker"
-
-# Zoxide
-eval "$(zoxide init zsh)"
-
-# fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# p10k configuration
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-EOL
-
-# Create p10k configuration with rainbow style
-cat > $HOME/.p10k.zsh << 'EOL'
-# Generated p10k config with rainbow prompt style
-typeset -g POWERLEVEL9K_PROMPT_CHAR_OK_VIINS_FOREGROUND=76
-typeset -g POWERLEVEL9K_PROMPT_CHAR_ERROR_VIINS_FOREGROUND=196
-
-# Enable rainbow prompt
-typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir vcs)
-typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status command_execution_time background_jobs)
-
-# Enable transient prompt for cleaner shell experience
-typeset -g POWERLEVEL9K_TRANSIENT_PROMPT=always
-
-# Use rainbow colors
-typeset -g POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX='%F{51}╭─'
-typeset -g POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX='%F{51}╰─'
-
-# OS icon color
-typeset -g POWERLEVEL9K_OS_ICON_FOREGROUND=255
-typeset -g POWERLEVEL9K_OS_ICON_BACKGROUND=27
-
-# Directory colors
-typeset -g POWERLEVEL9K_DIR_FOREGROUND=255
-typeset -g POWERLEVEL9K_DIR_BACKGROUND=33
-
-# Git colors (rainbow style)
-typeset -g POWERLEVEL9K_VCS_CLEAN_FOREGROUND=255
-typeset -g POWERLEVEL9K_VCS_CLEAN_BACKGROUND=40
-typeset -g POWERLEVEL9K_VCS_UNTRACKED_FOREGROUND=255
-typeset -g POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND=208
-typeset -g POWERLEVEL9K_VCS_MODIFIED_FOREGROUND=255
-typeset -g POWERLEVEL9K_VCS_MODIFIED_BACKGROUND=196
-EOL
-
-###############################################################################
-# Application Configuration                                                   #
-###############################################################################
-
-# Configure Karabiner to map Caps Lock to Escape
-mkdir -p ~/.config/karabiner
-cat > ~/.config/karabiner/karabiner.json << 'EOL'
-{
-    "global": {
-        "check_for_updates_on_startup": true,
-        "show_in_menu_bar": true,
-        "show_profile_name_in_menu_bar": false
-    },
-    "profiles": [
-        {
-            "complex_modifications": {
-                "parameters": {
-                    "basic.simultaneous_threshold_milliseconds": 50,
-                    "basic.to_delayed_action_delay_milliseconds": 500,
-                    "basic.to_if_alone_timeout_milliseconds": 1000,
-                    "basic.to_if_held_down_threshold_milliseconds": 500,
-                    "mouse_motion_to_scroll.speed": 100
-                },
-                "rules": []
-            },
-            "devices": [],
-            "fn_function_keys": [
-                {
-                    "from": {"key_code": "f1"},
-                    "to": {"consumer_key_code": "display_brightness_decrement"}
-                },
-                {
-                    "from": {"key_code": "f2"},
-                    "to": {"consumer_key_code": "display_brightness_increment"}
-                },
-                {
-                    "from": {"key_code": "f3"},
-                    "to": {"key_code": "mission_control"}
-                },
-                {
-                    "from": {"key_code": "f4"},
-                    "to": {"key_code": "launchpad"}
-                },
-                {
-                    "from": {"key_code": "f5"},
-                    "to": {"key_code": "illumination_decrement"}
-                },
-                {
-                    "from": {"key_code": "f6"},
-                    "to": {"key_code": "illumination_increment"}
-                },
-                {
-                    "from": {"key_code": "f7"},
-                    "to": {"consumer_key_code": "rewind"}
-                },
-                {
-                    "from": {"key_code": "f8"},
-                    "to": {"consumer_key_code": "play_or_pause"}
-                },
-                {
-                    "from": {"key_code": "f9"},
-                    "to": {"consumer_key_code": "fastforward"}
-                },
-                {
-                    "from": {"key_code": "f10"},
-                    "to": {"consumer_key_code": "mute"}
-                },
-                {
-                    "from": {"key_code": "f11"},
-                    "to": {"consumer_key_code": "volume_decrement"}
-                },
-                {
-                    "from": {"key_code": "f12"},
-                    "to": {"consumer_key_code": "volume_increment"}
-                }
-            ],
-            "name": "Default profile",
-            "parameters": {
-                "delay_milliseconds_before_open_device": 1000
-            },
-            "selected": true,
-            "simple_modifications": [
-                {
-                    "from": {"key_code": "caps_lock"},
-                    "to": {"key_code": "escape"}
-                }
-            ],
-            "virtual_hid_keyboard": {
-                "country_code": 0,
-                "mouse_key_xy_scale": 100
-            }
-        }
-    ]
-}
-EOL
-
-# Configure Hammerspoon
-mkdir -p ~/.hammerspoon
-cat > ~/.hammerspoon/init.lua << 'EOL'
--- Hammerspoon configuration
-
--- Reload config automatically when files change
-function reloadConfig(files)
-    doReload = false
-    for _,file in pairs(files) do
-        if file:sub(-4) == ".lua" then
-            doReload = true
-        end
-    end
-    if doReload then
-        hs.reload()
-    end
-end
-myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reloadConfig):start()
-hs.alert.show("Hammerspoon config loaded")
-
--- Window management
-hs.window.animationDuration = 0
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "left", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x
-  f.y = max.y
-  f.w = max.w / 2
-  f.h = max.h
-  win:setFrame(f)
-end)
-
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "right", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x + (max.w / 2)
-  f.y = max.y
-  f.w = max.w / 2
-  f.h = max.h
-  win:setFrame(f)
-end)
-
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "up", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x
-  f.y = max.y
-  f.w = max.w
-  f.h = max.h / 2
-  win:setFrame(f)
-end)
-
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "down", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x
-  f.y = max.y + (max.h / 2)
-  f.w = max.w
-  f.h = max.h / 2
-  win:setFrame(f)
-end)
-
-hs.hotkey.bind({"cmd", "alt", "ctrl"}, "f", function()
-  local win = hs.window.focusedWindow()
-  local f = win:frame()
-  local screen = win:screen()
-  local max = screen:frame()
-
-  f.x = max.x
-  f.y = max.y
-  f.w = max.w
-  f.h = max.h
-  win:setFrame(f)
-end)
-EOL
-
-# Setup VSCode with extensions and settings
-mkdir -p ~/Library/Application\ Support/Code/User/
-
-# Install VSCode extensions
-code_extensions=(
-  "adoxxorg.adoxx-adoscript"
-  "alefragnani.project-manager"
-  "batisteo.vscode-django"
-  "codezombiech.gitignore"
-  "donjayamanne.git-extension-pack"
-  "donjayamanne.githistory"
-  "donjayamanne.python-environment-manager"
-  "donjayamanne.python-extension-pack"
-  "eamodio.gitlens"
-  "github.copilot"
-  "github.copilot-chat"
-  "gruntfuggly.todo-tree"
-  "hediet.vscode-drawio"
-  "kevinrose.vsc-python-indent"
-  "mathworks.language-matlab"
-  "ms-python.debugpy"
-  "ms-python.python"
-  "ms-python.vscode-pylance"
-  "ms-toolsai.jupyter"
-  "ms-toolsai.jupyter-keymap"
-  "ms-toolsai.jupyter-renderers"
-  "ms-toolsai.tensorboard"
-  "ms-toolsai.vscode-jupyter-cell-tags"
-  "ms-toolsai.vscode-jupyter-slideshow"
-  "ms-vscode-remote.remote-wsl"
-  "njpwerner.autodocstring"
-  "visualstudioexptteam.intellicode-api-usage-examples"
-  "visualstudioexptteam.vscodeintellicode"
-  "wholroyd.jinja"
-  "ziyasal.vscode-open-in-github"
-)
-
-for ext in "${code_extensions[@]}"; do
-  code --install-extension "$ext" || true
-done
-
-# Configure VSCode settings
-cat > ~/Library/Application\ Support/Code/User/settings.json << 'EOL'
-{
-  "vim.timeout": 200,
-  "python.envFile": "${workspaceFolder}/.env",
-  "editor.fontFamily": "Fira Code",
-  "editor.fontLigatures": true,
-  "editor.fontWeight": "400",
-  "task.autoDetect": "on",
-  "task.runOnSave": "Git Auto Sync",
-  "settingsSync.keybindingsPerPlatform": false,
-  "vim.useSystemClipboard": true,
-  "vim.useCtrlKeys": true,
-  "vim.handleKeys": {
-    "<C-f>": true,
-    "<C-a>": false
-  },
-  "vim.normalModeKeyBindings": [
-    {
-      "before": ["v", "n"],
-      "after": ["v", "g", "_", "y"]
-    },
-    {
-      "before": ["k", "j"],
-      "after": ["<Esc>", "l"]
-    },
-    {
-      "before": ["f", "d"],
-      "commands": ["typescript.goToSourceDefinition"]
-    },
-    {
-      "before": ["d", "f"],
-      "after": ["g", "d"]
-    },
-    {
-      "before": ["d", "n"],
-      "after": ["d", "g", "_"]
-    }
-  ],
-  "vim.normalModeKeyBindingsNonRecursive": [
-    {
-      "before": ["<C-n>"],
-      "commands": ["editor.action.removeHighlight"]
-    },
-    {
-      "before": ["<S-h>"],
-      "commands": ["workbench.action.previousEditor"]
-    },
-    {
-      "before": ["<S-l>"],
-      "commands": ["workbench.action.nextEditor"]
-    },
-    {
-      "before": ["leader", "v"],
-      "commands": ["workbench.action.splitEditor"]
-    },
-    {
-      "before": ["leader", "s"],
-      "commands": ["workbench.action.splitEditorOrthogonal"]
-    },
-    {
-      "before": ["leader", "h"],
-      "commands": ["workbench.action.focusLeftGroup"]
-    },
-    {
-      "before": ["leader", "j"],
-      "commands": ["workbench.action.focusBelowGroup"]
-    },
-    {
-      "before": ["leader", "k"],
-      "commands": ["workbench.action.focusAboveGroup"]
-    },
-    {
-      "before": ["leader", "l"],
-      "commands": ["workbench.action.focusRightGroup"]
-    },
-    {
-      "before": ["leader", "w"],
-      "commands": ["workbench.action.files.save"]
-    },
-    {
-      "before": ["leader", "q"],
-      "commands": ["workbench.action.closeActiveEditor"]
-    },
-    {
-      "before": ["leader", "x"],
-      "commands": ["workbench.action.files.saveAll"]
-    }
-  ],
-  "vim.visualModeKeyBindingsNonRecursive": [
-    {
-      "before": ["<"],
-      "commands": ["editor.action.outdentLines"]
-    },
-    {
-      "before": [">"],
-      "commands": ["editor.action.indentLines"]
-    },
-    {
-      "before": ["J"],
-      "commands": ["editor.action.moveLinesDownAction"]
-    },
-    {
-      "before": ["K"],
-      "commands": ["editor.action.moveLinesUpAction"]
-    },
-    {
-      "before": ["p"],
-      "commands": ["editor.action.clipboardPasteAction"]
-    }
-  ],
-  "vim.leader": " ",
-  "vim.hlsearch": true,
-  "editor.tabSize": 2,
-  "editor.wordWrap": "on",
-  "editor.lineNumbers": "relative",
-  "editor.formatOnSave": true,
-  "editor.minimap.enabled": false,
-  "editor.renderWhitespace": "none",
-  "editor.suggestSelection": "first",
-  "editor.acceptSuggestionOnCommitCharacter": false,
-  "editor.guides.indentation": false,
-  "editor.renderControlCharacters": false,
-  "editor.cursorSmoothCaretAnimation": "on",
-  "editor.bracketPairColorization.enabled": false,
-  "editor.defaultFormatter": "ms-python.python",
-  "prettier.singleQuote": true,
-  "editor.wordSeparators": "/\\()\"':,.;<>~!@#$%^&*|+=[]{}`?-",
-  "editor.renderLineHighlight": "all",
-  "workbench.colorCustomizations": {},
-  "python.createEnvironment.trigger": "off",
-  "terminal.integrated.defaultProfile.windows": "Windows PowerShell",
-  "terminal.integrated.enableMultiLinePasteWarning": false,
-  "notebook.defaultFormatter": "ms-python.vscode-pylance",
-  "notebook.experimental.find.scope.enabled": true,
-  "notebook.experimental.variablesView": true,
-  "notebook.outline.showCodeCells": true,
-  "files.autoSave": "onFocusChange",
-  "editor.accessibilitySupport": "off",
-  "python.defaultInterpreterPath": "~/miniforge3/bin/python",
-  "workbench.startupEditor": "none",
-  "hediet.vscode-drawio.resizeImages": null,
-  "explorer.confirmDelete": false,
-  "explorer.confirmDragAndDrop": false,
-  "jupyter.askForKernelRestart": false,
-  "jupyter.widgetScriptSources": ["jsdelivr.com", "unpkg.com"],
-  "workbench.editorAssociations": {
-    "*.copilotmd": "vscode.markdown.preview.editor",
-    "*.pdf": "latex-workshop-pdf-hook",
-    "file:/**/*.xlsx": "jupyter-data-wrangler",
-    "*.BAK": "default",
-    "*.vsix": "default"
-  },
-  "github.copilot.enable": {
-    "*": true,
-    "plaintext": false,
-    "markdown": false,
-    "scminput": false
-  },
-  "git.autofetch": true,
-  "notebook.lineNumbers": "on",
-  "latex-workshop.latex.autoBuild.run": "never",
-  "latex-workshop.linting.chktex.enabled": true,
-  "latex-workshop.synctex.afterBuild.enabled": true,
-  "workbench.colorTheme": "GitHub Dark Default",
-  "python.languageServer": "Pylance",
-  "python.analysis.typeCheckingMode": "off",
-  "[python]": {
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-      "source.fixAll": "explicit",
-      "source.organizeImports": "explicit"
-    },
-    "editor.defaultFormatter": "ms-python.black-formatter",
-    "diffEditor.ignoreTrimWhitespace": true
-  },
-  "notebook.formatOnSave.enabled": true,
-  "notebook.codeActionsOnSave": {
-    "notebook.source.fixAll": true,
-    "notebook.source.organizeImports": true
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[markdown]": {
-    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
-  },
-  "workbench.list.smoothScrolling": true,
-  "editor.smoothScrolling": true,
-  "terminal.integrated.smoothScrolling": true,
-  "terminal.integrated.profiles.windows": {
-    "PowerShell": {
-      "source": "PowerShell",
-      "icon": "terminal-powershell"
-    },
-    "Command Prompt": {
-      "path": [
-        "${env:windir}\\Sysnative\\cmd.exe",
-        "${env:windir}\\System32\\cmd.exe"
-      ],
-      "args": [],
-      "icon": "terminal-cmd"
-    },
-    "Git Bash": {
-      "source": "Git Bash"
-    }
-  },
-  "terminal.integrated.defaultProfile.windows": "PowerShell",
-  "git.confirmSync": false,
-  "git.enableSmartCommit": true,
-  "breadcrumbs.enabled": false,
-  "[latex]": {
-    "editor.defaultFormatter": "James-Yu.latex-workshop"
-  },
-  "vim.cursorStylePerMode.insert": "line",
-  "vim.cursorStylePerMode.normal": "block",
-  "vim.cursorStylePerMode.replace": "block",
-  "vim.cursorStylePerMode.visual": "block",
-  "vim.cursorStylePerMode.visualblock": "block",
-  "vim.cursorStylePerMode.visualline": "block",
-  "editor.cursorBlinking": "smooth",
-  "github.copilot.chat.agent.thinkingTool": true,
-  "latex-workshop.formatting.latex": "latexindent"
-}
-EOL
-
-# Configure VSCode keybindings
-cat > ~/Library/Application\ Support/Code/User/keybindings.json << 'EOL'
-[
-  // NAVIGATION
-  {
-    "key": "ctrl+shift+a",
-    "command": "workbench.action.terminal.focusNext",
-    "when": "terminalFocus"
-  },
-  {
-    "key": "ctrl+shift+b",
-    "command": "workbench.action.terminal.focusPrevious",
-    "when": "terminalFocus"
-  },
-  {
-    "key": "ctrl+shift+j",
-    "command": "workbench.action.togglePanel"
-  },
-  {
-    "key": "ctrl+shift+n",
-    "command": "workbench.action.terminal.new",
-    "when": "terminalFocus"
-  },
-  {
-    "key": "ctrl+shift+w",
-    "command": "workbench.action.terminal.kill",
-    "when": "terminalFocus"
-  },
-  // FILE TREE
-  {
-    "command": "workbench.action.toggleSidebarVisibility",
-    "key": "ctrl+e"
-  },
-  {
-    "command": "workbench.files.action.focusFilesExplorer",
-    "key": "ctrl+e",
-    "when": "editorTextFocus"
-  },
-  {
-    "key": "n",
-    "command": "explorer.newFile",
-    "when": "filesExplorerFocus && !inputFocus"
-  },
-  {
-    "command": "renameFile",
-    "key": "r",
-    "when": "filesExplorerFocus && !inputFocus"
-  },
-  {
-    "key": "shift+n",
-    "command": "explorer.newFolder",
-    "when": "explorerViewletFocus"
-  },
-  {
-    "key": "shift+alt+n",
-    "command": "workbench.action.newWindow",
-    "when": "!explorerViewletFocus"
-  },
-  {
-    "command": "deleteFile",
-    "key": "d",
-    "when": "filesExplorerFocus && !inputFocus"
-  },
-  {
-    //DISABLE jupyter notebook line numbers
-    "key": "shift+l",
-    "command": "-jupyter.notebook.toggleLineNumbers",
-    "when": "notebookEditorFocused"
-  },
-  // Move active editor left or right (useful for full-stack web dev).
-  {
-    "key": "cmd+ctrl+j",
-    "command": "moveActiveEditor",
-    "args": {
-      "to": "left"
-    }
-  },
-  {
-    "key": "cmd+ctrl+k",
-    "command": "moveActiveEditor",
-    "args": {
-      "to": "right"
-    }
-  },
-  
-  // Traverse VSCode IntelliSense suggestions with vim keybindings.
-  {
-    "key": "cmd+j",
-    "command": "selectNextSuggestion",
-    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
-  },
-  {
-    "key": "cmd+k",
-    "command": "selectPrevSuggestion",
-    "when": "suggestWidgetMultipleSuggestions && suggestWidgetVisible && textInputFocus"
-  },
-  
-  // Traverse VSCode quick open options with vim keybindings.
-  {
-    "key": "cmd+j",
-    "command": "workbench.action.quickOpenSelectNext",
-    "when": "inQuickOpen"
-  },
-  {
-    "key": "cmd+k",
-    "command": "workbench.action.quickOpenSelectPrevious",
-    "when": "inQuickOpen"
-  },
-  // VSCode terminal commands.
-  {
-    "key": "cmd+n",
-    "command": "workbench.action.terminal.newInActiveWorkspace"
-  },
-  {
-    "key": "cmd+enter",
-    "command": "workbench.action.terminal.toggleTerminal"
-  },
-  {
-    "key": "cmd+ctrl+enter",
-    "command": "workbench.action.toggleMaximizedPanel"
-  },
-  {
-    "key": "cmd+d",
-    "command": "workbench.action.terminal.split",
-    "when": "terminalFocus && terminalProcessSupported"
-  },
-  {
-    "key": "cmd+\\",
-    "command": "-workbench.action.terminal.split",
-    "when": "terminalFocus && terminalProcessSupported"
-  },
-  {
-    "key": "cmd+k",
-    "command": "workbench.action.terminal.focusNextPane",
-    "when": "terminalFocus && terminalProcessSupported"
-  },
-  {
-    "key": "alt+cmd+down",
-    "command": "-workbench.action.terminal.focusNextPane",
-    "when": "terminalFocus && terminalProcessSupported"
-  },
-  {
-    "key": "cmd+j",
-    "command": "workbench.action.terminal.focusPreviousPane",
-    "when": "terminalFocus && terminalProcessSupported"
-  },
-  {
-    "key": "alt+cmd+up",
-    "command": "-workbench.action.terminal.focusPreviousPane",
-    "when": "terminalFocus && terminalProcessSupported"
-  },
-  {
-    "key": "cmd+w",
-    "command": "workbench.action.terminal.kill",
-    "when": "terminalFocus"
-  },
-  {
-    "key": "alt+v",
-    "command": "toggleVim"
-  },
-  {
-    "key": "ctrl+z",
-    "command": "workbench.action.toggleZenMode"
-  },
-  {
-    "key": "ctrl+shift+l",
-    "command": "notebook.toggleLineNumbers",
-    "when": "notebookEditorFocused && !inputFocus && !notebookOutputInputFocused"
-  },
-  {
-    "key": "shift+l",
-    "command": "-notebook.toggleLineNumbers",
-    "when": "notebookEditorFocused && !inputFocus && !notebookOutputInputFocused"
-  },
-  // Splits
-  {
-    "key": "leader v",
-    "command": "workbench.action.splitEditorRight",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "leader s",
-    "command": "workbench.action.splitEditorDown",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  // Panes
-  {
-    "key": "leader h",
-    "command": "workbench.action.focusLeftGroup",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "leader j",
-    "command": "workbench.action.focusBelowGroup",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "leader k",
-    "command": "workbench.action.focusAboveGroup",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "leader l",
-    "command": "workbench.action.focusRightGroup",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  // Nice to have
-  {
-    "key": "leader w",
-    "command": "workbench.action.files.save",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "leader q",
-    "command": "workbench.action.closeActiveEditor",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "leader x",
-    "command": "workbench.action.closeAllEditors",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "alt+j",
-    "command": "editor.action.moveLinesDownAction",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "alt+k",
-    "command": "editor.action.moveLinesUpAction",
-    "when": "editorTextFocus && vim.mode == 'Normal'"
-  },
-  {
-    "key": "alt+j",
-    "command": "editor.action.moveLinesDownAction",
-    "when": "editorTextFocus && vim.mode == 'Visual'"
-  },
-  {
-    "key": "alt+k",
-    "command": "editor.action.moveLinesUpAction",
-    "when": "editorTextFocus && vim.mode == 'Visual'"
-  }
-]
-EOL
-
-# Post-installation notes
-echo "Application installation complete via install-packages.sh"
-echo "Recommended browser extensions for Firefox:"
-echo "- uBlock Origin"
-echo "- KeePassXC-Browser"
-echo "- SponsorBlock for YouTube"
-echo "- Decentraleyes"
-
-# BetterTouchTool configuration message
-echo "BetterTouchTool has been installed."
-echo "Please open BetterTouchTool and configure your preferred trackpad gestures and keyboard shortcuts."
-
-# Configure f.lux for better sleep
-echo "f.lux has been installed."
-echo "Please open f.lux and configure your location and preferred color temperature."
-
-# Configure Discord (note: BetterDiscord needs manual installation)
-echo "Discord has been installed."
-echo "For BetterDiscord, please visit https://betterdiscord.app/ and follow installation instructions."
-
-# Arch Linux in UTM instructions
-echo "To install Arch Linux in UTM:"
-echo "1. Open UTM"
-echo "2. Create a new virtual machine"
-echo "3. Select 'Virtualize' and then 'Linux'"
-echo "4. Download and select an Arch Linux ISO"
-echo "5. Follow the Arch installation guide"
+# Source all app-specific configurations
+source "${HOME}/.macos/source_all.sh"
 
 ###############################################################################
 # General UI/UX                                                               #
 ###############################################################################
+
+# Set computer name (as done via System Preferences → Sharing)
+#sudo scutil --set ComputerName "0x6D746873"
+#sudo scutil --set HostName "0x6D746873"
+#sudo scutil --set LocalHostName "0x6D746873"
+#sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "0x6D746873"
 
 # Disable the sound effects on boot
 sudo nvram SystemAudioVolume=" "
@@ -893,7 +66,7 @@ defaults write NSGlobalDomain NSUseAnimatedFocusRing -bool false
 defaults write NSGlobalDomain NSToolbarTitleViewRolloverDelay -float 0
 
 # Disable smooth scrolling
-# (Uncomment if you’re on an older Mac that messes up the animation)
+# (Uncomment if you're on an older Mac that messes up the animation)
 #defaults write NSGlobalDomain NSScrollAnimationEnabled -bool false
 
 # Increase window resize speed for Cocoa applications
@@ -913,10 +86,10 @@ defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
 # Automatically quit printer app once the print jobs complete
 defaults write com.apple.print.PrintingPrefs "Quit When Finished" -bool true
 
-# Disable the “Are you sure you want to open this application?” dialog
+# Disable the "Are you sure you want to open this application?" dialog
 defaults write com.apple.LaunchServices LSQuarantine -bool false
 
-# Remove duplicates in the “Open With” menu (also see `lscleanup` alias)
+# Remove duplicates in the "Open With" menu (also see `lscleanup` alias)
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user
 
 # Display ASCII control characters using caret notation in standard text views
@@ -935,11 +108,6 @@ defaults write NSGlobalDomain NSDisableAutomaticTermination -bool true
 # Set Help Viewer windows to non-floating mode
 defaults write com.apple.helpviewer DevMode -bool true
 
-# Fix for the ancient UTF-8 bug in QuickLook (https://mths.be/bbo)
-# Commented out, as this is known to cause problems in various Adobe apps :(
-# See https://github.com/mathiasbynens/dotfiles/issues/237
-#echo "0x08000100:0" > ~/.CFUserTextEncoding
-
 # Reveal IP address, hostname, OS version, etc. when clicking the clock
 # in the login window
 sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo HostName
@@ -947,16 +115,16 @@ sudo defaults write /Library/Preferences/com.apple.loginwindow AdminHostInfo Hos
 # Disable Notification Center and remove the menu bar icon
 launchctl unload -w /System/Library/LaunchAgents/com.apple.notificationcenterui.plist 2> /dev/null
 
-# Disable automatic capitalization as it’s annoying when typing code
+# Disable automatic capitalization as it's annoying when typing code
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 
-# Disable smart dashes as they’re annoying when typing code
+# Disable smart dashes as they're annoying when typing code
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 
-# Disable automatic period substitution as it’s annoying when typing code
+# Disable automatic period substitution as it's annoying when typing code
 defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
 
-# Disable smart quotes as they’re annoying when typing code
+# Disable smart quotes as they're annoying when typing code
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
 
 # Disable auto-correct
@@ -983,7 +151,7 @@ defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadRightC
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.trackpadCornerClickBehavior -int 1
 defaults -currentHost write NSGlobalDomain com.apple.trackpad.enableSecondaryClick -bool true
 
-# Disable “natural” (Lion-style) scrolling
+# Disable "natural" (Lion-style) scrolling
 defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
 
 # Increase sound quality for Bluetooth headphones/headsets
@@ -1007,7 +175,7 @@ defaults write NSGlobalDomain KeyRepeat -int 1
 defaults write NSGlobalDomain InitialKeyRepeat -int 10
 
 # Set language and text formats
-# Note: if you’re in the US, replace `EUR` with `USD`, `Centimeters` with
+# Note: if you're in the US, replace `EUR` with `USD`, `Centimeters` with
 # `Inches`, `en_GB` with `en_US`, and `true` with `false`.
 defaults write NSGlobalDomain AppleLanguages -array "en" "nl"
 defaults write NSGlobalDomain AppleLocale -string "en_GB@currency=EUR"
@@ -1061,7 +229,7 @@ sudo pmset -a hibernatemode 0
 sudo rm /private/var/vm/sleepimage
 # Create a zero-byte file instead…
 sudo touch /private/var/vm/sleepimage
-# …and make sure it can’t be rewritten
+# …and make sure it can't be rewritten
 sudo chflags uchg /private/var/vm/sleepimage
 
 ###############################################################################
@@ -1192,12 +360,12 @@ chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library
 # Show the /Volumes folder
 sudo chflags nohidden /Volumes
 
-# Remove Dropbox’s green checkmark icons in Finder
+# Remove Dropbox's green checkmark icons in Finder
 file=/Applications/Dropbox.app/Contents/Resources/emblem-dropbox-uptodate.icns
 [ -e "${file}" ] && mv -f "${file}" "${file}.bak"
 
 # Expand the following File Info panes:
-# “General”, “Open with”, and “Sharing & Permissions”
+# "General", "Open with", and "Sharing & Permissions"
 defaults write com.apple.finder FXInfoPanesExpanded -dict \
 	General -bool true \
 	OpenWith -bool true \
@@ -1216,7 +384,7 @@ defaults write com.apple.dock tilesize -int 36
 # Change minimize/maximize window effect
 defaults write com.apple.dock mineffect -string "scale"
 
-# Minimize windows into their application’s icon
+# Minimize windows into their application's icon
 defaults write com.apple.dock minimize-to-application -bool true
 
 # Enable spring loading for all Dock items
@@ -1226,30 +394,30 @@ defaults write com.apple.dock enable-spring-load-actions-on-all-items -bool true
 defaults write com.apple.dock show-process-indicators -bool true
 
 # Wipe all (default) app icons from the Dock
-# This is only really useful when setting up a new Mac, or if you don’t use
+# This is only really useful when setting up a new Mac, or if you don't use
 # the Dock to launch apps.
 #defaults write com.apple.dock persistent-apps -array
 
 # Show only open applications in the Dock
 #defaults write com.apple.dock static-only -bool true
 
-# Don’t animate opening applications from the Dock
+# Don't animate opening applications from the Dock
 defaults write com.apple.dock launchanim -bool false
 
 # Speed up Mission Control animations
 defaults write com.apple.dock expose-animation-duration -float 0.1
 
-# Don’t group windows by application in Mission Control
+# Don't group windows by application in Mission Control
 # (i.e. use the old Exposé behavior instead)
 defaults write com.apple.dock expose-group-by-app -bool false
 
 # Disable Dashboard
 defaults write com.apple.dashboard mcx-disabled -bool true
 
-# Don’t show Dashboard as a Space
+# Don't show Dashboard as a Space
 defaults write com.apple.dock dashboard-in-overlay -bool true
 
-# Don’t automatically rearrange Spaces based on most recent use
+# Don't automatically rearrange Spaces based on most recent use
 defaults write com.apple.dock mru-spaces -bool false
 
 # Remove the auto-hiding Dock delay
@@ -1263,7 +431,7 @@ defaults write com.apple.dock autohide -bool true
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
 
-# Don’t show recent applications in Dock
+# Don't show recent applications in Dock
 defaults write com.apple.dock show-recents -bool false
 
 # Disable the Launchpad gesture (pinch with thumb and three fingers)
@@ -1308,7 +476,7 @@ defaults write com.apple.dock wvous-bl-modifier -int 0
 # Safari & WebKit                                                             #
 ###############################################################################
 
-# Privacy: don’t send search queries to Apple
+# Privacy: don't send search queries to Apple
 defaults write com.apple.Safari UniversalSearchEnabled -bool false
 defaults write com.apple.Safari SuppressSearchSuggestions -bool true
 
@@ -1319,31 +487,31 @@ defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebK
 # Show the full URL in the address bar (note: this still hides the scheme)
 defaults write com.apple.Safari ShowFullURLInSmartSearchField -bool true
 
-# Set Safari’s home page to `about:blank` for faster loading
+# Set Safari's home page to `about:blank` for faster loading
 defaults write com.apple.Safari HomePage -string "about:blank"
 
-# Prevent Safari from opening ‘safe’ files automatically after downloading
+# Prevent Safari from opening 'safe' files automatically after downloading
 defaults write com.apple.Safari AutoOpenSafeDownloads -bool false
 
 # Allow hitting the Backspace key to go to the previous page in history
 defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2BackspaceKeyNavigationEnabled -bool true
 
-# Hide Safari’s bookmarks bar by default
+# Hide Safari's bookmarks bar by default
 defaults write com.apple.Safari ShowFavoritesBar -bool false
 
-# Hide Safari’s sidebar in Top Sites
+# Hide Safari's sidebar in Top Sites
 defaults write com.apple.Safari ShowSidebarInTopSites -bool false
 
-# Disable Safari’s thumbnail cache for History and Top Sites
+# Disable Safari's thumbnail cache for History and Top Sites
 defaults write com.apple.Safari DebugSnapshotsUpdatePolicy -int 2
 
-# Enable Safari’s debug menu
+# Enable Safari's debug menu
 defaults write com.apple.Safari IncludeInternalDebugMenu -bool true
 
-# Make Safari’s search banners default to Contains instead of Starts With
+# Make Safari's search banners default to Contains instead of Starts With
 defaults write com.apple.Safari FindOnPageMatchesWordStartsOnly -bool false
 
-# Remove useless icons from Safari’s bookmarks bar
+# Remove useless icons from Safari's bookmarks bar
 defaults write com.apple.Safari ProxiesInBookmarksBar "()"
 
 # Enable the Develop menu and the Web Inspector in Safari
@@ -1387,7 +555,7 @@ defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebK
 #defaults write com.apple.Safari com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool false
 #defaults write com.apple.SafariTechnologyPreview com.apple.Safari.ContentPageGroupIdentifier.WebKit2AllowsInlineMediaPlayback -bool false
 
-# Enable “Do Not Track”
+# Enable "Do Not Track"
 defaults write com.apple.Safari SendDoNotTrackHTTPHeader -bool true
 
 # Update extensions automatically
@@ -1520,7 +688,7 @@ end tell
 
 EOD
 
-# Enable “focus follows mouse” for Terminal.app and all X11 apps
+# Enable "focus follows mouse" for Terminal.app and all X11 apps
 # i.e. hover over a window and start typing in it without clicking first
 #defaults write com.apple.terminal FocusFollowsMouse -bool true
 #defaults write org.x.X11 wm_ffm -bool true
@@ -1535,7 +703,7 @@ defaults write com.apple.Terminal ShowLineMarks -int 0
 # Install the Solarized Dark theme for iTerm
 open "${HOME}/init/Solarized Dark.itermcolors"
 
-# Don’t display the annoying prompt when quitting iTerm
+# Don't display the annoying prompt when quitting iTerm
 defaults write com.googlecode.iterm2 PromptOnQuit -bool false
 
 ###############################################################################
@@ -1636,7 +804,7 @@ defaults -currentHost write com.apple.ImageCapture disableHotPlug -bool true
 # Disable automatic emoji substitution (i.e. use plain text smileys)
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticEmojiSubstitutionEnablediMessage" -bool false
 
-# Disable smart quotes as it’s annoying for messages that contain code
+# Disable smart quotes as it's annoying for messages that contain code
 defaults write com.apple.messageshelper.MessageController SOInputLineSettings -dict-add "automaticQuoteSubstitutionEnabled" -bool false
 
 # Disable continuous spell checking
@@ -1684,7 +852,7 @@ defaults write com.operasoftware.OperaDeveloper PMPrintingExpandedStateForPrint2
 # Start SizeUp at login
 defaults write com.irradiatedsoftware.SizeUp StartAtLogin -bool true
 
-# Don’t show the preferences window on next start
+# Don't show the preferences window on next start
 defaults write com.irradiatedsoftware.SizeUp ShowPrefsOnNextStart -bool false
 
 ###############################################################################
@@ -1712,11 +880,11 @@ defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Do
 # Use `~/Downloads` to store completed downloads
 defaults write org.m0k.transmission DownloadLocationConstant -bool true
 
-# Don’t prompt for confirmation before downloading
+# Don't prompt for confirmation before downloading
 defaults write org.m0k.transmission DownloadAsk -bool false
 defaults write org.m0k.transmission MagnetOpenAsk -bool false
 
-# Don’t prompt for confirmation before removing non-downloading active transfers
+# Don't prompt for confirmation before removing non-downloading active transfers
 defaults write org.m0k.transmission CheckRemoveDownloading -bool true
 
 # Trash original torrent files

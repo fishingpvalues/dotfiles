@@ -12,52 +12,49 @@ This repository contains my personal configuration files (dotfiles) for multiple
 - **Window Management**: Rectangle, Hammerspoon (macOS), and system-specific alternatives
 - **System Settings**: Sensible defaults for developer-focused setups
 
+## macOS Configuration
+
+The repository includes extensive macOS system configurations in the `.macos` directory:
+
+### Application-Specific Settings
+
+- **Finder**: Custom view options, showing hidden files, and improved navigation
+- **Dock**: Optimized appearance and behavior, hot corners setup
+- **Safari**: Enhanced privacy and developer features
+- **Terminal**: UTF-8 support, secure keyboard entry, and custom theme
+- **Chrome**: Gesture controls and print dialog settings
+- **Mail**: Improved email handling and keyboard shortcuts
+- **Spotlight**: Customized search results and indexing
+- **System**: Energy saving, screen behavior, and UI/UX preferences
+
+### Known Issues and Warnings
+
+1. **Permission Requirements**:
+   - Many commands require sudo access
+   - Some settings may need Security & Privacy approval
+   - Full Disk Access may be required for certain operations
+
+2. **Compatibility Notes**:
+   - Some settings might not work on newer macOS versions
+   - Xcode Command Line Tools are required
+   - Some features depend on specific applications being installed
+
+3. **Potential Risks**:
+   - Disabling System Integrity Protection might be required for some settings
+   - Some security features are modified (e.g., Gatekeeper settings)
+   - Backup your system before applying settings
+
+4. **Bug Fixes Required**:
+   - Terminal theme installation needs path verification
+   - Some PlistBuddy commands might fail silently
+   - Spotlight indexing commands might need adjustment for newer OS versions
+
 ## Installation
 
-### Option 1: Using the Setup Scripts
+### Prerequisites
 
-This repository includes dedicated setup scripts for different operating systems:
+1. Install [chezmoi](https://www.chezmoi.io/):
 
-#### Windows
-
-```powershell
-# Clone the repository
-git clone https://github.com/yourusername/dotfiles.git
-cd dotfiles
-
-# Run the setup script
-powershell -ExecutionPolicy Bypass -File setup-chezmoi.ps1
-```
-
-#### macOS/Linux
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/dotfiles.git
-cd dotfiles
-
-# Run the setup script
-chmod +x setup-chezmoi.sh
-./setup-chezmoi.sh
-```
-
-### Option 2: Manual Installation
-
-#### Prerequisites
-
-Install [chezmoi](https://www.chezmoi.io/) if you haven't already:
-
-For macOS/Linux:
-```bash
-sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
-```
-
-For Windows (PowerShell):
-```powershell
-(irm -useb get.chezmoi.io/ps1) | powershell -c -
-```
-
-Or with package managers:
 ```bash
 # macOS with Homebrew
 brew install chezmoi
@@ -67,114 +64,157 @@ pacman -S chezmoi
 
 # Windows with Scoop
 scoop install chezmoi
+
+# Direct installation (macOS/Linux)
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
+
+# Direct installation (Windows PowerShell)
+(irm -useb get.chezmoi.io/ps1) | powershell -c -
 ```
 
-#### Quick Start
+2. **macOS Additional Requirements**:
+   - Install Xcode Command Line Tools: `xcode-select --install`
+   - Install Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+   - Grant necessary permissions in System Preferences
 
-Initialize chezmoi with this repository:
+### Quick Start
 
 ```bash
+# Initialize chezmoi with this repository
 chezmoi init https://github.com/yourusername/dotfiles.git
-```
 
-Apply the dotfiles to your system:
-
-```bash
-chezmoi apply
-```
-
-### Step-by-step Setup
-
-1. **Initialize chezmoi with this repository**:
-
-```bash
-chezmoi init https://github.com/yourusername/dotfiles.git
-```
-
-2. **Check what changes would be made**:
-
-```bash
+# Preview changes
 chezmoi diff
-```
 
-3. **Apply the dotfiles**:
-
-```bash
+# Apply dotfiles
 chezmoi apply
 ```
 
-4. **Install applications and tools**:
+### Detailed Setup
 
-OS-specific installation scripts will run automatically during setup.
-
-5. **Configure system settings**:
-
-System-specific settings will be applied automatically during setup.
-
-## Included Software & Tools
-
-### Terminal & Shell
-
-- **Cross-Platform**: zsh, bash, PowerShell with customizations
-- **Themes**: Powerlevel10k (zsh), Oh My Posh (PowerShell)
-- **Terminal Utilities**: exa, bat, fzf, ripgrep, fd, etc.
-- **Terminal Emulators**: WezTerm, kitty, Windows Terminal
-
-### Development Tools
-
-- **VSCode**: With extensions for various languages and tools
-- **Neovim**: Text editor with custom configurations
-- **Git**: With lazygit for easier Git operations
-- **Docker & Kubernetes**: Docker, kubectl, helm, k9s
-- **Programming Languages**: Python, Rust (via rustup)
-- **AI & ML**: Ollama, Jan AI, etc.
-
-### Productivity
-
-- **Window Management**:
-  - macOS: Rectangle, Hammerspoon, Amethyst
-  - Windows: PowerToys
-  - Linux: System-specific tools
-
-### Applications
-
-Platform-specific applications are installed through the respective package managers.
-
-## Fonts
-
-- **Nerd Fonts**: MesloLGS NF, Fira Code Nerd Font, etc.
-
-## Structure
-
-- `CHEZMOI.md`: Detailed guide for using chezmoi
-- `setup-chezmoi.ps1`: Windows setup script
-- `setup-chezmoi.sh`: Unix (macOS/Linux) setup script
-- `config/`: Directory containing configuration files for various tools
-- OS-specific package files and settings
-
-## Customization
-
-To modify or add new dotfiles:
-
-1. Make changes to the local files in the chezmoi source directory:
+1. **Clone and Initialize**:
 
 ```bash
-chezmoi edit ~/.zshrc  # or equivalent for your system
+# Clone the repository
+git clone https://github.com/yourusername/dotfiles.git
+cd dotfiles
+
+# For Windows
+powershell -ExecutionPolicy Bypass -File setup-chezmoi.ps1
+
+# For macOS/Linux
+chmod +x setup-chezmoi.sh
+./setup-chezmoi.sh
 ```
 
-2. Apply the changes:
+2. **Verify Installation**:
 
 ```bash
+# Check applied changes
+chezmoi diff
+
+# View source state
+chezmoi verify
+```
+
+3. **Update Configuration**:
+
+```bash
+# Edit files
+chezmoi edit $FILE
+
+# Apply changes
 chezmoi apply
-```
 
-3. Update the repository:
-
-```bash
+# Update repository
 chezmoi cd
 git add .
 git commit -m "Update dotfiles"
 git push
+```
+
+## Directory Structure
+
+```
+dotfiles/
+├── .chezmoi/           # Chezmoi internal files
+├── .macos/             # macOS specific settings
+│   ├── apps/          # Application-specific configurations
+│   └── source_all.sh  # Main configuration script
+├── config/             # Tool configurations
+│   ├── alacritty/     # Terminal emulator settings
+│   ├── nvim/          # Neovim configuration
+│   └── ...            # Other tool configs
+├── scripts/           # Utility scripts
+└── setup-*.sh         # Setup scripts
+```
+
+## Customization
+
+### Adding New Configurations
+
+1. **Add Files**:
+
+```bash
+# Add new file to chezmoi
+chezmoi add ~/.config/newconfig
+
+# Edit the file
+chezmoi edit ~/.config/newconfig
+```
+
+2. **Test Changes**:
+
+```bash
+# Preview changes
+chezmoi diff
+
+# Apply changes
+chezmoi apply
+```
+
+### Modifying macOS Settings
+
+1. Edit the relevant file in `.macos/apps/`
+2. Test the changes in a clean environment
+3. Update the documentation if needed
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Permission Errors**:
+   - Run with sudo when required
+   - Check System Preferences → Security & Privacy
+   - Grant Full Disk Access to Terminal/iTerm2
+
+2. **Failed Commands**:
+   - Verify OS version compatibility
+   - Check for required applications
+   - Review system logs for errors
+
+3. **Settings Not Applied**:
+   - Logout/restart might be required
+   - Check command syntax for OS version
+   - Verify paths and permissions
+
+### Recovery
+
+1. **Backup Default Settings**:
+
+```bash
+# Before applying changes
+defaults read > defaults.before
+```
+
+2. **Restore Settings**:
+
+```bash
+# Revert specific setting
+defaults delete com.apple.finder NewWindowTarget
+
+# Restart affected application
+killall Finder
 ```
 
 ## License
