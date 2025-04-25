@@ -11,6 +11,10 @@
     autocrlf = input
     pager = delta
     excludesfile = ~/.gitignore_global
+    preloadindex = true
+    untrackedCache = true
+    packedGitLimit = 512m
+    packedGitWindowSize = 512m
 
 [pull]
     rebase = true
@@ -26,6 +30,8 @@
 [diff]
     colorMoved = default
     tool = nvimdiff
+    wsErrorHighlight = all
+    algorithm = histogram
 
 [color]
     ui = auto
@@ -36,6 +42,7 @@
     side-by-side = true
     line-numbers = true
     theme = GitHub
+    syntax-theme = Dracula
 
 [interactive]
     diffFilter = delta --color-only
@@ -61,3 +68,16 @@
     smudge = git-lfs smudge -- %f
     process = git-lfs filter-process
     required = true
+
+[commit]
+    gpgsign = true
+
+[pack]
+    threads = 0
+    deltaCacheSize = 2047m
+    packSizeLimit = 2047m
+    windowMemory = 2047m
+
+[fetch]
+    prune = true
+    tags = true

@@ -172,6 +172,7 @@ if ($IsWindows) {
     }
 }
 
+<<<<<<< HEAD
 # Install packages if requested
 $installPackages = Read-Host "Would you like to install recommended packages? (y/N)"
 if ($installPackages -eq "y") {
@@ -190,3 +191,111 @@ if (-not $IsWindows) {
     Write-Host "`nTo use chezmoi from a new terminal, run:"
     Write-Host "  source $shellConfigFile"
 }
+=======
+Write-Host "Chezmoi setup complete!" -ForegroundColor Green
+Write-Host "You can now use chezmoi commands to manage your dotfiles:" -ForegroundColor Cyan
+Write-Host "  chezmoi cd      - Navigate to the source directory" -ForegroundColor Yellow
+Write-Host "  chezmoi edit    - Edit a file managed by chezmoi" -ForegroundColor Yellow
+Write-Host "  chezmoi apply   - Apply changes to your home directory" -ForegroundColor Yellow
+Write-Host "  chezmoi diff    - Show the differences between the source and destination files" -ForegroundColor Yellow
+Write-Host "  chezmoi status  - Show the status of files in the working directory" -ForegroundColor Yellow
+
+# Initialize Git repository for chezmoi properly
+Write-Host "Setting up Git repository for chezmoi..." -ForegroundColor Cyan
+$chezmoiSourceDir = & $CHEZMOI_BIN source-path
+Push-Location $chezmoiSourceDir
+try {
+    # Initialize git repository if needed
+    if (-not (Test-Path "$chezmoiSourceDir\.git")) {
+        git init
+    }
+    
+    # Configure git user if not already set
+    $gitUserName = git config --get user.name 2>$null
+    $gitUserEmail = git config --get user.email 2>$null
+    
+    if (-not $gitUserName) {
+        git config --local user.name "Your Name"
+    }
+    
+    if (-not $gitUserEmail) {
+        git config --local user.email "your.email@example.com"
+    }
+    
+    # Check if there are any commits
+    $hasCommits = git rev-parse --verify HEAD 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        # No commits yet, make initial commit
+        git add .
+        git commit -m "Initial commit for chezmoi"
+        Write-Host "Created initial Git commit for chezmoi" -ForegroundColor Green
+    }
+    
+    # Check if remote is correctly configured
+    $correctRemoteUrl = "https://github.com/fishingpvalues/dotfiles.git"
+    $currentRemoteUrl = git config --get remote.origin.url 2>$null
+    
+    # If remote exists but URL is wrong, update it
+    if ($currentRemoteUrl -and $currentRemoteUrl -ne $correctRemoteUrl) {
+        Write-Host "Updating remote URL from $currentRemoteUrl to $correctRemoteUrl" -ForegroundColor Yellow
+        git remote set-url origin $correctRemoteUrl
+    }
+    # If remote doesn't exist, add it
+    elseif (-not $currentRemoteUrl) {
+        Write-Host "Adding remote origin: $correctRemoteUrl" -ForegroundColor Green
+        git remote add origin $correctRemoteUrl
+    }
+    
+    # Configure git pull to use fast-forward only
+    git config pull.ff only
+    
+    # Set up branch tracking if needed
+    $branchName = git rev-parse --abbrev-ref HEAD
+    
+    # Try to push to establish the remote branch if it doesn't exist
+    Write-Host "Setting up tracking for branch $branchName..." -ForegroundColor Cyan
+    git push -u origin $branchName 2>$null
+    
+    # Alternative approach if the above fails
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Remote push failed, configuring for local-only operation" -ForegroundColor Yellow
+        # Configure chezmoi to work without remote updates
+        git config branch.$branchName.remote no-remote
+        git config branch.$branchName.merge refs/heads/$branchName
+    }
+} catch {
+    Write-Host "Warning: Error setting up Git repository: $_" -ForegroundColor Yellow
+} finally {
+    Pop-Location
+}
+
+# Add a function for easily resetting the chezmoi repository
+function Reset-ChezmoiRepository {
+    param (
+        [switch]$Force
+    )
+    
+    Write-Host "Resetting chezmoi repository..." -ForegroundColor Cyan
+    if (-not $Force -and -not (Read-Host "This will reset your chezmoi repository. Continue? (y/n)").ToLower().StartsWith("y")) {
+        Write-Host "Operation canceled." -ForegroundColor Yellow
+        return
+    }
+    
+    $chezmoiSourceDir = & $CHEZMOI_BIN source-path
+    Push-Location $chezmoiSourceDir
+    try {
+        # Reset the git repository
+        git fetch origin
+        git reset --hard origin/main
+        git clean -fd
+        Write-Host "Repository reset successfully." -ForegroundColor Green
+    } catch {
+        Write-Host "Error resetting repository: $_" -ForegroundColor Red
+    } finally {
+        Pop-Location
+    }
+}
+
+# Export the function so it's available for users
+Export-ModuleMember -Function Reset-ChezmoiRepository -ErrorAction SilentlyContinue
+>>>>>>> 50ddfb038f47e3d210acc2e2ad98e67c4c7933fb
