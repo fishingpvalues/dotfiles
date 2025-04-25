@@ -1,109 +1,182 @@
-# Dotfiles Management with Chezmoi
+# Cross-Platform Dotfiles
 
-This repository contains my personal dotfiles, managed with [chezmoi](https://www.chezmoi.io/). These dotfiles can be installed across different operating systems (Windows, macOS, and Linux/Arch) using the appropriate installation script.
+This repository contains my personal configuration files (dotfiles) for multiple operating systems, managed with [chezmoi](https://www.chezmoi.io/).
 
-## Quick Start
+## Features
 
-### Option 1: Using Setup Scripts (Recommended)
+- **Cross-Platform Support**: Works on macOS, Linux, and Windows
+- **Package Management**: Using OS-specific package managers (Homebrew, pacman, winget)
+- **Shell Configuration**: zsh, bash, PowerShell with customizations
+- **Terminal Utilities**: exa, bat, ripgrep, fzf, etc.
+- **Development Environment**: VSCode, Neovim, Docker, Python, Rust, and more
+- **Window Management**: Rectangle, Hammerspoon (macOS), and system-specific alternatives
+- **System Settings**: Sensible defaults for developer-focused setups
 
-Use the provided setup scripts to configure chezmoi with your dotfiles:
+## Installation
 
-#### On Windows
+### Option 1: Using the Setup Scripts
+
+This repository includes dedicated setup scripts for different operating systems:
+
+#### Windows
 
 ```powershell
+# Clone the repository
 git clone https://github.com/yourusername/dotfiles.git
 cd dotfiles
+
+# Run the setup script
 powershell -ExecutionPolicy Bypass -File setup-chezmoi.ps1
 ```
 
-#### On macOS/Linux
+#### macOS/Linux
 
 ```bash
+# Clone the repository
 git clone https://github.com/yourusername/dotfiles.git
 cd dotfiles
+
+# Run the setup script
 chmod +x setup-chezmoi.sh
 ./setup-chezmoi.sh
 ```
 
-#### On Arch Linux
+### Option 2: Manual Installation
+
+#### Prerequisites
+
+Install [chezmoi](https://www.chezmoi.io/) if you haven't already:
+
+For macOS/Linux:
+```bash
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
+```
+
+For Windows (PowerShell):
+```powershell
+(irm -useb get.chezmoi.io/ps1) | powershell -c -
+```
+
+Or with package managers:
+```bash
+# macOS with Homebrew
+brew install chezmoi
+
+# Arch Linux
+pacman -S chezmoi
+
+# Windows with Scoop
+scoop install chezmoi
+```
+
+#### Quick Start
+
+Initialize chezmoi with this repository:
 
 ```bash
-git clone https://github.com/yourusername/dotfiles.git
-cd dotfiles
-chmod +x setup-chezmoi-arch.sh
-./setup-chezmoi-arch.sh
+chezmoi init https://github.com/yourusername/dotfiles.git
 ```
 
-### Option 2: Using Chezmoi Directly
-
-If you already have chezmoi installed, you can directly initialize your dotfiles:
+Apply the dotfiles to your system:
 
 ```bash
-chezmoi init --apply git@github.com:yourusername/dotfiles.git
+chezmoi apply
 ```
 
-## What's Included?
+### Step-by-step Setup
 
-- Shell configurations (.bashrc, .zshrc)
-- Neovim setup with Lazy.nvim
-- VS Code settings and extensions
-- Terminal configurations (WezTerm, Kitty, Windows Terminal)
-- Package installation for:
-  - macOS (via Homebrew)
-  - Windows (via winget and Scoop)
-  - Arch Linux (via pacman and yay)
-  - Debian/Ubuntu (via apt)
+1. **Initialize chezmoi with this repository**:
 
-## Chezmoi Dotfiles Management
-
-This repository is fully configured to work with chezmoi. For detailed instructions on using chezmoi to manage your dotfiles, please see [CHEZMOI.md](CHEZMOI.md).
-
-Key features:
-- Cross-platform dotfiles management
-- Template support for OS-specific configurations
-- Secret management capabilities
-- Version control integration
-
-## Directory Structure
-
-```
-.
-├── .chezmoi.toml       # Chezmoi configuration
-├── .chezmoiignore      # Files to ignore from management
-├── bin/                # Contains the chezmoi binary
-├── config/             # Configuration files organized by application
-│   ├── bash/           # Bash shell configuration
-│   ├── nvim/           # Neovim configuration
-│   ├── vscode/         # VS Code settings and keybindings
-│   ├── kitty/          # Kitty terminal configuration
-│   ├── wezterm/        # WezTerm terminal configuration
-│   └── ...             # Other tool configurations
-├── scripts/            # Installation and setup scripts
-│   ├── unix/           # Scripts for Unix-like systems
-│   └── windows/        # Scripts for Windows
-├── setup-chezmoi.ps1   # Windows setup script for chezmoi
-├── setup-chezmoi.sh    # Unix setup script for chezmoi
-└── setup-chezmoi-arch.sh # Arch Linux setup script for chezmoi
+```bash
+chezmoi init https://github.com/yourusername/dotfiles.git
 ```
 
-## Operating System Detection
+2. **Check what changes would be made**:
 
-The setup scripts automatically detect your operating system and apply the appropriate configurations and packages:
+```bash
+chezmoi diff
+```
 
-- **macOS**: Uses Homebrew to install packages and installs macOS-specific tools
-- **Windows**: Uses winget and Scoop to install packages
-- **Arch Linux**: Uses pacman and yay (AUR helper) to install packages
-- **Debian/Ubuntu**: Uses apt to install packages
+3. **Apply the dotfiles**:
 
-## Customizing
+```bash
+chezmoi apply
+```
 
-To customize these dotfiles for your own use:
+4. **Install applications and tools**:
 
-1. Fork this repository
-2. Modify the configurations as needed
-3. Update the installation scripts if necessary
-4. Run the appropriate setup script for your OS
+OS-specific installation scripts will run automatically during setup.
+
+5. **Configure system settings**:
+
+System-specific settings will be applied automatically during setup.
+
+## Included Software & Tools
+
+### Terminal & Shell
+
+- **Cross-Platform**: zsh, bash, PowerShell with customizations
+- **Themes**: Powerlevel10k (zsh), Oh My Posh (PowerShell)
+- **Terminal Utilities**: exa, bat, fzf, ripgrep, fd, etc.
+- **Terminal Emulators**: WezTerm, kitty, Windows Terminal
+
+### Development Tools
+
+- **VSCode**: With extensions for various languages and tools
+- **Neovim**: Text editor with custom configurations
+- **Git**: With lazygit for easier Git operations
+- **Docker & Kubernetes**: Docker, kubectl, helm, k9s
+- **Programming Languages**: Python, Rust (via rustup)
+- **AI & ML**: Ollama, Jan AI, etc.
+
+### Productivity
+
+- **Window Management**:
+  - macOS: Rectangle, Hammerspoon, Amethyst
+  - Windows: PowerToys
+  - Linux: System-specific tools
+
+### Applications
+
+Platform-specific applications are installed through the respective package managers.
+
+## Fonts
+
+- **Nerd Fonts**: MesloLGS NF, Fira Code Nerd Font, etc.
+
+## Structure
+
+- `CHEZMOI.md`: Detailed guide for using chezmoi
+- `setup-chezmoi.ps1`: Windows setup script
+- `setup-chezmoi.sh`: Unix (macOS/Linux) setup script
+- `config/`: Directory containing configuration files for various tools
+- OS-specific package files and settings
+
+## Customization
+
+To modify or add new dotfiles:
+
+1. Make changes to the local files in the chezmoi source directory:
+
+```bash
+chezmoi edit ~/.zshrc  # or equivalent for your system
+```
+
+2. Apply the changes:
+
+```bash
+chezmoi apply
+```
+
+3. Update the repository:
+
+```bash
+chezmoi cd
+git add .
+git commit -m "Update dotfiles"
+git push
+```
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT
