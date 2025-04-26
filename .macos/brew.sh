@@ -49,7 +49,6 @@ brew install \
   ranger \
   ripgrep \
   tldr \
-  trivy \
   tree \
   wget \
   yazi \
