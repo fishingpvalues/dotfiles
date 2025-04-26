@@ -1,3 +1,5 @@
+SHELL = /bin/bash
+
 .PHONY: all install install-arch install-packages install-configs clean help install-omz install-fonts install-aur install-yay install-vscode-extensions install-chezmoi update fonts install-hyprland install-dotfiles postinstall
 
 all: help
@@ -57,10 +59,10 @@ fonts:
 install-yay:
 	@if ! command -v yay &> /dev/null; then \
 		echo "Installing yay AUR helper..."; \
-		sudo pacman -S --needed --noconfirm git base-devel; \
-		git clone https://aur.archlinux.org/yay.git /tmp/yay; \
-		cd /tmp/yay; \
-		makepkg -si --noconfirm; \
+		sudo pacman -S --needed --noconfirm git base-devel && \
+		git clone https://aur.archlinux.org/yay.git /tmp/yay && \
+		cd /tmp/yay && \
+		makepkg -si --noconfirm && \
 		rm -rf /tmp/yay; \
 	else \
 		echo "yay is already installed"; \
@@ -148,12 +150,11 @@ install-packages:
 		echo "Configuring conda environment location..."; \
 		CONDA_ENV_DIR="$${HOME}/.conda/envs"; \
 		mkdir -p "$${CONDA_ENV_DIR}"; \
-		cat > "$${HOME}/.condarc" << EOF \
+		cat > "$${HOME}/.condarc" << EOF
 envs_dirs:
   - $${CONDA_ENV_DIR}
   - $${HOME}/miniforge3/envs
-EOF \
-		; \
+EOF
 		\
 		# Ensure conda initialization is in shell profiles \
 		for SHELL_RC in "$${HOME}/.bashrc" "$${HOME}/.zshrc"; do \
@@ -303,7 +304,7 @@ install-chezmoi:
 			sudo pacman -S --needed --noconfirm chezmoi; \
 		else \
 			sh -c "$$(curl -fsLS get.chezmoi.io)" -- -b $$HOME/.local/bin; \
-			if [[ ! "$$PATH" == *"$$HOME/.local/bin"* ]]; then \
+			if [ ! "$$PATH" = *"$$HOME/.local/bin"* ]; then \
 				export PATH="$$PATH:$$HOME/.local/bin"; \
 			fi; \
 		fi; \
@@ -333,23 +334,15 @@ clean:
 	else \
 		rm -f $(HOME)/.bashrc; \
 		rm -f $(HOME)/.zshrc; \
-		\
-		# Remove Neovim symlinks \
 		if [ -d "$(HOME)/.config/nvim" ]; then \
 			find $(CURDIR)/.nvim -type f -exec rm -f $(HOME)/.config/nvim/$(basename {}) \;; \
 		fi; \
-		\
-		# Remove WezTerm symlinks \
 		if [ -d "$(HOME)/.config/wezterm" ]; then \
 			find $(CURDIR)/.wezterm -type f -exec rm -f $(HOME)/.config/wezterm/$(basename {}) \;; \
 		fi; \
-		\
-		# Remove Nushell symlinks \
 		if [ -d "$(HOME)/.config/nushell" ]; then \
 			find $(CURDIR)/nushell -type f -exec rm -f $(HOME)/.config/nushell/$(basename {}) \;; \
 		fi; \
-		\
-		# Remove VS Code symlinks \
 		if [ -d "$(HOME)/.config/Code/User" ]; then \
 			rm -f $(HOME)/.config/Code/User/settings.json; \
 			rm -f $(HOME)/.config/Code/User/keybindings.json; \
