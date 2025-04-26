@@ -1,4 +1,4 @@
-.PHONY: all install install-arch install-packages install-configs clean help install-omz install-fonts install-aur install-yay install-vscode-extensions install-chezmoi update fonts
+.PHONY: all install install-arch install-packages install-configs clean help install-omz install-fonts install-aur install-yay install-vscode-extensions install-chezmoi update fonts install-hyprland install-dotfiles postinstall
 
 all: help
 
@@ -21,6 +21,9 @@ help:
 	@echo "make update        - Update dotfiles"
 	@echo "make fonts         - Configure fonts"
 	@echo "make clean         - Remove symlinks created by this Makefile"
+	@echo "make install-hyprland - Install Hyprland and all related tools"
+	@echo "make install-dotfiles - Apply all dotfiles"
+	@echo "make postinstall   - Run post-install scripts"
 
 install: fonts
 	@echo "Installing dotfiles for Arch Linux..."
@@ -354,3 +357,13 @@ clean:
 	fi
 	
 	@echo "Cleanup completed!"
+
+install-hyprland: install-packages install-aur install-dotfiles
+	@echo "Hyprland and all related tools installed!"
+
+install-dotfiles:
+	@chezmoi apply --force
+
+postinstall:
+	@chmod +x scripts/unix/symlink_wallpapers.sh
+	@scripts/unix/symlink_wallpapers.sh

@@ -1,6 +1,8 @@
 #!/usr/bin/env pwsh
 # Dotfiles installation script for Windows
 
+. "$PSScriptRoot/functions.ps1"
+
 # Check for administrator privileges
 if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     Write-Warning "Please run this script as Administrator"
@@ -10,38 +12,6 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 # Update the dotfiles directory path to point to the parent of scripts/windows
 $DOTFILES_DIR = (Get-Item $PSScriptRoot).Parent.Parent.FullName
 $HOME_DIR = $env:USERPROFILE
-
-# Function to create symbolic links
-function Create-SymLink {
-    param (
-        [string]$SourcePath,
-        [string]$DestPath
-    )
-    
-    if (Test-Path $SourcePath) {
-        if (Test-Path $DestPath) {
-            # Backup existing file if it's not a symlink
-            if (-not (Get-Item $DestPath).LinkType) {
-                $backupPath = "$DestPath.backup"
-                Write-Host "Backing up existing file to $backupPath"
-                Move-Item -Path $DestPath -Destination $backupPath -Force
-            }
-            else {
-                Remove-Item -Path $DestPath -Force
-            }
-        }
-        else {
-            # Create parent directory if it doesn't exist
-            $parentDir = Split-Path -Parent $DestPath
-            if (-not (Test-Path $parentDir)) {
-                New-Item -Path $parentDir -ItemType Directory -Force | Out-Null
-            }
-        }
-        
-        New-Item -ItemType SymbolicLink -Path $DestPath -Target $SourcePath -Force | Out-Null
-        Write-Host "Created symlink: $DestPath -> $SourcePath"
-    }
-}
 
 function Install-Winget {
     # Check if winget is available

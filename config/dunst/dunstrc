@@ -1,0 +1,29 @@
+[global]
+    geometry = "300x5-30+50"
+    font = JetBrainsMono Nerd Font 10
+    format = "<b>%s</b>\n%b"
+    word_wrap = yes
+    origin = top-right
+    offset = 30x50
+    icon_path = /usr/share/icons/Papirus/16x16/apps/:/usr/share/icons/Papirus/16x16/devices/
+    icon_theme = Papirus
+    frame_width = 2
+    separator_height = 2
+    frame_color = "#THEME_FRAME_COLOR#"
+    separator_color = frame
+    corner_radius = 8
+
+[urgency_low]
+    background = "#THEME_BG_COLOR#"
+    foreground = "#THEME_FG_COLOR#"
+    frame_color = "#THEME_FRAME_COLOR#"
+
+[urgency_normal]
+    background = "#THEME_BG_COLOR#"
+    foreground = "#THEME_FG_COLOR#"
+    frame_color = "#THEME_FRAME_COLOR#"
+
+[urgency_critical]
+    background = "#THEME_URGENT_BG#"
+    foreground = "#THEME_URGENT_FG#"
+    frame_color = "#THEME_URGENT_FRAME#" 

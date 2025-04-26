@@ -71,10 +71,11 @@
     use_go = {{ promptBool "use_go" "Use Go" }}
 
     # Work vs Personal machine
-    is_work_machine = {{ promptBool "is_work_machine" "Is this a work machine" }}
-    install_extras = {{ promptBool "install_extras" "Install extra development tools" }}
+    is_work_machine = {{ promptBool "Is this a work machine?" }}
+    install_extras = {{ promptBool "Install extra development tools?" }}
 
     # Terminal preferences
+<<<<<<< HEAD
     use_nerd_font = {{ promptBool "use_nerd_font" "Use Nerd Font (for icons in terminal)" }}
     nerd_font = {{ promptString "nerd_font" "JetBrainsMono" (list "JetBrainsMono" "FiraCode" "Hack" "CascadiaCode" "SourceCodePro") | quote }}
     {{- if eq .chezmoi.os "windows" }}
@@ -82,14 +83,16 @@
     {{- else }}
     default_terminal = {{ promptString "default_terminal" "kitty" (list "kitty" "alacritty" "wezterm") | quote }}
     {{- end }}
+=======
+    use_nerd_font = {{ promptBool "Use Nerd Font (for icons in terminal)?" }}
+>>>>>>> 85ac9b7 (Refactor setup scripts and enhance dotfiles configuration)
 
     # Shell preferences
     {{- if eq .chezmoi.os "windows" }}
     default_shell = {{ promptString "default_shell" "pwsh" (list "pwsh" "powershell" "bash" "zsh") | quote }}
     {{- else }}
     # Colors and themes
-    {{- $colorSchemes := list "github-dark" "dracula" "nord" "solarized-dark" "solarized-light" "gruvbox" "catppuccin" }}
-    color_scheme = {{ promptString "color_scheme" "github-dark" $colorSchemes | quote }}
+    color_scheme = {{ promptString "color_scheme" "github-dark" | quote }}
 
     # Editor preferences
     {{- if eq .chezmoi.os "windows" }}

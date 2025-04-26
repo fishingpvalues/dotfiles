@@ -2,6 +2,7 @@
 # Cross-platform setup script for chezmoi dotfiles
 # Supports Windows, macOS, and Linux
 
+<<<<<<< HEAD
 # Stop on errors
 $ErrorActionPreference = "Stop"
 
@@ -19,6 +20,28 @@ Write-Host "Setting up chezmoi in $DOTFILES_DIR"
 # Create bin directory if it doesn't exist
 if (-not (Test-Path (Join-Path $DOTFILES_DIR "bin"))) {
     New-Item -ItemType Directory -Path (Join-Path $DOTFILES_DIR "bin") | Out-Null
+=======
+param(
+    [switch]$Reinit
+)
+
+# Set the current directory as the source state for chezmoi
+$DOTFILES_DIR = $PSScriptRoot
+$CHEZMOI_DIR = "$DOTFILES_DIR\.chezmoi"
+$CHEZMOI_BIN = "$DOTFILES_DIR\bin\chezmoi.exe"
+$LOCAL_CHEZMOI_DIR = "$env:USERPROFILE\.local\share\chezmoi"
+
+if ($Reinit) {
+    Write-Host "[setup] Reinitializing chezmoi..." -ForegroundColor Cyan
+    if (Test-Path $LOCAL_CHEZMOI_DIR) {
+        Remove-Item -Path $LOCAL_CHEZMOI_DIR -Recurse -Force
+        Write-Host "Removed $LOCAL_CHEZMOI_DIR" -ForegroundColor Green
+    }
+    if (Test-Path $CHEZMOI_DIR) {
+        Remove-Item -Path $CHEZMOI_DIR -Recurse -Force
+        Write-Host "Removed $CHEZMOI_DIR" -ForegroundColor Green
+    }
+>>>>>>> 85ac9b7 (Refactor setup scripts and enhance dotfiles configuration)
 }
 
 # Install chezmoi if not already installed
@@ -63,6 +86,7 @@ if (-not (Test-Path (Join-Path $CHEZMOI_DIR "config"))) {
     & $CHEZMOI_BIN init --source=$DOTFILES_DIR
 }
 
+<<<<<<< HEAD
 # Define config mappings based on OS
 $configMappings = @{}
 
@@ -111,6 +135,49 @@ if ($IsWindows) {
         "config\starship\starship.toml" = ".config/starship.toml"
         "config\lazygit" = ".config/lazygit"
     }
+=======
+# Map config directories to their destination paths
+$configMappings = @{
+    # Bash configuration
+    "config\bash\bashrc"          = "dot_bashrc"
+    
+    # ZSH configuration
+    "config\zsh\zshrc"            = "dot_zshrc"
+    "config\zsh\p10k.zsh"         = "dot_p10k.zsh"
+    
+    # Neovim configuration
+    "config\nvim"                 = "dot_config\nvim"
+    
+    # Terminal configurations
+    "config\kitty"                = "dot_config\kitty"
+    "config\wezterm"              = "dot_config\wezterm"
+    "config\windows-terminal\settings.json" = "AppData\Local\Microsoft\Windows Terminal\settings.json"
+    
+    # Shell configurations
+    "config\nushell"              = "dot_config\nushell"
+    "config\powershell\user_profile.ps1" = "Documents\PowerShell\Microsoft.PowerShell_profile.ps1"
+    "config\powershell\github-dark.omp.json" = "AppData\Local\Programs\oh-my-posh\themes\github-dark.omp.json"
+    
+    # Git configuration
+    "config\git\gitconfig"        = "dot_gitconfig"
+    "config\git\gitignore_global" = "dot_gitignore_global"
+    
+    # SSH configuration
+    "config\ssh\config"           = ".ssh\config"
+    
+    # Starship configuration
+    "config\starship\starship.toml" = "dot_config\starship.toml"
+    
+    # Lazygit configuration
+    "config\lazygit"              = "dot_config\lazygit"
+    
+    # FZF configuration
+    "config\fzf\fzf.config"       = "dot_config\fzf\config"
+    
+    # Other configurations
+    "config\wget"                 = "dot_config\wget"
+    "config\curl"                 = "dot_config\curl"
+>>>>>>> 85ac9b7 (Refactor setup scripts and enhance dotfiles configuration)
 }
 
 # Create source directory
@@ -296,6 +363,17 @@ function Reset-ChezmoiRepository {
     }
 }
 
+<<<<<<< HEAD
 # Export the function so it's available for users
 Export-ModuleMember -Function Reset-ChezmoiRepository -ErrorAction SilentlyContinue
 >>>>>>> 50ddfb038f47e3d210acc2e2ad98e67c4c7933fb
+=======
+# At the end, call the install script
+$installScript = "$DOTFILES_DIR/scripts/windows/install.ps1"
+if (Test-Path $installScript) {
+    Write-Host "[setup] Running install script..." -ForegroundColor Cyan
+    & $installScript
+} else {
+    Write-Host "[setup] Install script not found: $installScript" -ForegroundColor Yellow
+}
+>>>>>>> 85ac9b7 (Refactor setup scripts and enhance dotfiles configuration)

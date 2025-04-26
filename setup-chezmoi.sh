@@ -24,10 +24,27 @@ create_backup() {
     fi
 }
 
-# Set the current directory as the source state for chezmoi
+REINIT=false
+if [[ "$1" == "--reinit" ]]; then
+  REINIT=true
+fi
+
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CHEZMOI_DIR="${DOTFILES_DIR}/.chezmoi"
 CHEZMOI_BIN="${DOTFILES_DIR}/bin/chezmoi"
+LOCAL_CHEZMOI_DIR="${HOME}/.local/share/chezmoi"
+
+if $REINIT; then
+  echo "[setup] Reinitializing chezmoi..."
+  if [ -d "$LOCAL_CHEZMOI_DIR" ]; then
+    rm -rf "$LOCAL_CHEZMOI_DIR"
+    echo "Removed $LOCAL_CHEZMOI_DIR"
+  fi
+  if [ -d "$CHEZMOI_DIR" ]; then
+    rm -rf "$CHEZMOI_DIR"
+    echo "Removed $CHEZMOI_DIR"
+  fi
+fi
 
 # Detect OS type
 OS="$(uname -s)"
@@ -244,3 +261,12 @@ echo ""
 echo "To use chezmoi from anywhere, restart your shell or run:"
 echo "  source ~/.bashrc  # if using bash"
 echo "  source ~/.zshrc   # if using zsh"
+
+# At the end, call the install script
+INSTALL_SCRIPT="$DOTFILES_DIR/scripts/unix/install.sh"
+if [ -f "$INSTALL_SCRIPT" ]; then
+  echo "[setup] Running install script..."
+  bash "$INSTALL_SCRIPT"
+else
+  echo "[setup] Install script not found: $INSTALL_SCRIPT"
+fi

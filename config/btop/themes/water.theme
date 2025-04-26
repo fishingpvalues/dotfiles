@@ -1,0 +1,4 @@
+# Water theme for btop
+main_bg = "#2E3A4E"
+main_fg = "#E0F2F7"
+accent = "#88C0D0" 

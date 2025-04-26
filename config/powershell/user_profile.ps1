@@ -1,3 +1,15 @@
+# Ensure oh-my-posh is on PATH for all environments
+$ompPaths = @(
+    "$env:USERPROFILE\scoop\shims",
+    "$env:USERPROFILE\scoop\apps\oh-my-posh\current",
+    "C:\Program Files\oh-my-posh\bin"
+)
+foreach ($ompPath in $ompPaths) {
+    if (Test-Path $ompPath) {
+        $env:PATH = "$ompPath;$env:PATH"
+    }
+}
+
 # set PowerShell to UTF-8
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 
