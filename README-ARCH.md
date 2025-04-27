@@ -21,7 +21,7 @@
 
 ### 2.1 Clone the Repo
 ```sh
-git clone https://github.com/yourusername/dotfiles.git
+git clone https://github.com/fishingpvalues/dotfiles.git
 cd dotfiles
 ```
 

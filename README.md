@@ -105,7 +105,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
 
 ```bash
 # Initialize chezmoi with this repository
-chezmoi init https://github.com/yourusername/dotfiles.git
+chezmoi init https://github.com/fishingpvalues/dotfiles.git
 
 # Preview changes
 chezmoi diff
@@ -116,9 +116,6 @@ chezmoi apply
 
 ### Detailed Setup
 
-<<<<<<< HEAD
-1. **Clone and Initialize**:
-=======
 OS-specific installation scripts will run automatically during setup.
 
 5. **Configure system settings**:
@@ -198,7 +195,6 @@ dotfiles/
       install.ps1
       healer.ps1
       install-packages.ps1
-      install-oh-my-posh.ps1
     unix/
       install.sh
       healer.sh
@@ -222,32 +218,6 @@ dotfiles/
 To modify or add new dotfiles:
 
 1. Make changes to the local files in the chezmoi source directory:
->>>>>>> 85ac9b7 (Refactor setup scripts and enhance dotfiles configuration)
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/dotfiles.git
-cd dotfiles
-
-# For Windows
-powershell -ExecutionPolicy Bypass -File setup-chezmoi.ps1
-
-# For macOS/Linux
-chmod +x setup-chezmoi.sh
-./setup-chezmoi.sh
-```
-
-2. **Verify Installation**:
-
-```bash
-# Check applied changes
-chezmoi diff
-
-# View source state
-chezmoi verify
-```
-
-3. **Update Configuration**:
 
 ```bash
 # Edit files
@@ -263,44 +233,11 @@ git commit -m "Update dotfiles"
 git push
 ```
 
-## Directory Structure
-
-```
-dotfiles/
-├── .chezmoi/           # Chezmoi internal files
-├── .macos/             # macOS specific settings
-│   ├── apps/          # Application-specific configurations
-│   └── source_all.sh  # Main configuration script
-├── config/             # Tool configurations
-│   ├── alacritty/     # Terminal emulator settings
-│   ├── nvim/          # Neovim configuration
-│   └── ...            # Other tool configs
-├── scripts/           # Utility scripts
-└── setup-*.sh         # Setup scripts
-```
-
-## Customization
-
 ### Adding New Configurations
-
-1. **Add Files**:
 
 ```bash
 # Add new file to chezmoi
 chezmoi add ~/.config/newconfig
-
-# Edit the file
-chezmoi edit ~/.config/newconfig
-```
-
-2. **Test Changes**:
-
-```bash
-# Preview changes
-chezmoi diff
-
-# Apply changes
-chezmoi apply
 ```
 
 ### Modifying macOS Settings
@@ -313,33 +250,16 @@ chezmoi apply
 
 ### Common Issues
 
-1. **Permission Errors**:
-   - Run with sudo when required
-   - Check System Preferences → Security & Privacy
-   - Grant Full Disk Access to Terminal/iTerm2
-
-2. **Failed Commands**:
-   - Verify OS version compatibility
-   - Check for required applications
-   - Review system logs for errors
-
-3. **Settings Not Applied**:
-   - Logout/restart might be required
-   - Check command syntax for OS version
-   - Verify paths and permissions
+- **Permission Errors**: Run with sudo when required, check System Preferences → Security & Privacy, grant Full Disk Access to Terminal/iTerm2
+- **Failed Commands**: Verify OS version compatibility, check for required applications, review system logs for errors
+- **Settings Not Applied**: Logout/restart might be required, check command syntax for OS version, verify paths and permissions
 
 ### Recovery
-
-1. **Backup Default Settings**:
 
 ```bash
 # Before applying changes
 defaults read > defaults.before
-```
 
-2. **Restore Settings**:
-
-```bash
 # Revert specific setting
 defaults delete com.apple.finder NewWindowTarget
 
@@ -350,6 +270,12 @@ killall Finder
 ## License
 
 MIT
+
+## Platform-Specific Setup Guides
+
+- [Arch Linux Setup](README-ARCH.md)
+- [macOS Setup](README-macOS.md)
+- [Chezmoi Usage](CHEZMOI.md)
 
 ## Windows PowerShell + Dotfiles Setup Guide
 
@@ -541,7 +467,6 @@ dotfiles/
       install.ps1
       healer.ps1
       install-packages.ps1
-      install-oh-my-posh.ps1
     unix/
       install.sh
       healer.sh
