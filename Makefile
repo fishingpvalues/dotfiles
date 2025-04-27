@@ -146,8 +146,8 @@ install-packages:
 		mkdir -p "$${CONDA_ENV_DIR}"; \
 		cat > "$${HOME}/.condarc" << EOF
 envs_dirs:
-  - $${CONDA_ENV_DIR}
-  - $${HOME}/miniforge3/envs
+		- $${CONDA_ENV_DIR}
+		- $${HOME}/miniforge3/envs
 EOF
 		# Ensure conda initialization is in shell profiles \
 		for SHELL_RC in "$${HOME}/.bashrc" "$${HOME}/.zshrc"; do \
