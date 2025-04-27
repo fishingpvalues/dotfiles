@@ -150,7 +150,7 @@ install-packages:
 		# Configure conda to store environments in .conda/envs \
 		CONDA_ENV_DIR="$${HOME}/.conda/envs"; \
 		mkdir -p "$${CONDA_ENV_DIR}"; \
-		cat > "$${HOME}/.condarc" << EOF; \
+		cat > "$${HOME}/.condarc" << EOF
 envs_dirs:
 	- $${CONDA_ENV_DIR}
 	- $${HOME}/miniforge3/envs
