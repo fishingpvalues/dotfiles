@@ -127,27 +127,21 @@ install-packages:
 			python-pytest \
 			yt-dlp \
 			chezmoi; \
-		\
 		# Install Rust \
 		rustup default stable; \
-		\
 		# Install Miniforge3 (Conda) \
 		if ! command -v conda &> /dev/null; then \
 			echo "Installing Miniforge3..."; \
 			wget -q https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O /tmp/miniforge.sh; \
 			bash /tmp/miniforge.sh -b -p $${HOME}/miniforge3; \
 			rm /tmp/miniforge.sh; \
-			\
 			# Add to PATH for current session \
 			export PATH="$${HOME}/miniforge3/bin:$$PATH"; \
-			\
 			# Initialize conda for current and future sessions \
 			eval "$$($${HOME}/miniforge3/bin/conda shell.bash hook)"; \
 			$${HOME}/miniforge3/bin/conda init zsh bash; \
 		fi; \
-		\
 		# Configure conda to store environments in .conda/envs \
-		echo "Configuring conda environment location..."; \
 		CONDA_ENV_DIR="$${HOME}/.conda/envs"; \
 		mkdir -p "$${CONDA_ENV_DIR}"; \
 		cat > "$${HOME}/.condarc" << EOF
@@ -155,7 +149,6 @@ envs_dirs:
   - $${CONDA_ENV_DIR}
   - $${HOME}/miniforge3/envs
 EOF
-		\
 		# Ensure conda initialization is in shell profiles \
 		for SHELL_RC in "$${HOME}/.bashrc" "$${HOME}/.zshrc"; do \
 			if [ -f "$$SHELL_RC" ]; then \
@@ -166,9 +159,7 @@ EOF
 				fi; \
 			fi; \
 		done; \
-		\
 		echo "Configured conda to store environments in $${CONDA_ENV_DIR}"; \
-		\
 		# Setup Python dev tools \
 		pip install --user --upgrade uv ruff pyright pdoc commitizen pre-commit just; \
 	else \
