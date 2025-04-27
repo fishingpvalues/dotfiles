@@ -175,6 +175,12 @@ EOF
 install-aur: install-yay
 	@echo "Installing AUR packages..."
 	@if [ "$(ARCH_CHECK)" = "true" ]; then \
+		# Ensure yay is available before proceeding \
+		if ! command -v yay &> /dev/null; then \
+			echo "Error: yay command not found. Please install it first (make install-yay)."; \
+			exit 1; \
+		fi; \
+		# List of AUR packages to install \
 		yay -S --needed --noconfirm \
 			visual-studio-code-bin \
 			github-cli \
@@ -192,15 +198,14 @@ install-aur: install-yay
 			stremio \
 			jdownloader2 \
 			hyprland-git \
-			# panda \ # Assuming 'panda' was a typo or specific package name
 			discord \
 			betterdiscord-installer-bin \
 			teams-for-linux \
-			spotify-launcher; \
+			spotify-launcher || echo "WARNING: Some AUR packages might have failed to install."; \
 		# Install Ghidra if not already installed \
 		if ! pacman -Q ghidra &>/dev/null; then \
 			echo "Installing Ghidra..."; \
-			yay -S --needed --noconfirm ghidra; \
+			yay -S --needed --noconfirm ghidra || echo "WARNING: Ghidra installation failed."; \
 		fi; \
 	else \
 		echo "Not running on Arch Linux, skipping AUR package installation"; \
