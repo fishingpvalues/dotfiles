@@ -67,10 +67,16 @@
         {
           "type": "python",
           "style": "powerline",
-          "powerline_symbol": "\ue0b0",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#4584b6",
-          "template": " \ue235 {{ .Full }} "
+          "template": " \uE235 {{ .Full }}{{ if .Venv }} ({{ .Venv }}){{ end }}",
+          "properties": {
+            "fetch_virtual_env": true,
+            "display_mode": "always",
+            "display_default": true,
+            "display_version": true
+          }
         },
         {
           "type": "dotnet",
