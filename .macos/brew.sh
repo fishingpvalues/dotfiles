@@ -49,7 +49,6 @@ brew install \
   ranger \
   ripgrep \
   tldr \
-  trivy \
   tree \
   wget \
   yazi \
@@ -110,15 +109,15 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 brew install miniforge
 
 # Security and hacking tools
-brew install \
-  aircrack-ng \
-  hashcat \
-  john \
-  nmap \
-  wireshark
+# brew install \
+#   aircrack-ng \
+#   hashcat \
+#   john \
+#   nmap \
+#   wireshark
 
 # Install Ollama
-brew install ollama
+# brew install ollama
 
 ###############################################################################
 # GUI Applications via Cask                                                  #

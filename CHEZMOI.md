@@ -32,7 +32,7 @@ This repository includes setup scripts for all major operating systems:
 
 ```powershell
 # Clone the repository
-git clone https://github.com/yourusername/dotfiles.git
+git clone https://github.com/fishingpvalues/dotfiles.git
 cd dotfiles
 
 # Run the setup script
@@ -43,7 +43,7 @@ powershell -ExecutionPolicy Bypass -File setup-chezmoi.ps1
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dotfiles.git
+git clone https://github.com/fishingpvalues/dotfiles.git
 cd dotfiles
 
 # Run the setup script
@@ -55,7 +55,7 @@ chmod +x setup-chezmoi.sh
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dotfiles.git
+git clone https://github.com/fishingpvalues/dotfiles.git
 cd dotfiles
 
 # Run the Arch-specific setup script

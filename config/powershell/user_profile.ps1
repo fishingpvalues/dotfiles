@@ -1,9 +1,28 @@
+# Ensure oh-my-posh is on PATH for all environments
+# $ompPaths = @(
+#     ...
+# )
+# ... (comment out EVERYTHING else) ...
+
 # set PowerShell to UTF-8
-[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+# [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+
+#region Conda initialize
+# !! Contents within this block are managed by 'conda init' !!
+Write-Host "Attempting to generate Conda hook script..." -ForegroundColor Cyan # Diagnostic message
+$condaHookOutput = (& "C:\Users\danie\miniforge3\Scripts\conda.exe" "shell.powershell" "hook")
+Write-Host "Conda hook script generated. Length: $($condaHookOutput.Length)" -ForegroundColor Cyan # Diagnostic message
+if ($null -ne $condaHookOutput -and $condaHookOutput.Length -gt 0) {
+    Write-Host "Executing Conda hook script via Invoke-Expression..." -ForegroundColor Cyan # Diagnostic message
+    Invoke-Expression ($condaHookOutput -join [Environment]::NewLine)
+} else {
+    Write-Warning "Conda hook script produced no output or was null during profile load."
+}
+#endregion
 
 # PowerShell Profile
-# Designed for PowerShell 7+ with modern features
-# Optimized for developer workflows
+# # Designed for PowerShell 7+ ...
+# ... (comment out the rest of the file) ...
 
 # Import modules
 Import-Module -Name Terminal-Icons -ErrorAction SilentlyContinue

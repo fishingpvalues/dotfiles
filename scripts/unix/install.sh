@@ -82,14 +82,12 @@ install_macos() {
     wget \
     curl \
     thefuck \
-    binwalk \
     zsh \
     nushell \
     btop \
     yazi \
     macchina \
     lnav \
-    trivy \
     wezterm \
     ffmpeg \
     exa \
@@ -112,7 +110,6 @@ install_macos() {
     rustup-init \
     gnupg \
     pinentry-mac \
-    openvpn \
     yt-dlp \
     miniforge \
     chezmoi
@@ -216,23 +213,6 @@ EOL
   # Setup Rust
   rustup-init -y
   
-  # Install Ollama
-  if ! command -v ollama &>/dev/null; then
-    print_color "YELLOW" "Installing Ollama..."
-    curl -fsSL https://ollama.com/install.sh | sh
-  fi
-  
-  # Install llama.cpp
-  if ! command -v llama &>/dev/null; then
-    print_color "YELLOW" "Installing llama.cpp..."
-    git clone https://github.com/ggerganov/llama.cpp.git /tmp/llama.cpp
-    cd /tmp/llama.cpp
-    make -j
-    sudo cp build/bin/llama /usr/local/bin/
-    cd "$DOTFILES_DIR"
-    rm -rf /tmp/llama.cpp
-  fi
-
   # Install CUDA for Nvidia GPUs if available
   if system_profiler SPDisplaysDataType 2>/dev/null | grep -q "NVIDIA"; then
     print_color "YELLOW" "NVIDIA GPU detected, installing CUDA..."
@@ -320,7 +300,6 @@ install_debian() {
     python3-pip \
     python3-venv \
     thefuck \
-    binwalk \
     zsh \
     fzf \
     ripgrep \
@@ -335,7 +314,6 @@ install_debian() {
     containerd.io \
     code \
     lnav \
-    openvpn \
     gnupg2 \
     texlive-full \
     p7zip-full \
@@ -402,16 +380,6 @@ install_debian() {
   if ! command -v macchina &>/dev/null; then
     print_color "YELLOW" "Installing macchina..."
     cargo install macchina
-  fi
-  
-  # Install trivy
-  if ! command -v trivy &>/dev/null; then
-    print_color "YELLOW" "Installing Trivy..."
-    sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-    wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-    echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-    sudo apt-get update
-    sudo apt-get install -y trivy
   fi
   
   # Install Miniforge
