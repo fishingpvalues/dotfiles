@@ -5,7 +5,7 @@ set -e # Exit on error
 
 # Source the main setup script first
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "${SCRIPT_DIR}/setup-chezmoi.sh"
+source "${SCRIPT_DIR}/../bootstrap/setup-chezmoi.sh"
 
 # Additional Arch Linux specific configurations
 echo "Setting up Arch Linux specific configurations..."
@@ -38,9 +38,9 @@ fi
 # Install Oh My Posh if not already installed
 if [ ! -f "/usr/local/bin/oh-my-posh" ]; then
     echo "Installing Oh My Posh..."
-    if [ -f "${DOTFILES_DIR}/scripts/unix/install-oh-my-posh.sh" ]; then
-        chmod +x "${DOTFILES_DIR}/scripts/unix/install-oh-my-posh.sh"
-        "${DOTFILES_DIR}/scripts/unix/install-oh-my-posh.sh"
+    if [ -f "${DOTFILES_DIR}/bootstrap/scripts/unix/install-oh-my-posh.sh" ]; then
+        chmod +x "${DOTFILES_DIR}/bootstrap/scripts/unix/install-oh-my-posh.sh"
+        "${DOTFILES_DIR}/bootstrap/scripts/unix/install-oh-my-posh.sh"
     fi
 fi
 

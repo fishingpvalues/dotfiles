@@ -1,6 +1,7 @@
 # Arch Linux Dotfiles: Hyprland, Live Theming, and Automation
 
 ## Features
+
 - **Hyprland**: Modern Wayland window manager with macOS-inspired look
 - **Live Theme Switching**: Instantly switch between Forest, Water, and Desert themes for all major apps
 - **Universal App Integration**: Kitty, WezTerm, Alacritty, Foot, tmux, btop, htop, ranger, lf, micro, helix, zellij, ncmpcpp, bat, starship, lazygit, neofetch, yazi, zathura, mako, swaylock, mpv, k9s, obsidian, dunst, waybar, rofi, VSCode, Firefox, GTK, Qt, and more
@@ -11,6 +12,7 @@
 ---
 
 ## 1. Prerequisites
+
 - Arch Linux (fresh or existing install)
 - Internet connection
 - [yay](https://github.com/Jguer/yay) AUR helper (auto-installed)
@@ -20,16 +22,19 @@
 ## 2. Installation
 
 ### 2.1 Clone the Repo
+
 ```sh
 git clone https://github.com/fishingpvalues/dotfiles.git
 cd dotfiles
 ```
 
 ### 2.2 Install Everything
+
 ```sh
 make install-hyprland
 make postinstall
 ```
+
 - Installs all required packages, AUR apps, and dotfiles
 - Symlinks wallpapers to `~/Pictures/Wallpapers`
 
@@ -38,15 +43,18 @@ make postinstall
 ## 3. Theme Switching
 
 ### 3.1 Switch Theme Manually
+
 ```sh
-scripts/unix/set_theme.sh forest   # or water, desert
+bootstrap/scripts/unix/set_theme.sh forest   # or water, desert
 ```
 
 ### 3.2 Cycle Themes with Hotkey
+
 - Default: `Super + T` (see `config/hyprland/hyprland.conf`)
-- Binds to `scripts/unix/cycle_theme.sh`
+- Binds to `bootstrap/scripts/unix/cycle_theme.sh`
 
 ### 3.3 What Gets Themed?
+
 - **Waybar, Kitty, WezTerm, Rofi, Dunst, Mako, Alacritty, Foot, tmux, btop, htop, ranger, lf, micro, helix, zellij, ncmpcpp, bat, starship, lazygit, neofetch, yazi, zathura, swaylock, mpv, k9s, obsidian, VSCode, Firefox, GTK, Qt, and more**
 - **Wallpaper**: Random from the respective theme folder
 - **GTK/Qt**: Theme, icon, cursor, font, accent color
@@ -55,6 +63,7 @@ scripts/unix/set_theme.sh forest   # or water, desert
 ---
 
 ## 4. Adding/Editing Themes
+
 - For each app, add `forest`, `water`, and `desert` theme files in the correct config directory (see `set_theme.sh` for paths)
 - Example: `~/.config/btop/themes/forest.theme`, `~/.config/tmux/forest.conf`, etc.
 - The script will symlink and reload them automatically
@@ -62,6 +71,7 @@ scripts/unix/set_theme.sh forest   # or water, desert
 ---
 
 ## 5. Live Reload/Advanced Tricks
+
 - **Terminals**: Reloaded via signals (SIGUSR1)
 - **Waybar**: Reloaded via signal
 - **VSCode**: Reloaded via simulated Ctrl+R (if `wmctrl` and `xdotool` are installed)
@@ -73,6 +83,7 @@ scripts/unix/set_theme.sh forest   # or water, desert
 ---
 
 ## 6. Wallpapers
+
 - Place your wallpapers in `media/wallpapers/forest/`, `media/wallpapers/water/`, `media/wallpapers/desert/`
 - On install, these are symlinked to `~/Pictures/Wallpapers/`
 - The theme switcher picks a random wallpaper from the current theme's folder
@@ -80,6 +91,7 @@ scripts/unix/set_theme.sh forest   # or water, desert
 ---
 
 ## 7. Customization
+
 - Add more apps by following the symlink + reload pattern in `set_theme.sh`
 - Add more themes by creating the appropriate config files
 - Extend GTK/Qt tricks as needed
@@ -87,6 +99,7 @@ scripts/unix/set_theme.sh forest   # or water, desert
 ---
 
 ## 8. Troubleshooting
+
 - If an app does not update, check its config path and reload command in `set_theme.sh`
 - For pywal/pywalfox, ensure they are installed and configured
 - For VSCode/Firefox, ensure they are running for live reload
@@ -95,10 +108,12 @@ scripts/unix/set_theme.sh forest   # or water, desert
 ---
 
 ## 9. Credits
+
 - Inspired by the Arch, Hyprland, and ricing communities
 - pywal/pywalfox, WhiteSur themes, and all open-source projects used
 
 ---
 
-## 10. Enjoy!
-You now have a fully modular, live-theming, macOS-inspired Arch Linux desktop. Switch themes, enjoy instant updates, and rice to your heart's content! 
+## 10. Enjoy
+
+You now have a fully modular, live-theming, macOS-inspired Arch Linux desktop. Switch themes, enjoy instant updates, and rice to your heart's content!

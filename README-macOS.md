@@ -1,6 +1,6 @@
-> **Note:** No pirated, unlicensed, or non-company-approved software is installed. All apps are open source or from official sources. 
-> 
-> **Security/AI tools (aircrack-ng, hashcat, john, nmap, wireshark, ollama) have been removed for work compliance.** 
+> **Note:** No pirated, unlicensed, or non-company-approved software is installed. All apps are open source or from official sources.
+>
+> **Security/AI tools (aircrack-ng, hashcat, john, nmap, wireshark, ollama) have been removed for work compliance.**
 
 # macOS Dotfiles & System Automation
 
@@ -9,6 +9,7 @@ This guide explains how to set up and use these dotfiles for a highly customized
 ---
 
 ## Features
+
 - **Automated macOS System Tweaks:** UI/UX, keyboard, trackpad, Finder, Dock, Safari, Mail, Terminal, Chrome, Spotlight, and more
 - **App Install & Configuration:** Homebrew, CLI tools, terminal emulators, developer tools, fonts
 - **Cross-Platform Dotfiles:** Shared config for zsh, bash, git, neovim, kitty, wezterm, starship, tmux, fzf, and more
@@ -17,6 +18,7 @@ This guide explains how to set up and use these dotfiles for a highly customized
 ---
 
 ## Prerequisites
+
 - macOS (tested on recent versions, but some tweaks may need updates for the latest releases)
 - [Xcode Command Line Tools](https://developer.apple.com/xcode/resources/): `xcode-select --install`
 - [Homebrew](https://brew.sh/): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
@@ -37,16 +39,17 @@ chezmoi diff
 chezmoi apply
 
 # 4. Run the macOS setup script (for system/app tweaks)
-./setup-chezmoi.sh
+./bootstrap/setup-chezmoi.sh
 # or, for a fresh setup, add --reinit
-./setup-chezmoi.sh --reinit
+./bootstrap/setup-chezmoi.sh --reinit
 ```
 
 ---
 
 ## What Gets Configured?
 
-### System Tweaks (via `.macos/.macos` and `.macos/apps/*`)
+### System Tweaks (via `bootstrap/.macos/.macos` and `bootstrap/.macos/apps/*`)
+
 - **General UI/UX:** Scrollbars, highlight color, save/print panels, fast window resize, disable transparency, etc.
 - **Keyboard/Trackpad:** Tap-to-click, fast key repeat, disable smart quotes/dashes, full keyboard access
 - **Finder:** Show hidden files, default view, sidebar, search, etc.
@@ -57,6 +60,7 @@ chezmoi apply
 - **System:** Energy saving, screen, login window, Notification Center, etc.
 
 ### Apps & Tools (installed/configured via Homebrew and scripts)
+
 - **Terminal Emulators:** WezTerm, kitty
 - **Shells:** zsh (with Powerlevel10k), bash
 - **CLI Tools:** exa, bat, fzf, ripgrep, fd, starship, lazygit, neofetch, btop, tmux, wget, curl, git, ssh
@@ -71,27 +75,29 @@ chezmoi apply
 
 ```
 dotfiles/
-  .macos/           # macOS-specific scripts and app configs
+  bootstrap/           # macOS-specific scripts and app configs
   config/           # App and tool configs (cross-platform)
   scripts/          # Helper scripts (unix/windows)
-  setup-chezmoi.sh  # Main macOS/Linux setup script
-  dot_Brewfile      # Homebrew bundle file (macOS)
+  bootstrap/setup-chezmoi.sh  # Main macOS/Linux setup script
+  bootstrap/dot_Brewfile      # Homebrew bundle file (macOS)
   ...
 ```
 
 ---
 
 ## Customization & Tips
+
 - **Edit dotfiles:** `chezmoi edit <file>`
 - **Add new config:** `chezmoi add ~/.config/myapp/config.toml`
 - **Update dotfiles:** `chezmoi update`
 - **Push/pull changes:** Use `chezmoi cd` to enter the source dir, then use git as usual
-- **macOS tweaks:** Edit `.macos/.macos` or scripts in `.macos/apps/` for system/app settings
-- **App lists:** Edit `dot_Brewfile` to add/remove Homebrew apps
+- **macOS tweaks:** Edit `bootstrap/.macos/.macos` or scripts in `bootstrap/.macos/apps/` for system/app settings
+- **App lists:** Edit `bootstrap/dot_Brewfile` to add/remove Homebrew apps
 
 ---
 
 ## Troubleshooting & Notes
+
 - Some settings require **sudo** or Security & Privacy approval
 - Xcode Command Line Tools and Homebrew are required for most automation
 - Some tweaks may not work on the latest macOS without updates
@@ -101,6 +107,7 @@ dotfiles/
 ---
 
 ## More Info
+
 - [Main README](README.md) — Cross-platform overview
 - [CHEZMOI.md](CHEZMOI.md) — Chezmoi usage and advanced tips
 - [Arch README](README-ARCH.md) — Linux/Hyprland setup
@@ -108,4 +115,4 @@ dotfiles/
 
 ---
 
-Enjoy your automated, reproducible, and secure macOS setup! 
+Enjoy your automated, reproducible, and secure macOS setup!

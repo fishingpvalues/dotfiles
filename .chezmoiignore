@@ -244,3 +244,7 @@ docker/
 {{- if not .use_kubernetes }}
 .kube/
 {{- end }}
+
+# Bootstrap scripts
+bootstrap/scripts/windows/
+bbootstrap/scripts/unix/

@@ -263,7 +263,7 @@ echo "  source ~/.bashrc  # if using bash"
 echo "  source ~/.zshrc   # if using zsh"
 
 # At the end, call the install script
-INSTALL_SCRIPT="$DOTFILES_DIR/scripts/unix/install.sh"
+INSTALL_SCRIPT="$DOTFILES_DIR/bootstrap/scripts/unix/install.sh"
 if [ -f "$INSTALL_SCRIPT" ]; then
   echo "[setup] Running install script..."
   bash "$INSTALL_SCRIPT"

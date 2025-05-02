@@ -1,0 +1,60 @@
+name: Bootstrap CI
+
+on:
+  push:
+    paths:
+      - 'bootstrap/**'
+      - '.github/workflows/bootstrap-ci.yml'
+  pull_request:
+    paths:
+      - 'bootstrap/**'
+      - '.github/workflows/bootstrap-ci.yml'
+
+jobs:
+  test-bootstrap:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python (for shellcheck on Windows)
+        if: matrix.os == 'windows-latest'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install shellcheck
+        if: matrix.os != 'windows-latest'
+        run: |
+          sudo apt-get update || brew update || true
+          sudo apt-get install -y shellcheck || brew install shellcheck || true
+
+      - name: Lint bash scripts (shellcheck)
+        if: matrix.os != 'windows-latest'
+        run: |
+          find bootstrap -type f -name '*.sh' -exec shellcheck {} +
+
+      - name: Lint PowerShell scripts
+        if: matrix.os == 'windows-latest'
+        run: |
+          pwsh -Command 'Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object { Write-Host "Linting $_"; Invoke-ScriptAnalyzer -Path $_.FullName -Recurse }'
+
+      - name: Test bootstrap/setup-chezmoi.sh (Linux/macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          chmod +x bootstrap/setup-chezmoi.sh
+          ./bootstrap/setup-chezmoi.sh --reinit || true
+
+      - name: Test bootstrap/setup-chezmoi.ps1 (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          pwsh -File bootstrap/setup-chezmoi.ps1
+
+      - name: Test bootstrap/setup-chezmoi-arch.sh (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          chmod +x bootstrap/setup-chezmoi-arch.sh
+          ./bootstrap/setup-chezmoi-arch.sh || true 

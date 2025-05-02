@@ -360,10 +360,10 @@ install-dotfiles: install-chezmoi
 
 postinstall:
 	@# Example post-install task: Symlink wallpapers if script exists
-	@if [ -f "./scripts/unix/symlink_wallpapers.sh" ]; then \
+	@if [ -f "./bootstrap/scripts/unix/symlink_wallpapers.sh" ]; then \
 		echo "Running wallpaper symlink script..."; \
-		chmod +x scripts/unix/symlink_wallpapers.sh; \
-		./scripts/unix/symlink_wallpapers.sh; \
+		chmod +x ./bootstrap/scripts/unix/symlink_wallpapers.sh; \
+		./bootstrap/scripts/unix/symlink_wallpapers.sh; \
 	else \
 		echo "Wallpaper symlink script not found, skipping."; \
 	fi

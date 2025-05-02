@@ -36,7 +36,7 @@ git clone https://github.com/fishingpvalues/dotfiles.git
 cd dotfiles
 
 # Run the setup script
-powershell -ExecutionPolicy Bypass -File setup-chezmoi.ps1
+powershell -ExecutionPolicy Bypass -File bootstrap/setup-chezmoi.ps1
 ```
 
 ### macOS/Linux
@@ -47,8 +47,8 @@ git clone https://github.com/fishingpvalues/dotfiles.git
 cd dotfiles
 
 # Run the setup script
-chmod +x setup-chezmoi.sh
-./setup-chezmoi.sh
+chmod +x bootstrap/setup-chezmoi.sh
+./bootstrap/setup-chezmoi.sh
 ```
 
 ### Arch Linux
@@ -59,8 +59,8 @@ git clone https://github.com/fishingpvalues/dotfiles.git
 cd dotfiles
 
 # Run the Arch-specific setup script
-chmod +x setup-chezmoi-arch.sh
-./setup-chezmoi-arch.sh
+chmod +x bootstrap/setup-chezmoi-arch.sh
+./bootstrap/setup-chezmoi-arch.sh
 ```
 
 ## Basic Commands
@@ -126,12 +126,13 @@ dotfiles/
 │   ├── nvim/             # Neovim configuration
 │   ├── vscode/           # VS Code settings
 │   └── ...               # Other tool configurations
-├── setup-chezmoi.ps1     # Windows setup script
-├── setup-chezmoi.sh      # macOS/Linux setup script
-└── setup-chezmoi-arch.sh # Arch Linux specific setup
+├── bootstrap/setup-chezmoi.ps1     # Windows setup script
+├── bootstrap/setup-chezmoi.sh      # macOS/Linux setup script
+└── bootstrap/setup-chezmoi-arch.sh # Arch Linux specific setup
 ```
 
 When you run the setup scripts, they will:
+
 1. Map your config files to their appropriate locations in chezmoi's source state
 2. Install chezmoi if it's not already installed
 3. Add chezmoi to your PATH
@@ -180,9 +181,9 @@ export PATH="$HOME/.local/bin:$PATH"
 
 The setup scripts handle OS detection and apply the appropriate configurations:
 
-- **Windows**: Uses the setup-chezmoi.ps1 script
-- **macOS/Linux**: Uses the setup-chezmoi.sh script
-- **Arch Linux**: Uses the setup-chezmoi-arch.sh script
+- **Windows**: Uses the bootstrap/setup-chezmoi.ps1 script
+- **macOS/Linux**: Uses the bootstrap/setup-chezmoi.sh script
+- **Arch Linux**: Uses the bootstrap/setup-chezmoi-arch.sh script
 
 ## Advanced Usage
 
