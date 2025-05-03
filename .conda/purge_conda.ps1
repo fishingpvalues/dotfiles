@@ -35,28 +35,18 @@ Write-Host ""
 
 # Check if the path actually exists before proceeding
 if (-not (Test-Path -Path $MiniforgeInstallPath -PathType Container)) {
-    Write-Error "The specified Miniforge installation path does not exist: $MiniforgeInstallPath"
-    Write-Error "Please update the `$MiniforgeInstallPath variable in the script and try again."
-    exit
-}
-
-$confirmation = Read-Host "Are you SURE you want to proceed? (Type 'YES' to confirm)"
-if ($confirmation -ne 'YES') {
-    Write-Host "Aborted by user." -ForegroundColor Red
-    exit
-}
-
-# --- Phase 1: Deletion ---
-Write-Host "`n--- Attempting Deletion ---" -ForegroundColor Cyan
-
-# 1. Delete Miniforge Installation Directory
-Write-Host "Attempting to delete Miniforge installation directory: $MiniforgeInstallPath"
-try {
-    Remove-Item -Path $MiniforgeInstallPath -Recurse -Force -ErrorAction Stop
-    Write-Host "[SUCCESS] Deleted $MiniforgeInstallPath" -ForegroundColor Green
-} catch {
-    Write-Warning "[FAILED] Could not delete $MiniforgeInstallPath. Error: $($_.Exception.Message)"
-    Write-Warning "You may need to close applications using it or delete it manually."
+    Write-Warning "The specified Miniforge installation path does not exist: $MiniforgeInstallPath"
+    Write-Warning "Skipping deletion of installation directory, but continuing with cleanup and reporting."
+} else {
+    # 1. Delete Miniforge Installation Directory
+    Write-Host "Attempting to delete Miniforge installation directory: $MiniforgeInstallPath"
+    try {
+        Remove-Item -Path $MiniforgeInstallPath -Recurse -Force -ErrorAction Stop
+        Write-Host "[SUCCESS] Deleted $MiniforgeInstallPath" -ForegroundColor Green
+    } catch {
+        Write-Warning "[FAILED] Could not delete $MiniforgeInstallPath. Error: $($_.Exception.Message)"
+        Write-Warning "You may need to close applications using it or delete it manually."
+    }
 }
 
 # 2. Delete User Conda Config Files/Folders
