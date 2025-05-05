@@ -98,28 +98,19 @@
     {{- end }}
 
 # Root-level variables for CI and template compatibility
-editor = {{ if eq .chezmoi.os "windows" }}{{ if (env "CI") }}"code"{{ else }}{{ promptString "editor" "code" (list "code" "nvim" "notepad++") | quote }}{{ end }}{{ else }}{{ if (env "CI") }}"nvim"{{ else }}{{ promptString "editor" "nvim" (list "nvim" "code" "vim") | quote }}{{ end }}{{ end }}
-color_scheme = {{ if (env "CI") }}"github-dark"{{ else }}{{ promptString "color_scheme" "github-dark" | quote }}{{ end }}
+# (Removed template expressions for editor and color_scheme; use static values in TOML config sections)
 
 [edit]
-    command = "{{ .editor }}"
+    command = "nvim"
 
 # Git settings
 [merge]
-    command = "{{ .editor }}"
-    {{- if eq .editor "nvim" }}
+    command = "nvim"
     args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
-    {{- else if eq .editor "code" }}
-    args = ["--wait", "--diff", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
-    {{- end }}
 
 [diff]
-    command = "{{ .editor }}"
-    {{- if eq .editor "nvim" }}
+    command = "nvim"
     args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
-    {{- else if eq .editor "code" }}
-    args = ["--wait", "--diff", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
-    {{- end }}
 
 # Version control settings
 [sourceVCS]
