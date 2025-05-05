@@ -5,5 +5,5 @@ WORKDIR /dotfiles
 COPY . /dotfiles
 RUN git submodule update --init --recursive
 RUN chmod +x ./setup-chezmoi.sh
-RUN ./setup-chezmoi.sh --reinit
+RUN CI=1 ./setup-chezmoi.sh --reinit
 CMD ["bash", "/dotfiles/test/test.sh"] 
