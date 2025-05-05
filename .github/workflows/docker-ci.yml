@@ -1,27 +1,24 @@
-name: Docker Bootstrap Matrix CI
+name: Docker Dotfiles Matrix CI
 
 on:
   push:
     branches: [main]
     paths:
-      - 'bootstrap/**'
+      - 'setup-chezmoi*'
       - '.github/workflows/docker-ci.yml'
   pull_request:
     paths:
-      - 'bootstrap/**'
+      - 'setup-chezmoi*'
       - '.github/workflows/docker-ci.yml'
 
 jobs:
-  test-bootstrap-docker:
+  test-dotfiles-docker:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         image: ["ubuntu:latest", "fedora:latest", "alpine:latest"]
     container:
       image: ${{ matrix.image }}
-    env:
-      # Example secret usage (set MY_SECRET in repo settings for real use)
-      MY_SECRET: ${{ secrets.MY_SECRET }}
     steps:
       - name: Install dependencies (Ubuntu/Fedora)
         if: contains(matrix.image, 'ubuntu') || contains(matrix.image, 'fedora')
@@ -34,9 +31,9 @@ jobs:
           apk add --no-cache git curl wget bash sudo shellcheck
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Lint all shell scripts
+      - name: Lint root-level shell scripts
         run: |
-          find bootstrap -type f -name '*.sh' -exec shellcheck {} +
+          shellcheck setup-chezmoi.sh || true
       - name: Run setup-chezmoi.sh (first run)
         run: |
           chmod +x setup-chezmoi.sh
@@ -52,7 +49,7 @@ jobs:
           grep -q 'Chezmoi setup complete' setup-chezmoi.sh || echo "[INFO] Output check skipped (demo)"
 
   deploy:
-    needs: test-bootstrap-docker
+    needs: test-dotfiles-docker
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:

@@ -1,13 +1,15 @@
-name: Bootstrap CI
+name: Bootstrap & Dotfiles CI
 
 on:
   push:
     paths:
       - 'bootstrap/**'
+      - 'setup-chezmoi*'
       - '.github/workflows/bootstrap-ci.yml'
   pull_request:
     paths:
       - 'bootstrap/**'
+      - 'setup-chezmoi*'
       - '.github/workflows/bootstrap-ci.yml'
 
 jobs:
@@ -20,27 +22,44 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python (for shellcheck on Windows)
-        if: matrix.os == 'windows-latest'
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Install shellcheck
-        if: matrix.os != 'windows-latest'
-        run: |
-          sudo apt-get update || brew update || true
-          sudo apt-get install -y shellcheck || brew install shellcheck || true
-
       - name: Lint bash scripts (shellcheck)
         if: matrix.os != 'windows-latest'
         run: |
-          find bootstrap -type f -name '*.sh' -exec shellcheck {} +
+          find bootstrap/scripts/unix -type f -name '*.sh' -exec shellcheck {} +
 
       - name: Lint PowerShell scripts
         if: matrix.os == 'windows-latest'
         run: |
-          pwsh -Command 'Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object { Write-Host "Linting $_"; Invoke-ScriptAnalyzer -Path $_.FullName -Recurse }'
+          pwsh -Command 'Get-ChildItem -Recurse -Path bootstrap/scripts/windows -Filter *.ps1 | ForEach-Object { Write-Host "Linting $_"; Invoke-ScriptAnalyzer -Path $_.FullName -Recurse }'
+
+      - name: Test all bootstrap scripts (Unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          for f in bootstrap/scripts/unix/*.sh; do
+            chmod +x "$f"
+            bash "$f" || true
+          done
+
+      - name: Test all bootstrap scripts (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          pwsh -Command 'Get-ChildItem -Path bootstrap/scripts/windows -Filter *.ps1 | ForEach-Object { Write-Host "Testing $_"; pwsh -File $_.FullName }'
+
+  test-dotfiles:
+    needs: test-bootstrap
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint root-level shell scripts
+        if: matrix.os != 'windows-latest'
+        run: |
+          shellcheck setup-chezmoi.sh || true
+          shellcheck setup-chezmoi-arch.sh || true
 
       - name: Test setup-chezmoi.sh (Linux/macOS)
         if: matrix.os != 'windows-latest'
@@ -48,13 +67,13 @@ jobs:
           chmod +x setup-chezmoi.sh
           ./setup-chezmoi.sh --reinit || true
 
-      - name: Test bootstrap/setup-chezmoi.ps1 (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          pwsh -File bootstrap/setup-chezmoi.ps1
-
-      - name: Test bootstrap/setup-chezmoi-arch.sh (Linux)
+      - name: Test setup-chezmoi-arch.sh (Linux)
         if: matrix.os == 'ubuntu-latest'
         run: |
-          chmod +x bootstrap/setup-chezmoi-arch.sh
-          ./bootstrap/setup-chezmoi-arch.sh || true 
+          chmod +x setup-chezmoi-arch.sh
+          ./setup-chezmoi-arch.sh || true
+
+      - name: Test setup-chezmoi.ps1 (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          pwsh -File bootstrap/setup-chezmoi.ps1 
