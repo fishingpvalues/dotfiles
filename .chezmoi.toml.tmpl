@@ -97,6 +97,10 @@
     editor = {{ if (env "CI") }}"nvim"{{ else }}{{ promptString "editor" "nvim" (list "nvim" "code" "vim") | quote }}{{ end }}
     {{- end }}
 
+# Root-level variables for CI and template compatibility
+editor = {{ if eq .chezmoi.os "windows" }}{{ if (env "CI") }}"code"{{ else }}{{ promptString "editor" "code" (list "code" "nvim" "notepad++") | quote }}{{ end }}{{ else }}{{ if (env "CI") }}"nvim"{{ else }}{{ promptString "editor" "nvim" (list "nvim" "code" "vim") | quote }}{{ end }}{{ end }}
+color_scheme = {{ if (env "CI") }}"github-dark"{{ else }}{{ promptString "color_scheme" "github-dark" | quote }}{{ end }}
+
 [edit]
     command = "{{ .editor }}"
 
