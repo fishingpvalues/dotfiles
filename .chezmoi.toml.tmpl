@@ -3,9 +3,9 @@
 
 # User information
 [data]
-    name = {{ promptString "name" "Your Full Name" | quote }}
-    email = {{ promptString "email" "your.email@example.com" | quote }}
-    github_username = {{ promptString "github_username" "fishingpvalues" | quote }}
+    name = {{ if (env "CI") }}{{ env "NAME" | default "CI User" | quote }}{{ else }}{{ promptString "name" "Your Full Name" | quote }}{{ end }}
+    email = {{ if (env "CI") }}{{ env "EMAIL" | default "ci@example.com" | quote }}{{ else }}{{ promptString "email" "your.email@example.com" | quote }}{{ end }}
+    github_username = {{ if (env "CI") }}{{ env "GITHUB_USERNAME" | default "ciuser" | quote }}{{ else }}{{ promptString "github_username" "fishingpvalues" | quote }}{{ end }}
 
     # Operating system detection
     {{- $osID := .chezmoi.os }}
@@ -44,8 +44,8 @@
     {{- if and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id") }}
     {{-   if eq .chezmoi.osRelease.id "arch" }}
     is_arch = true
-    use_aur = {{ promptBool "use_aur" "Use AUR (Arch User Repository)" }}
-    aur_helper = {{ promptString "aur_helper" "yay" (list "yay" "paru" "aurman") | quote }}
+    use_aur = {{ if (env "CI") }}false{{ else }}{{ promptBool "use_aur" "Use AUR (Arch User Repository)" }}{{ end }}
+    aur_helper = {{ if (env "CI") }}"yay"{{ else }}{{ promptString "aur_helper" "yay" (list "yay" "paru" "aurman") | quote }}{{ end }}
     {{-   else if eq .chezmoi.osRelease.id "debian" }}
     is_debian = true
     {{-   else if eq .chezmoi.osRelease.id "ubuntu" }}
@@ -63,38 +63,38 @@
     {{- end }}
 
     # Development environment
-    use_docker = {{ promptBool "use_docker" "Use Docker for development" }}
-    use_kubernetes = {{ promptBool "use_kubernetes" "Use Kubernetes" }}
-    use_virtualenv = {{ promptBool "use_virtualenv" "Use Python virtual environments" }}
-    use_node = {{ promptBool "use_node" "Use Node.js" }}
-    use_rust = {{ promptBool "use_rust" "Use Rust" }}
-    use_go = {{ promptBool "use_go" "Use Go" }}
+    use_docker = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_docker" "Use Docker for development" }}{{ end }}
+    use_kubernetes = {{ if (env "CI") }}false{{ else }}{{ promptBool "use_kubernetes" "Use Kubernetes" }}{{ end }}
+    use_virtualenv = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_virtualenv" "Use Python virtual environments" }}{{ end }}
+    use_node = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_node" "Use Node.js" }}{{ end }}
+    use_rust = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_rust" "Use Rust" }}{{ end }}
+    use_go = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_go" "Use Go" }}{{ end }}
 
     # Work vs Personal machine
-    is_work_machine = {{ promptBool "Is this a work machine?" }}
-    install_extras = {{ promptBool "Install extra development tools?" }}
+    is_work_machine = {{ if (env "CI") }}false{{ else }}{{ promptBool "Is this a work machine?" }}{{ end }}
+    install_extras = {{ if (env "CI") }}false{{ else }}{{ promptBool "Install extra development tools?" }}{{ end }}
 
     # Terminal preferences
-    use_nerd_font = {{ promptBool "use_nerd_font" "Use Nerd Font (for icons in terminal)" }}
-    nerd_font = {{ promptString "nerd_font" "JetBrainsMono" (list "JetBrainsMono" "FiraCode" "Hack" "CascadiaCode" "SourceCodePro") | quote }}
+    use_nerd_font = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_nerd_font" "Use Nerd Font (for icons in terminal)" }}{{ end }}
+    nerd_font = {{ if (env "CI") }}"JetBrainsMono"{{ else }}{{ promptString "nerd_font" "JetBrainsMono" (list "JetBrainsMono" "FiraCode" "Hack" "CascadiaCode" "SourceCodePro") | quote }}{{ end }}
     {{- if eq .chezmoi.os "windows" }}
-    default_terminal = {{ promptString "default_terminal" "windows-terminal" (list "windows-terminal" "alacritty" "wezterm") | quote }}
+    default_terminal = {{ if (env "CI") }}"windows-terminal"{{ else }}{{ promptString "default_terminal" "windows-terminal" (list "windows-terminal" "alacritty" "wezterm") | quote }}{{ end }}
     {{- else }}
-    default_terminal = {{ promptString "default_terminal" "kitty" (list "kitty" "alacritty" "wezterm") | quote }}
+    default_terminal = {{ if (env "CI") }}"kitty"{{ else }}{{ promptString "default_terminal" "kitty" (list "kitty" "alacritty" "wezterm") | quote }}{{ end }}
     {{- end }}
 
     # Shell preferences
     {{- if eq .chezmoi.os "windows" }}
-    default_shell = {{ promptString "default_shell" "pwsh" (list "pwsh" "powershell" "bash" "zsh") | quote }}
+    default_shell = {{ if (env "CI") }}"pwsh"{{ else }}{{ promptString "default_shell" "pwsh" (list "pwsh" "powershell" "bash" "zsh") | quote }}{{ end }}
     {{- else }}
     # Colors and themes
-    color_scheme = {{ promptString "color_scheme" "github-dark" | quote }}
+    color_scheme = {{ if (env "CI") }}"github-dark"{{ else }}{{ promptString "color_scheme" "github-dark" | quote }}{{ end }}
 
     # Editor preferences
     {{- if eq .chezmoi.os "windows" }}
-    editor = {{ promptString "editor" "code" (list "code" "nvim" "notepad++") | quote }}
+    editor = {{ if (env "CI") }}"code"{{ else }}{{ promptString "editor" "code" (list "code" "nvim" "notepad++") | quote }}{{ end }}
     {{- else }}
-    editor = {{ promptString "editor" "nvim" (list "nvim" "code" "vim") | quote }}
+    editor = {{ if (env "CI") }}"nvim"{{ else }}{{ promptString "editor" "nvim" (list "nvim" "code" "vim") | quote }}{{ end }}
     {{- end }}
 
 [edit]
