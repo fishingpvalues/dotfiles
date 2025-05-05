@@ -546,3 +546,59 @@ dotfiles/
 4. **Customize further:**
    - See `bootstrap/scripts/unix/set_theme.sh` for how to add more apps or theme logic.
    - See the Makefile for all installable targets.
+
+## Cloning with Submodules
+
+This repository uses a submodule for the bootstrap scripts. To clone with all dependencies:
+
+```sh
+git clone --recurse-submodules https://github.com/fishingpvalues/dotfiles.git
+```
+
+If you already cloned without submodules, run:
+
+```sh
+git submodule update --init --recursive
+```
+
+## Automated Testing Framework
+
+This repository includes a robust, cross-platform testing framework to ensure all setup scripts, dotfiles, and functions work as expected on all supported platforms (Linux, macOS, Windows).
+
+### How It Works
+
+- **Docker-based matrix testing** for Ubuntu, Fedora, Arch, and Alpine Linux using Dockerfiles in `test/`.
+- **GitHub Actions CI** runs all tests on every push and pull request, including:
+  - All Linux Docker containers
+  - macOS runner
+  - Windows runner
+- **Test scripts** (`test/test.sh`, `test/test.ps1`) source all shell profiles and run all key functions/aliases, checking for errors and expected output.
+- **Idempotency**: Install scripts are run multiple times to ensure re-runs are safe.
+
+### Running Tests Locally
+
+#### Linux (Docker required)
+
+```sh
+./test/run-all.sh
+```
+
+#### macOS
+
+```sh
+./test/test.sh
+```
+
+#### Windows (PowerShell)
+
+```powershell
+./test/test.ps1
+```
+
+### In CI
+
+- All tests run automatically via `.github/workflows/test-dotfiles.yml`.
+
+### Refreshing All READMEs
+
+To keep documentation up to date after changes, scan the root directory for all `README*.md` files and update them with any new features, scripts, or test instructions. You can automate this with a script or manually review and update each README as needed.

@@ -4,20 +4,37 @@
 # )
 # ... (comment out EVERYTHING else) ...
 
-# set PowerShell to UTF-8
-# [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+# Set PowerShell to UTF-8
+[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 
 #region Conda initialize
 # !! Contents within this block are managed by 'conda init' !!
 Write-Host "Attempting to generate Conda hook script..." -ForegroundColor Cyan # Diagnostic message
-$condaHookOutput = (& "C:\Users\danie\miniforge3\Scripts\conda.exe" "shell.powershell" "hook")
-Write-Host "Conda hook script generated. Length: $($condaHookOutput.Length)" -ForegroundColor Cyan # Diagnostic message
-if ($null -ne $condaHookOutput -and $condaHookOutput.Length -gt 0) {
-    Write-Host "Executing Conda hook script via Invoke-Expression..." -ForegroundColor Cyan # Diagnostic message
-    Invoke-Expression ($condaHookOutput -join [Environment]::NewLine)
+
+# --- Conda Initialization (Robust hook handling) ---
+# Ensure this path matches your Miniforge3 installation
+$CondaExePath = Join-Path $HOME "miniforge3\Scripts\conda.exe"
+if (Test-Path $CondaExePath) {
+    $condaHookOutput = (& $CondaExePath "shell.powershell" "hook")
+    if ($null -ne $condaHookOutput -and $condaHookOutput.Length -gt 0) {
+        Write-Host "Executing Conda hook script via Invoke-Expression..." -ForegroundColor Cyan # Diagnostic message
+        Invoke-Expression ($condaHookOutput -join [Environment]::NewLine)
+    } else {
+        Write-Warning "Conda hook script produced no output or was null during profile load."
+    }
 } else {
-    Write-Warning "Conda hook script produced no output or was null during profile load."
+    Write-Warning "Conda executable not found at $CondaExePath. Conda initialization skipped."
 }
+# --- End Conda Initialization ---
+
+# --- Workaround for Conda _CE_M/_CE_CONDA bug in PS 7.5+ ---
+# This removes variables potentially set incorrectly by the hook before activation commands.
+Remove-Item Env:_CE_M, Env:_CE_CONDA -ErrorAction SilentlyContinue
+# --- End Workaround ---
+
+# --- Auto-activate Conda Base Environment (Optional) ---
+conda activate base
+# --- End Auto-activate ---
 #endregion
 
 # PowerShell Profile
@@ -314,7 +331,7 @@ function New-Script {
     Example usage of the script
     
 .NOTES
-    Author: $(whoami)
+    Author: $env:USERNAME
     Date: $(Get-Date -Format "yyyy-MM-dd")
 #>
 

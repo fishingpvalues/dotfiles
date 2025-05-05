@@ -1,0 +1,9 @@
+FROM archlinux:latest
+
+RUN pacman -Syu --noconfirm git curl sudo zsh neovim
+WORKDIR /dotfiles
+COPY . /dotfiles
+RUN git submodule update --init --recursive
+RUN chmod +x ./bootstrap/setup-chezmoi.sh
+RUN ./bootstrap/setup-chezmoi.sh --reinit
+CMD ["bash", "/dotfiles/test/test.sh"] 

@@ -1,0 +1,40 @@
+name: Dotfiles CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dockerfile: [Dockerfile.ubuntu, Dockerfile.fedora, Dockerfile.arch, Dockerfile.alpine]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Build and test in ${{ matrix.dockerfile }}
+        run: |
+          docker build -f test/${{ matrix.dockerfile }} -t dotfiles-test .
+          docker run --rm dotfiles-test
+
+  test-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Run macOS test
+        run: ./test/test.sh
+
+  test-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Run Windows test
+        shell: pwsh
+        run: ./test/test.ps1 
