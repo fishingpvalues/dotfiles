@@ -102,22 +102,22 @@ editor = {{ if eq .chezmoi.os "windows" }}{{ if (env "CI") }}"code"{{ else }}{{ 
 color_scheme = {{ if (env "CI") }}"github-dark"{{ else }}{{ promptString "color_scheme" "github-dark" | quote }}{{ end }}
 
 [edit]
-    command = "{{ .data.editor }}"
+    command = "{{ .editor }}"
 
 # Git settings
 [merge]
-    command = "{{ .data.editor }}"
-    {{- if eq .data.editor "nvim" }}
+    command = "{{ .editor }}"
+    {{- if eq .editor "nvim" }}
     args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
-    {{- else if eq .data.editor "code" }}
+    {{- else if eq .editor "code" }}
     args = ["--wait", "--diff", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
     {{- end }}
 
 [diff]
-    command = "{{ .data.editor }}"
-    {{- if eq .data.editor "nvim" }}
+    command = "{{ .editor }}"
+    {{- if eq .editor "nvim" }}
     args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
-    {{- else if eq .data.editor "code" }}
+    {{- else if eq .editor "code" }}
     args = ["--wait", "--diff", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
     {{- end }}
 
