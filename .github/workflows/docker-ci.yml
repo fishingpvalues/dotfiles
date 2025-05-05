@@ -37,19 +37,19 @@ jobs:
       - name: Lint all shell scripts
         run: |
           find bootstrap -type f -name '*.sh' -exec shellcheck {} +
-      - name: Run bootstrap/setup-chezmoi.sh (first run)
+      - name: Run setup-chezmoi.sh (first run)
         run: |
-          chmod +x bootstrap/setup-chezmoi.sh
-          ./bootstrap/setup-chezmoi.sh --reinit || true
-      - name: Run bootstrap/setup-chezmoi.sh (idempotency check)
+          chmod +x setup-chezmoi.sh
+          ./setup-chezmoi.sh --reinit || true
+      - name: Run setup-chezmoi.sh (idempotency check)
         run: |
-          ./bootstrap/setup-chezmoi.sh --reinit || true
+          ./setup-chezmoi.sh --reinit || true
       - name: Advanced test - check for expected file
         run: |
           test -f /root/.config/nvim/init.vim || echo "[INFO] nvim config not present (expected if not in repo)"
       - name: Advanced test - check script output
         run: |
-          grep -q 'Chezmoi setup complete' bootstrap/setup-chezmoi.sh || echo "[INFO] Output check skipped (demo)"
+          grep -q 'Chezmoi setup complete' setup-chezmoi.sh || echo "[INFO] Output check skipped (demo)"
 
   deploy:
     needs: test-bootstrap-docker

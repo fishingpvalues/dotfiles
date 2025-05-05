@@ -42,11 +42,11 @@ jobs:
         run: |
           pwsh -Command 'Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object { Write-Host "Linting $_"; Invoke-ScriptAnalyzer -Path $_.FullName -Recurse }'
 
-      - name: Test bootstrap/setup-chezmoi.sh (Linux/macOS)
+      - name: Test setup-chezmoi.sh (Linux/macOS)
         if: matrix.os != 'windows-latest'
         run: |
-          chmod +x bootstrap/setup-chezmoi.sh
-          ./bootstrap/setup-chezmoi.sh --reinit || true
+          chmod +x setup-chezmoi.sh
+          ./setup-chezmoi.sh --reinit || true
 
       - name: Test bootstrap/setup-chezmoi.ps1 (Windows)
         if: matrix.os == 'windows-latest'
