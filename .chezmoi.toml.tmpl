@@ -75,7 +75,6 @@
     install_extras = {{ promptBool "Install extra development tools?" }}
 
     # Terminal preferences
-<<<<<<< HEAD
     use_nerd_font = {{ promptBool "use_nerd_font" "Use Nerd Font (for icons in terminal)" }}
     nerd_font = {{ promptString "nerd_font" "JetBrainsMono" (list "JetBrainsMono" "FiraCode" "Hack" "CascadiaCode" "SourceCodePro") | quote }}
     {{- if eq .chezmoi.os "windows" }}
@@ -83,9 +82,6 @@
     {{- else }}
     default_terminal = {{ promptString "default_terminal" "kitty" (list "kitty" "alacritty" "wezterm") | quote }}
     {{- end }}
-=======
-    use_nerd_font = {{ promptBool "Use Nerd Font (for icons in terminal)?" }}
->>>>>>> 85ac9b7 (Refactor setup scripts and enhance dotfiles configuration)
 
     # Shell preferences
     {{- if eq .chezmoi.os "windows" }}
