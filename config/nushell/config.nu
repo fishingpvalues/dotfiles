@@ -243,20 +243,6 @@ def fzf-preview [query?: string] {
     }
 }
 
-# Thefuck integration
-if not (which thefuck | is-empty) {
-    def fuck [] {
-        with-env [PYTHONIOENCODING PYTHONLEGACYWINDOWSSTDIO] [utf-8 1] {
-            let result = (^thefuck (history | last 1 | get command.0))
-            if ($result | str trim | is-empty) {
-                return
-            }
-            print $"running: ($result)"
-            nu -c $result
-        }
-    }
-}
-
 # Python virtual environment helper
 def venv [name: string = ".venv"] {
     if ($name | path exists) {

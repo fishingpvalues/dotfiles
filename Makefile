@@ -85,8 +85,6 @@ install-packages:
 			bash \
 			wget \
 			curl \
-			thefuck \
-			binwalk \
 			fzf \
 			ripgrep \
 			fd \
