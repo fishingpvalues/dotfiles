@@ -28,11 +28,17 @@ jobs:
           choco install git
           git config --global core.autocrlf input
 
+      - name: Install Bash 5 (macOS)
+        if: matrix.os == 'macos-latest'
+        run: |
+          brew install bash
+          sudo bash -c 'echo /opt/homebrew/bin/bash >> /etc/shells'
+
       - name: Run bootstrap for macOS
         if: matrix.os == 'macos-latest'
         run: |
           chmod +x ./setup-chezmoi.sh
-          CI=1 ./setup-chezmoi.sh --reinit
+          /opt/homebrew/bin/bash ./setup-chezmoi.sh --reinit
 
       - name: Run bootstrap for Windows
         if: matrix.os == 'windows-latest'
