@@ -22,6 +22,45 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up shell for Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          choco install git
+          git config --global core.autocrlf input
+
+      - name: Run bootstrap for macOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          chmod +x ./setup-chezmoi.sh
+          CI=1 ./setup-chezmoi.sh --reinit
+
+      - name: Run bootstrap for Windows
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          ./bootstrap/scripts/windows/install.ps1
+
+      - name: Run bootstrap for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          chmod +x ./setup-chezmoi.sh
+          CI=1 ./setup-chezmoi.sh --reinit
+
+      - name: Validate key files (macOS/Linux)
+        if: matrix.os != 'windows-latest'
+        run: |
+          test -f $HOME/.zshrc
+          test -f $HOME/.config/nushell/config.nu
+          test -f $HOME/.config/nvim/init.lua || true
+
+      - name: Validate key files (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Test-Path $HOME\.config\nushell\config.nu
+          Test-Path $HOME\.zshrc
+
       - name: Lint bash scripts (shellcheck)
         if: matrix.os != 'windows-latest'
         run: |
