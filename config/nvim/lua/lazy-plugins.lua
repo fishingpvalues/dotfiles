@@ -431,46 +431,32 @@ require('lazy').setup({
               icon_hl = '@variable',
               desc = icons.files .. " Files",
               group = 'Label',
-              action = files_shortcut_action,
+              action = 'lua require("custom.commands.dashboard_actions").files_shortcut_action()',
               key = 'f',
             },
             {
               desc = safe_apps_label,
               group = 'DiagnosticHint',
-              action = apps_shortcut_action,
+              action = 'lua require("custom.commands.dashboard_actions").apps_shortcut_action()',
               key = 'a',
             },
             {
               desc = icons.dotfiles .. " dotfiles",
               group = 'Number',
-              action = dotfiles_shortcut_action,
+              action = 'lua require("custom.commands.dashboard_actions").dotfiles_shortcut_action()',
               key = 'd',
             },
             {
               desc = '󰙅 Yazi',
               group = 'Label',
-              action = yazi_shortcut_action,
+              action = 'lua require("custom.commands.dashboard_actions").yazi_shortcut_action()',
               key = 'y',
             },
-            -- New Project shortcut
             {
               desc = '󰝰 New Project',
               group = 'Label',
               key = 'n',
-              action = function()
-                vim.ui.input({ prompt = 'Project name: ' }, function(name)
-                  if not name or name == '' then return end
-                  local base = vim.fn.expand('~/Projects')
-                  if vim.fn.isdirectory(base) == 0 then vim.fn.mkdir(base, 'p') end
-                  local project_dir = base .. '/' .. name
-                  if vim.fn.isdirectory(project_dir) == 0 then
-                    vim.fn.mkdir(project_dir, 'p')
-                    vim.notify('Created project: ' .. project_dir, vim.log.levels.INFO)
-                  end
-                  vim.cmd('cd ' .. project_dir)
-                  vim.cmd('Telescope find_files cwd=' .. project_dir)
-                end)
-              end,
+              action = 'lua require("custom.commands.dashboard_actions").new_project_action()',
             },
           },
           packages = { enable = true },
@@ -487,21 +473,7 @@ require('lazy').setup({
             icon = icons.mru_icon,
             label = '',
             cwd_only = false,
-            -- Use Telescope's oldfiles with sorting by modification time if available
-            -- Otherwise fallback to default MRU
-            -- This requires Telescope >= 0.1.2
-            action = function()
-              local ok = pcall(require, 'telescope.builtin')
-              if ok then
-                require('telescope.builtin').oldfiles({
-                  only_cwd = false,
-                  -- sort by modification time if supported
-                  -- fallback to default if not
-                })
-              else
-                vim.notify('Telescope not available', vim.log.levels.WARN)
-              end
-            end,
+            action = 'lua require("custom.commands.dashboard_actions").mru_action()',
           },
           footer = dune_footer,
         },
