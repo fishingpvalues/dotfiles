@@ -227,4 +227,31 @@ end
 
 -- To show fastfetch/neofetch on shell startup, ensure your shell rc file (e.g., .bashrc, .zshrc, PowerShell profile) includes the fastfetch/neofetch logic. WezTerm will run your shell, which will display the info automatically.
 
+-- Status bar: CPU, RAM, and time (Windows)
+wezterm.on('update-right-status', function(window, pane)
+  local time = wezterm.strftime('%H:%M:%S')
+  local cpu = ''
+  local ram = ''
+  -- Nerd Font icons
+  local clock_icon = '󰥔'
+  local cpu_icon = '󰍛'
+  local ram_icon = '󰍛'
+  if wezterm.target_triple:find('windows') then
+    -- Get CPU usage (average of all cores)
+    local cpu_out = wezterm.run_child_process({'powershell', '-NoProfile', '-Command', "Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average | Select -ExpandProperty Average"})
+    if cpu_out and #cpu_out > 0 then
+      cpu = string.format('%s %s%%', cpu_icon, cpu_out:gsub('\n', ''))
+    end
+    -- Get RAM usage (used/total in GB)
+    local ram_out = wezterm.run_child_process({'powershell', '-NoProfile', '-Command', "Get-CimInstance Win32_OperatingSystem | ForEach-Object { [math]::Round(($_.TotalVisibleMemorySize- $_.FreePhysicalMemory)/1MB,1) }"})
+    local ram_total = wezterm.run_child_process({'powershell', '-NoProfile', '-Command', "Get-CimInstance Win32_OperatingSystem | ForEach-Object { [math]::Round($_.TotalVisibleMemorySize/1MB,1) }"})
+    if ram_out and ram_total and #ram_out > 0 and #ram_total > 0 then
+      ram = string.format('%s %s/%sGB', ram_icon, ram_out:gsub('\n', ''), ram_total:gsub('\n', ''))
+    end
+  end
+  window:set_right_status(wezterm.format({
+    {Text = string.format('%s %s   %s   %s', clock_icon, time, cpu, ram)}
+  }))
+end)
+
 return config

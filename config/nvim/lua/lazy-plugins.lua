@@ -162,9 +162,8 @@ require('lazy').setup({
     config = function()
       local db = require('dashboard')
       
-      -- Cat ASCII art header with fixed formatting
+      -- Cat ASCII art header with fixed formatting (reduced blank lines)
       local cat_header = {
-        '',
         '                       _                        ',
         '                      \\`*-.                    ',
         '                       )  _`-.                 ',
@@ -175,19 +174,129 @@ require('lazy').setup({
         '                        ;       `       `.     ',
         '                        :.       .        \\    ',
         '                        . \\  .   :   .-\'   .   ',
-        '                        \'  `+.;  ;  \'      :   ',
-        '                        :  \'  |    ;       ;-. ',
+        "                        '  `+.;  ;  '      :   ",
+        "                        :  '  |    ;       ;-. ",
         "                        ; '   : :`-:     _.`* ;",
         "               [bug] .*' /  .*' ; .*`- +'  `*' ",
         "                     `*-*   `*-*  `*-*'        ",
-        '',
         '                         Meow vim ฅ^•ﻌ•^ฅ             ',
         '',
       }
 
-      -- Dune quote for footer
+      -- Digital clock and date with weekday (German) and icons
+      local function get_datetime_line()
+        local have_nerd = vim.g.have_nerd_font
+        local clock_icon = have_nerd and '󰥔' or '🕒'
+        local cal_icon = have_nerd and '󰃰' or '📅'
+        local weekdays = {
+          'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'
+        }
+        local now = os.date('*t')
+        local weekday = weekdays[now.wday]
+        local date_str = string.format('%s %s, %02d.%02d.%04d', cal_icon, weekday, now.day, now.month, now.year)
+        local time_str = string.format('%s %02d:%02d:%02d', clock_icon, now.hour, now.min, now.sec)
+        return { '', date_str .. '   ' .. time_str, '' }
+      end
+
+      -- Weather info using wttr.in
+      local function get_weather_line()
+        local have_nerd = vim.g.have_nerd_font
+        local weather_icon = have_nerd and '' or '☀️'
+        local location = os.getenv('WTTR_LOCATION') or '' -- User can set WTTR_LOCATION, else auto
+        local url = 'wttr.in/' .. location .. '?format=%C+%t+%w'
+        local weather = ''
+        -- Try to cache for session
+        if not vim.g._dashboard_weather then
+          local handle = io.popen('curl -s "' .. url .. '"')
+          if handle then
+            weather = handle:read('*a') or ''
+            handle:close()
+            if weather and #weather > 0 then
+              vim.g._dashboard_weather = weather
+            else
+              vim.g._dashboard_weather = 'Wetter nicht verfügbar'
+            end
+          else
+            vim.g._dashboard_weather = 'Wetter nicht verfügbar'
+          end
+        end
+        weather = vim.g._dashboard_weather or 'Wetter nicht verfügbar'
+        return { weather_icon .. ' ' .. weather }
+      end
+
+      -- Git status/branch info
+      local function get_git_line()
+        local have_nerd = vim.g.have_nerd_font
+        local git_icon = have_nerd and '' or ''
+        local branch = ''
+        local status = ''
+        local git_dir = vim.fn.finddir('.git', '.;')
+        if git_dir ~= '' then
+          branch = vim.fn.system('git rev-parse --abbrev-ref HEAD 2>NUL'):gsub('\n', '')
+          local stat = vim.fn.system('git status --porcelain=2 --branch 2>NUL')
+          local ahead, behind = stat:match('ahead (%d+)'), stat:match('behind (%d+)')
+          local dirty = stat:find('1 .') and '✗' or ''
+          status = string.format('%s%s%s', ahead and (' ↑'..ahead) or '', behind and (' ↓'..behind) or '', dirty)
+          if branch == '' then branch = 'No branch' end
+          return { string.format('%s %s%s', git_icon, branch, status) }
+        else
+          return { git_icon .. ' Kein Git-Repo' }
+        end
+      end
+      -- Network status: WiFi/Ethernet and IP
+      local function get_network_line()
+        local have_nerd = vim.g.have_nerd_font
+        local wifi_icon = have_nerd and '󰤨' or '📶'
+        local eth_icon = have_nerd and '󰈀' or '🔌'
+        local ip_icon = have_nerd and '󰩟' or '🌐'
+        local ip = vim.fn.system('hostname -I 2>NUL'):match('%d+%.%d+%.%d+%.%d+') or vim.fn.system('ipconfig 2>NUL'):match('IPv4.-: ([%d%.]+)') or ''
+        if not ip or ip == '' then ip = 'IP nicht verfügbar' end
+        -- Try to detect WiFi/Ethernet (Windows/Unix)
+        local net = ''
+        if vim.fn.has('win32') == 1 then
+          local wifi = vim.fn.system('netsh wlan show interfaces 2>NUL')
+          if wifi:find('SSID') then
+            net = wifi_icon .. ' WLAN'
+          else
+            net = eth_icon .. ' LAN'
+          end
+        else
+          local iw = vim.fn.system('iwgetid -r 2>/dev/null')
+          if iw and #iw > 0 then
+            net = wifi_icon .. ' WLAN'
+          else
+            net = eth_icon .. ' LAN'
+          end
+        end
+        return { string.format('%s %s %s %s', net, ip_icon, ip, '') }
+      end
+      -- Battery status
+      local function get_battery_line()
+        local have_nerd = vim.g.have_nerd_font
+        local bat_icon = have_nerd and '󰁹' or '🔋'
+        local bat = ''
+        if vim.fn.has('win32') == 1 then
+          local wmic = vim.fn.system('wmic path Win32_Battery get EstimatedChargeRemaining 2>NUL')
+          local percent = wmic:match('(%d+)')
+          if percent then
+            bat = percent .. '%%'
+          else
+            bat = 'Nicht verfügbar'
+          end
+        else
+          local acpi = vim.fn.system('acpi -b 2>/dev/null')
+          local percent = acpi:match('(%d?%d?%d)%%')
+          if percent then
+            bat = percent .. '%%'
+          else
+            bat = 'Nicht verfügbar'
+          end
+        end
+        return { string.format('%s %s', bat_icon, bat) }
+      end
+
+      -- Dune quote for footer (reduced blank lines)
       local dune_footer = {
-        '',
         'I must not fear.',
         'Fear is the mind-killer.',
         'Fear is the little-death that brings total obliteration.',
@@ -195,29 +304,47 @@ require('lazy').setup({
         'I will permit it to pass over me and through me.',
         'And when it has gone past, I will turn the inner eye to see its path.',
         'Where the fear has gone there will be nothing. Only I will remain.',
-        '',
         '— Bene Gesserit Litany Against Fear',
-        '',
+        '', -- Add blank line before Python/Data Science info
       }
 
-      -- Data Science Info (runtime fetch)
+      -- Data Science Info (condensed to one line)
       local function get_data_science_info()
+        local have_nerd = vim.g.have_nerd_font
+        local icons = {
+          python = have_nerd and '󰌠' or '🐍',
+          conda = have_nerd and '󱔎' or '🅒',
+          cuda = have_nerd and '󰢮' or '🖥️',
+          jupyter = have_nerd and '󰠮' or '📒',
+          yazi = have_nerd and '󰙅' or '🗂️',
+        }
         local py = vim.fn.system('python --version 2>&1'):gsub('\n', '')
-        local conda = os.getenv('CONDA_DEFAULT_ENV') or 'None'
+        if py == '' or py:match('not found') then
+          py = icons.python .. ' Python: Not found'
+        else
+          py = icons.python .. ' ' .. py
+        end
+        local conda_env = os.getenv('CONDA_DEFAULT_ENV')
+        local conda = conda_env and #conda_env > 0 and (icons.conda .. ' ' .. conda_env) or (icons.conda .. ' No Conda')
         local cuda = vim.fn.system('nvidia-smi --query-gpu=name,driver_version --format=csv,noheader 2>/dev/null | head -n1'):gsub('\n', '')
-        if cuda == '' then cuda = 'Not detected' end
+        if cuda == '' or cuda:match('not found') then
+          cuda = icons.cuda .. ' No CUDA'
+        else
+          cuda = icons.cuda .. ' ' .. cuda
+        end
         local jupyter = vim.fn.system('jupyter --version 2>&1 | head -n1'):gsub('\n', '')
-        if jupyter == '' then jupyter = 'Not detected' end
+        if jupyter == '' or jupyter:match('not found') then
+          jupyter = icons.jupyter .. ' No Jupyter'
+        else
+          jupyter = icons.jupyter .. ' ' .. jupyter
+        end
+        local yazi_path = vim.fn.exepath('yazi')
+        local yazi = yazi_path and #yazi_path > 0 and (icons.yazi .. ' Yazi') or (icons.yazi .. ' No Yazi')
         return {
-          '',
-          'Data Science Info:',
-          '  Python: ' .. py,
-          '  Conda Env: ' .. conda,
-          '  CUDA: ' .. cuda,
-          '  Jupyter: ' .. jupyter,
-          '',
+          string.format('󰅩  %s   %s   %s   %s   %s', py, conda, cuda, jupyter, yazi)
         }
       end
+      -- Insert condensed Data Science Info at the end of the footer
       for _, line in ipairs(get_data_science_info()) do
         table.insert(dune_footer, line)
       end
@@ -233,6 +360,64 @@ require('lazy').setup({
         debug_icon = vim.g.have_nerd_font and "󱄑" or "D",
       }
 
+      -- Helper to check if a command exists
+      local function has_cmd(cmd)
+        return vim.fn.exepath(cmd) ~= ''
+      end
+      -- Helper to check if a directory exists
+      local function dir_exists(path)
+        return vim.fn.isdirectory(vim.fn.expand(path)) == 1
+      end
+      -- Helper to show a notification
+      local function notify_missing(what, icon, extra)
+        vim.schedule(function()
+          vim.notify(icon .. ' ' .. what .. ' is not available.' .. (extra or ''), vim.log.levels.WARN, {title = 'Dashboard'})
+        end)
+      end
+      -- Files shortcut: needs ripgrep
+      local function files_shortcut_action()
+        if not has_cmd('rg') then
+          notify_missing('ripgrep (rg)', icons.files, ' Please install ripgrep to use file search.')
+          return
+        end
+        vim.cmd('Telescope find_files')
+      end
+      -- Dotfiles shortcut: needs chezmoi and ~/dotfiles
+      local function dotfiles_shortcut_action()
+        if not dir_exists('~/dotfiles') then
+          notify_missing('dotfiles directory', icons.dotfiles, ' ~/dotfiles not found.')
+          return
+        end
+        if not has_cmd('chezmoi') then
+          notify_missing('chezmoi', icons.dotfiles, ' Please install chezmoi to manage dotfiles.')
+          return
+        end
+        vim.cmd('Telescope find_files cwd=~/dotfiles')
+      end
+      -- Yazi shortcut: needs yazi in PATH
+      local function yazi_shortcut_action()
+        if not has_cmd('yazi') then
+          notify_missing('Yazi file manager', '󰙅', ' Please install yazi and add to PATH.')
+          return
+        end
+        vim.cmd('Yazi')
+      end
+      -- Apps shortcut: always visible, warn if missing
+      local function apps_shortcut_action()
+        if not has_cmd('rg') then
+          notify_missing('ripgrep (rg)', icons.app, ' Please install ripgrep to use this shortcut.')
+          return
+        end
+        if not apps_dir or not dir_exists(apps_dir) then
+          notify_missing('Apps directory', icons.app, ' Not found for this OS.')
+          return
+        end
+        vim.cmd('Telescope find_files cwd=' .. vim.fn.expand(apps_dir))
+      end
+
+      -- Fallback for apps_label if nil
+      local safe_apps_label = (apps_label ~= nil and tostring(apps_label) ~= '' and apps_label) or (icons.app or 'Apps')
+
       db.setup({
         theme = 'hyper',
         config = {
@@ -246,26 +431,46 @@ require('lazy').setup({
               icon_hl = '@variable',
               desc = icons.files .. " Files",
               group = 'Label',
-              action = 'Telescope find_files',
+              action = files_shortcut_action,
               key = 'f',
             },
             {
-              desc = icons.app .. " Apps",
+              desc = safe_apps_label,
               group = 'DiagnosticHint',
-              action = 'Telescope find_files cwd=~/Applications',
+              action = apps_shortcut_action,
               key = 'a',
             },
             {
               desc = icons.dotfiles .. " dotfiles",
               group = 'Number',
-              action = 'Telescope find_files cwd=~/dotfiles',
+              action = dotfiles_shortcut_action,
               key = 'd',
             },
             {
-              desc = 'Yazi',
+              desc = '󰙅 Yazi',
               group = 'Label',
-              action = 'Yazi',
+              action = yazi_shortcut_action,
               key = 'y',
+            },
+            -- New Project shortcut
+            {
+              desc = '󰝰 New Project',
+              group = 'Label',
+              key = 'n',
+              action = function()
+                vim.ui.input({ prompt = 'Project name: ' }, function(name)
+                  if not name or name == '' then return end
+                  local base = vim.fn.expand('~/Projects')
+                  if vim.fn.isdirectory(base) == 0 then vim.fn.mkdir(base, 'p') end
+                  local project_dir = base .. '/' .. name
+                  if vim.fn.isdirectory(project_dir) == 0 then
+                    vim.fn.mkdir(project_dir, 'p')
+                    vim.notify('Created project: ' .. project_dir, vim.log.levels.INFO)
+                  end
+                  vim.cmd('cd ' .. project_dir)
+                  vim.cmd('Telescope find_files cwd=' .. project_dir)
+                end)
+              end,
             },
           },
           packages = { enable = true },
@@ -276,12 +481,27 @@ require('lazy').setup({
             label = '', 
             action = 'Telescope find_files cwd=' 
           },
-          mru = { 
-            enable = true, 
-            limit = 10, 
-            icon = icons.mru_icon, 
-            label = '', 
-            cwd_only = false 
+          mru = {
+            enable = true,
+            limit = 10,
+            icon = icons.mru_icon,
+            label = '',
+            cwd_only = false,
+            -- Use Telescope's oldfiles with sorting by modification time if available
+            -- Otherwise fallback to default MRU
+            -- This requires Telescope >= 0.1.2
+            action = function()
+              local ok = pcall(require, 'telescope.builtin')
+              if ok then
+                require('telescope.builtin').oldfiles({
+                  only_cwd = false,
+                  -- sort by modification time if supported
+                  -- fallback to default if not
+                })
+              else
+                vim.notify('Telescope not available', vim.log.levels.WARN)
+              end
+            end,
           },
           footer = dune_footer,
         },
@@ -299,6 +519,25 @@ require('lazy').setup({
           vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#D7A752', italic = true })
         end,
       })
+
+      -- Compose status block (single wide line, compact)
+      local function get_status_block_plain()
+        local dt = get_datetime_line()[2] or ''
+        local weather = get_weather_line()[1] or ''
+        local git = get_git_line()[1] or ''
+        local net = get_network_line()[1] or ''
+        local bat = get_battery_line()[1] or ''
+        -- Join all status info into one wide line
+        return {
+          string.format('  %s   %s   %s   %s   %s  ', dt, weather, git, net, bat),
+          '', -- Add blank line after status/info
+        }
+      end
+      -- Insert status block below cat ASCII art
+      local cat_end = #cat_header
+      for i, v in ipairs(get_status_block_plain()) do
+        table.insert(cat_header, cat_end + i, v)
+      end
     end,
     dependencies = { { 'nvim-tree/nvim-web-devicons' } }
   },
