@@ -178,6 +178,18 @@ if ($installPackages -eq "y") {
     & (Join-Path $DOTFILES_DIR "scripts" "install-packages.ps1")
 }
 
+# After chezmoi setup, prompt to run install-packages.ps1
+$installScript = Join-Path $DOTFILES_DIR 'bootstrap/scripts/install-packages.ps1'
+if (Test-Path $installScript) {
+    Write-Host "\nWould you like to install essential developer tools (Rust, Go, Node.js, GCC, etc.)? (y/N): " -NoNewline
+    $runInstall = Read-Host
+    if ($runInstall -eq 'y' -or $runInstall -eq 'Y') {
+        & $installScript
+    } else {
+        Write-Host "You can run 'bootstrap/scripts/install-packages.ps1' later to install developer tools."
+    }
+}
+
 Write-Host "`nChezmoi setup complete!"
 Write-Host "You can now use chezmoi commands to manage your dotfiles:"
 Write-Host "  chezmoi cd      - Navigate to the source directory"
