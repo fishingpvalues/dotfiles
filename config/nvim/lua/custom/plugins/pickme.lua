@@ -13,11 +13,17 @@ return {
     mini_pick.setup({
       -- Configure with transparency-friendly options
       window = {
-        config = {
-          border = "rounded",
-          width = 0.8,
-          height = 0.6,
-        },
+        config = function()
+          local columns = vim.o.columns
+          local lines = vim.o.lines
+          local width = math.floor(columns * 0.8)
+          local height = math.floor(lines * 0.4)
+          return {
+            border = "rounded",
+            width = width,
+            height = height,
+          }
+        end,
       },
       -- Customize appearance
       options = {

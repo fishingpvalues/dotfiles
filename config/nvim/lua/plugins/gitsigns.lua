@@ -72,7 +72,5 @@ return {
       row = 0,
       col = 1
     },
-    -- Configure gitsigns to work with transparent backgrounds
-    _signs_staged_enable = false,
   },
 }

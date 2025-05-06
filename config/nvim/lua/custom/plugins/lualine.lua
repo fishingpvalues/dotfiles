@@ -70,11 +70,73 @@ return {
       return table.concat(status, ' | ')
     end
 
+    local function lsp_status()
+      local clients = vim.lsp.get_active_clients({ bufnr = 0 })
+      if #clients > 0 then
+        return ' ' .. clients[1].name
+      end
+      return ''
+    end
+
+    local function filetype_icon()
+      local devicons = require('nvim-web-devicons')
+      local fname = vim.fn.expand('%:t')
+      local ext = vim.fn.expand('%:e')
+      local icon, _ = devicons.get_icon(fname, ext, { default = true })
+      return icon or ''
+    end
+
+    local function readonly_modified()
+      if vim.bo.readonly then
+        return ''
+      elseif vim.bo.modified then
+        return '●'
+      end
+      return ''
+    end
+
+    local function short_path()
+      local path = vim.fn.expand('%:~:.')
+      if path == '' then return '[No Name]' end
+      return path
+    end
+
+    local function session_name()
+      if vim.v.this_session ~= '' then
+        return ' ' .. vim.fn.fnamemodify(vim.v.this_session, ':t:r')
+      end
+      return ''
+    end
+
+    local function search_count()
+      if vim.v.hlsearch == 1 and vim.fn.searchcount then
+        local sc = vim.fn.searchcount({ maxcount = 999, timeout = 50 })
+        if sc.total and sc.total > 0 then
+          return string.format(' %d/%d', sc.current, sc.total)
+        end
+      end
+      return ''
+    end
+
+    -- Custom component for conda environment
+    local function conda_env()
+      local env = vim.env.CONDA_DEFAULT_ENV
+      if env and env ~= '' then
+        return ' ' .. env
+      end
+      -- Try virtualenv
+      local venv = vim.env.VIRTUAL_ENV
+      if venv and venv ~= '' then
+        return ' ' .. vim.fn.fnamemodify(venv, ':t')
+      end
+      return ''
+    end
+
     -- Initialize lualine with transparency-friendly configuration
     require('lualine').setup({
       options = {
         icons_enabled = true,
-        theme = 'auto',
+        theme = 'codedark',
         component_separators = { left = '', right = '' },
         section_separators = { left = '', right = '' },
         disabled_filetypes = {
@@ -90,60 +152,35 @@ return {
         },
       },
       sections = {
-        lualine_a = {
-          { mode, separator = { left = '', right = '' }, padding = { left = 1, right = 1 } },
-        },
+        lualine_a = { { 'mode', icon = '' } },
         lualine_b = {
-          { 'branch', icon = '' },
-          {
-            'diff',
-            symbols = {
-              added = ' ',
-              modified = ' ',
-              removed = ' ',
-            },
-            source = function()
-              local gitsigns = vim.b.gitsigns_status_dict
-              if gitsigns then
-                return {
-                  added = gitsigns.added,
-                  modified = gitsigns.changed,
-                  removed = gitsigns.removed
-                }
-              end
-            end,
-          },
-          {
-            'diagnostics',
-            sources = { 'nvim_diagnostic' },
-            symbols = {
-              error = ' ',
-              warn = ' ',
-              info = ' ',
-              hint = ' ',
-            },
-          },
+          { 'branch', icon = '', cond = function() return vim.b.gitsigns_status_dict ~= nil end },
+          { 'diff', cond = function() local g = vim.b.gitsigns_status_dict; return g and (g.added > 0 or g.changed > 0 or g.removed > 0) end },
+          { 'diagnostics', cond = function() return vim.diagnostic and #vim.diagnostic.get(0) > 0 end },
         },
         lualine_c = {
-          { filename, path = 1 },
-          { lsp_progress },
+          { filetype_icon, padding = { left = 0, right = 0 } },
+          { short_path },
+          { readonly_modified, padding = { left = 0, right = 1 } },
+          { session_name, cond = function() return vim.v.this_session ~= '' end },
         },
         lualine_x = {
-          'filetype',
-          'encoding',
-          'fileformat',
+          { conda_env },
+          { lsp_status },
+          { 'encoding' },
+          { 'fileformat' },
+          { 'filetype' },
         },
         lualine_y = {
-          { 'progress', separator = { left = '', right = '' }, padding = { left = 1, right = 1 } },
+          { 'progress' },
+          { search_count },
         },
-        lualine_z = {
-          { 'location', separator = { left = '', right = '' }, padding = { left = 1, right = 1 } },
-        },
+        lualine_z = { { 'location' } },
       },
       inactive_sections = {
         lualine_a = {},
         lualine_b = {},
-        lualine_c = { filename },
+        lualine_c = { 'filename' },
         lualine_x = { 'location' },
         lualine_y = {},
         lualine_z = {},

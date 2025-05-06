@@ -6,9 +6,6 @@ return {
     'williamboman/mason.nvim',
     'williamboman/mason-lspconfig.nvim',
     
-    -- Add cmp-nvim-lsp as a dependency to fix errors
-    'hrsh7th/cmp-nvim-lsp',
-
     -- Useful status updates for LSP
     { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
 
@@ -31,24 +28,34 @@ return {
     -- Setup neovim lua configuration
     require('neodev').setup()
 
-    -- Try loading cmp_nvim_lsp with error handling
-    local has_cmp_lsp, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    
-    if has_cmp_lsp then
-      capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
-    else
-      vim.notify('Warning: cmp_nvim_lsp not available', vim.log.levels.WARN)
-    end
-
     -- Setup mason-lspconfig after mason is configured
     local mason_lspconfig = require('mason-lspconfig')
     mason_lspconfig.setup({
       ensure_installed = {
-        'tsserver',
-        'eslint',
-        'lua_ls',
-        'pyright',
+        'tsserver',    -- TypeScript/JavaScript
+        'eslint',      -- JavaScript/TypeScript linting
+        'lua_ls',      -- Lua
+        'pyright',     -- Python
+        'bashls',      -- Bash
+        'jsonls',      -- JSON
+        'html',        -- HTML
+        'cssls',       -- CSS
+        'yamlls',      -- YAML
+        'marksman',    -- Markdown
+        'rust_analyzer', -- Rust
+        'intelephense',   -- PHP
+        'phpactor',       -- PHP alternative
+        'twiggy_language_server', -- Twig (if available)
+        'sqlls',          -- SQL
+        'dockerls',       -- Docker
+        'ansiblels',      -- Ansible
+        'jdtls',          -- Java
+        'clangd',         -- C/C++
+        'graphql',        -- GraphQL
+        'vuels',          -- Vue.js
+        'volar',          -- Vue.js alternative
+        'svelte',         -- Svelte
+        -- Add more servers as needed
       },
     })
 
@@ -107,7 +114,7 @@ return {
     mason_lspconfig.setup_handlers({
       function(server_name)
         require('lspconfig')[server_name].setup({
-          capabilities = capabilities,
+          capabilities = vim.lsp.protocol.make_client_capabilities(),
           on_attach = on_attach,
           settings = {
             -- Configure server-specific settings

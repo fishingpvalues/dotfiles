@@ -131,7 +131,7 @@ require('lazy').setup({
   require 'plugins/telescope',
   require 'plugins/lspconfig',
   require 'plugins/conform',
-  require 'plugins/cmp',  -- Add CMP module for completion
+  -- require 'plugins/cmp',  -- nvim-cmp removed in favor of blink.cmp
   require 'custom/plugins/lspkind-config',
   
   -- Theme configuration with transparency support
@@ -487,6 +487,140 @@ require('lazy').setup({
           vim.opt.background = "light"
         end,
       })
+    end,
+  },
+
+  {
+    "Saghen/blink.cmp",
+    event = "InsertEnter",
+    dependencies = {
+      "L3MON4D3/LuaSnip", -- for snippet support
+      "rafamadriz/friendly-snippets", -- optional, for more snippets
+    },
+    config = function()
+      require("blink.cmp").setup({
+        -- Add custom config here if needed
+      })
+    end,
+  },
+
+  -- Satellite (minimap/scrollbar)
+  {
+    'lewis6991/satellite.nvim',
+    event = 'VeryLazy',
+    config = function()
+      require('satellite').setup({})
+    end,
+  },
+
+  -- YAML Companion
+  {
+    'someone-stole-my-name/yaml-companion.nvim',
+    ft = { 'yaml' },
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('yaml-companion').setup({})
+    end,
+  },
+
+  -- nvim-jqx (JSON explorer)
+  {
+    'gennaro-tedesco/nvim-jqx',
+    ft = { 'json', 'yaml' },
+    dependencies = { 'nvim-lua/plenary.nvim' },
+  },
+
+  -- ToggleTerm (terminal integration)
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      require('toggleterm').setup({})
+    end,
+  },
+
+  -- persisted.nvim (session management)
+  {
+    'olimorris/persisted.nvim',
+    config = function()
+      require('persisted').setup({})
+    end,
+  },
+
+  -- Comment.nvim (commenting)
+  {
+    'numToStr/Comment.nvim',
+    config = function()
+      require('Comment').setup({})
+    end,
+    event = 'VeryLazy',
+  },
+
+  -- diffview.nvim (diff UI)
+  {
+    'sindrets/diffview.nvim',
+    cmd = { 'DiffviewOpen', 'DiffviewFileHistory' },
+    dependencies = { 'nvim-lua/plenary.nvim' },
+  },
+
+  -- neogit (Magit-like Git UI)
+  {
+    'NeogitOrg/neogit',
+    cmd = 'Neogit',
+    dependencies = { 'nvim-lua/plenary.nvim', 'sindrets/diffview.nvim' },
+    config = function()
+      require('neogit').setup({})
+    end,
+  },
+
+  -- Keep gitsigns.nvim as it is SOTA for inline git signs
+
+  -- telescope-zoxide (directory switching)
+  {
+    'jvgrootveld/telescope-zoxide',
+    dependencies = { 'nvim-telescope/telescope.nvim' },
+    config = function()
+      require('telescope').load_extension('zoxide')
+    end,
+  },
+
+  -- fidget.nvim (LSP progress)
+  {
+    'j-hui/fidget.nvim',
+    tag = 'legacy',
+    event = 'LspAttach',
+    config = function()
+      require('fidget').setup({})
+    end,
+  },
+
+  -- nvim-lightbulb (LSP code action indicator)
+  {
+    'kosayoda/nvim-lightbulb',
+    event = 'LspAttach',
+    config = function()
+      require('nvim-lightbulb').setup({
+        autocmd = { enabled = true },
+      })
+    end,
+  },
+
+  -- lspsaga.nvim (LSP UI)
+  {
+    'nvimdev/lspsaga.nvim',
+    event = 'LspAttach',
+    config = function()
+      require('lspsaga').setup({})
+    end,
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+  },
+
+  -- actions-preview.nvim (LSP code action preview)
+  {
+    'aznhe21/actions-preview.nvim',
+    event = 'LspAttach',
+    config = function()
+      require('actions-preview').setup({})
     end,
   },
 }, {
