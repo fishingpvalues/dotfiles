@@ -1,6 +1,13 @@
 SHELL = /bin/bash
 
-.PHONY: all install install-arch install-packages install-configs clean help install-omz install-fonts install-aur install-yay install-vscode-extensions install-chezmoi update fonts install-hyprland install-dotfiles postinstall
+.PHONY: all install install-arch install-packages install-configs clean help install-omz install-fonts install-aur install-yay install-vscode-extensions install-chezmoi update fonts install-hyprland install-dotfiles postinstall test
+
+# Platform detection
+UNAME_S := $(shell uname -s)
+IS_WINDOWS := $(filter Windows_NT,$(OS))
+
+# Error log file
+ERROR_LOG := make_errors.log
 
 all: help
 
@@ -26,20 +33,20 @@ help:
 	@echo "make install-hyprland    - Install Hyprland and all related tools"
 	@echo "make install-dotfiles    - Apply all dotfiles"
 	@echo "make postinstall         - Run post-install scripts"
+	@echo "make test                - Run tests for the current platform"
 
-install: fonts
-	@echo "Installing dotfiles..."
+install: install-fonts
+	@echo "Installing dotfiles..." | tee -a $(ERROR_LOG)
 	@if [ "$(ARCH_CHECK)" = "true" ]; then \
-		echo "Detected Arch Linux..."; \
-		$(MAKE) install-arch; \
+		echo "Detected Arch Linux..." | tee -a $(ERROR_LOG); \
+		$(MAKE) install-arch 2>>$(ERROR_LOG); \
 	else \
-		echo "Not on Arch Linux, attempting generic install via install.sh..."; \
-		if [ -f "./install.sh" ]; then \
-			chmod +x ./install.sh; \
-			./install.sh; \
+		echo "Not on Arch Linux, attempting generic install via bootstrap/scripts/unix/install.sh..." | tee -a $(ERROR_LOG); \
+		if [ -f "./bootstrap/scripts/unix/install.sh" ]; then \
+			chmod +x ./bootstrap/scripts/unix/install.sh 2>>$(ERROR_LOG); \
+			./bootstrap/scripts/unix/install.sh 2>>$(ERROR_LOG) || echo "[ERROR] install.sh failed, see $(ERROR_LOG)" | tee -a $(ERROR_LOG); \
 		else \
-			echo "Error: install.sh not found for non-Arch system."; \
-			exit 1; \
+			echo "[WARN] install.sh not found for non-Arch system. Skipping generic install." | tee -a $(ERROR_LOG); \
 		fi; \
 	fi
 
@@ -49,8 +56,8 @@ install-arch: install-packages install-aur install-omz install-fonts install-che
 	@echo "Consider changing your default shell to zsh: chsh -s /bin/zsh"
 
 update:
-	@echo "Updating dotfiles..."
-	@chezmoi update
+	@echo "Updating dotfiles..." | tee -a $(ERROR_LOG)
+	@chezmoi update 2>>$(ERROR_LOG) || echo "[ERROR] chezmoi update failed, see $(ERROR_LOG)" | tee -a $(ERROR_LOG)
 
 fonts:
 	@echo "Setting up fonts..."
@@ -326,26 +333,22 @@ install-configs: install-chezmoi
 	@echo "Config files applied successfully!"
 
 clean:
-	@echo "Cleaning up..."
-	@# Remove chezmoi cache if it exists
+	@echo "Cleaning up..." | tee -a $(ERROR_LOG)
 	@if [ -d "$$HOME/.cache/chezmoi" ]; then \
-		echo "Removing chezmoi cache..."; \
-		rm -rf "$$HOME/.cache/chezmoi"; \
+		echo "Removing chezmoi cache..." | tee -a $(ERROR_LOG); \
+		rm -rf "$$HOME/.cache/chezmoi" 2>>$(ERROR_LOG); \
 	fi
-	@# Purge files managed by chezmoi if command exists
 	@if command -v chezmoi &> /dev/null; then \
-		echo "Removing files managed by chezmoi (purge)..."; \
-		chezmoi purge --force; \
+		echo "Removing files managed by chezmoi (purge)..." | tee -a $(ERROR_LOG); \
+		chezmoi purge --force 2>>$(ERROR_LOG); \
 	else \
-		echo "chezmoi command not found, attempting manual removal of common symlinks..."; \
-		# Manual fallback removal (less reliable)
-		rm -f $(HOME)/.bashrc $(HOME)/.zshrc $(HOME)/.gitconfig $(HOME)/.tmux.conf; \
-		rm -rf $(HOME)/.config/nvim $(HOME)/.config/wezterm $(HOME)/.config/nushell $(HOME)/.config/alacritty $(HOME)/.config/htop; \
-		rm -f $(HOME)/.config/Code/User/settings.json $(HOME)/.config/Code/User/keybindings.json; \
-		rm -rf $(HOME)/.oh-my-zsh; \
-		# Add other common files/dirs managed by your dotfiles if needed
+		echo "chezmoi command not found, attempting manual removal of common symlinks..." | tee -a $(ERROR_LOG); \
+		rm -f $$HOME/.bashrc $$HOME/.zshrc $$HOME/.gitconfig $$HOME/.tmux.conf 2>>$(ERROR_LOG); \
+		rm -rf $$HOME/.config/nvim $$HOME/.config/wezterm $$HOME/.config/nushell $$HOME/.config/alacritty $$HOME/.config/htop 2>>$(ERROR_LOG); \
+		rm -f $$HOME/.config/Code/User/settings.json $$HOME/.config/Code/User/keybindings.json 2>>$(ERROR_LOG); \
+		rm -rf $$HOME/.oh-my-zsh 2>>$(ERROR_LOG); \
 	fi
-	@echo "Cleanup completed!"
+	@echo "Cleanup completed!" | tee -a $(ERROR_LOG)
 
 install-hyprland: install-packages install-aur install-dotfiles
 	@echo "Hyprland and potentially related tools installed/configured via dependencies!"
@@ -365,3 +368,30 @@ postinstall:
 	else \
 		echo "Wallpaper symlink script not found, skipping."; \
 	fi
+
+# Unified test target for all platforms with fallback and error logging
+# Usage: make test
+
+test:
+ifeq ($(IS_WINDOWS),Windows_NT)
+	@echo "Running all Windows dotfiles tests via test/run-all.ps1..." | tee -a $(ERROR_LOG)
+	@if [ -f ./test/run-all.ps1 ]; then \
+		pwsh ./test/run-all.ps1 2>>$(ERROR_LOG) || echo "[ERROR] Windows tests failed, see $(ERROR_LOG)" | tee -a $(ERROR_LOG); \
+	else \
+		echo "[WARN] test/run-all.ps1 not found. Skipping Windows tests." | tee -a $(ERROR_LOG); \
+	fi
+else
+	@echo "Running all Unix/macOS/Linux dotfiles tests via test/run-all.sh..." | tee -a $(ERROR_LOG)
+	@if [ -f ./test/run-all.sh ]; then \
+		./test/run-all.sh 2>>$(ERROR_LOG) || echo "[ERROR] Unix tests failed, see $(ERROR_LOG)" | tee -a $(ERROR_LOG); \
+	else \
+		echo "[WARN] test/run-all.sh not found. Skipping Unix tests." | tee -a $(ERROR_LOG); \
+	fi
+endif
+
+# Include platform-specific Makefile fragments if they exist
+ifeq ($(IS_WINDOWS),Windows_NT)
+-include Makefile.windows
+else
+-include Makefile.unix
+endif

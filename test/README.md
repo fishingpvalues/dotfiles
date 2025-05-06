@@ -9,6 +9,7 @@ This directory contains system-level and environment tests for your dotfiles set
   - Shell configs (bash, zsh, PowerShell, etc.)
   - Key CLI tools and aliases
   - OS-level compatibility (Ubuntu, Fedora, Arch, Alpine, macOS, Windows)
+  - LSP install scripts (using the centralized `.lsp-servers` list)
 - **Neovim:**
   - Neovim config and plugins are tested via Plenary.nvim (see `config/nvim/lua/custom/tests/` for details)
 
@@ -23,22 +24,23 @@ This directory contains system-level and environment tests for your dotfiles set
    - From the repo root, run:
 
      ```sh
-     act -j test-linux
-     act -j test-macos
-     act -j test-windows
+     ./test/run-all.sh
+     # or on Windows
+     pwsh ./test/run-all.ps1
      ```
 
-   - Or just `act` to run all jobs. This will use the Dockerfiles in `test/` and run the same tests as CI, but locally and offline.
+   - Or use `act` to run all jobs as in CI. This will use the Dockerfiles in `test/` and run the same tests as CI, but locally and offline.
 
 3. **What happens?**
-   - act will build Docker containers for each OS, run the bootstrap scripts, and execute all system and Neovim tests.
-   - Neovim tests are run as part of the system test scripts (see below).
+   - All platform bootstrap scripts, LSP install scripts, and Neovim Plenary tests are run and checked for errors.
+   - Neovim tests are run as part of the system test scripts.
 
 ## Directory Structure
 
 - `test.sh`, `test.ps1`: Main test scripts for Linux/macOS and Windows
+- `run-all.sh`, `run-all.ps1`: Unified entry points for all platforms
 - `Dockerfile.*`: Dockerfiles for each OS
-- `run-all.sh`: Helper to run all Docker-based tests
+- `.lsp-servers`: Centralized list of LSP servers for all platforms
 - `config/nvim/lua/custom/tests/`: Neovim-specific tests (run inside Neovim)
 
 ## See Also

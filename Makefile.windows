@@ -1,0 +1,7 @@
+# Makefile.windows - Windows-specific Makefile fragment
+# Add Windows-only targets here
+
+.PHONY: windows-hello
+
+windows-hello:
+	@echo "Hello from Windows-specific Makefile fragment!" 

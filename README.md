@@ -35,6 +35,10 @@ This repository contains my personal configuration files (dotfiles) for multiple
 - **Development Environment**: VSCode, Neovim, Docker, Python, Rust, and more
 - **Window Management**: Rectangle, Hammerspoon (macOS), and system-specific alternatives
 - **System Settings**: Sensible defaults for developer-focused setups
+- **Cross-platform bootstrap scripts** (Linux, macOS, Windows)
+- **Modular Neovim config** (plugins, custom commands, etc.)
+- **Centralized LSP server list** (`.lsp-servers`)
+- **Unified test entry points for all platforms**
 
 ## macOS Configuration
 
@@ -207,6 +211,13 @@ dotfiles/
     wallpapers/
   .macos/
   .conda/
+  .lsp-servers
+  config/nvim/init.lua
+  config/nvim/lua/plugins/
+  config/nvim/lua/custom/plugins/
+  config/nvim/lua/custom/commands/
+  config/nvim/lua/custom/init.lua
+  test/
 ```
 
 - All scripts are grouped by OS in `bootstrap/scripts/`.
@@ -518,6 +529,13 @@ dotfiles/
     wallpapers/
   .macos/
   .conda/
+  .lsp-servers
+  config/nvim/init.lua
+  config/nvim/lua/plugins/
+  config/nvim/lua/custom/plugins/
+  config/nvim/lua/custom/commands/
+  config/nvim/lua/custom/init.lua
+  test/
 ```
 
 - Remove any empty or obsolete folders (e.g., `nvim.old/`, `.chezmoi/source/`, `.vscode/` if not needed)
@@ -602,3 +620,34 @@ This repository includes a robust, cross-platform testing framework to ensure al
 ### Refreshing All READMEs
 
 To keep documentation up to date after changes, scan the root directory for all `README*.md` files and update them with any new features, scripts, or test instructions. You can automate this with a script or manually review and update each README as needed.
+
+## Extending Neovim Config
+
+- Add new plugins to `config/nvim/lua/plugins/` or `config/nvim/lua/custom/plugins/`.
+- Add new custom commands to `config/nvim/lua/custom/commands/`.
+- Require your new modules in `config/nvim/lua/custom/init.lua`.
+
+## Testing
+
+- Run all tests on any platform:
+
+  ```sh
+  ./test/run-all.sh
+  # or on Windows
+  pwsh ./test/run-all.ps1
+  ```
+
+- All bootstrap scripts, LSP install scripts, and Neovim Plenary tests are run and checked for errors.
+
+## LSP Servers
+
+- Edit `.lsp-servers` to add/remove npm-based LSP servers for all platforms.
+
+## Contributing
+
+- Keep all new scripts and configs modular.
+- Add tests for new functionality in `test/` or `config/nvim/lua/custom/tests/`.
+
+---
+
+For more details, see `test/README.md` and `config/nvim/lua/custom/tests/README.md`.
