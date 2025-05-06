@@ -32,7 +32,7 @@ return {
     local mason_lspconfig = require('mason-lspconfig')
     mason_lspconfig.setup({
       ensure_installed = {
-        'tsserver',    -- TypeScript/JavaScript
+        'typescript-language-server',    -- TypeScript/JavaScript
         'eslint',      -- JavaScript/TypeScript linting
         'lua_ls',      -- Lua
         'pyright',     -- Python

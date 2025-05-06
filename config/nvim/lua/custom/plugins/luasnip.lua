@@ -5,7 +5,6 @@ return {
   -- build = "make install_jsregexp", -- Disabled build step to avoid compilation
   dependencies = {
     "rafamadriz/friendly-snippets",
-    "saadparwaiz1/cmp_luasnip",
   },
   config = function()
     local ls = require("luasnip")

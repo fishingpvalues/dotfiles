@@ -1,0 +1,1 @@
+# To show fastfetch/neofetch on startup, ensure your shell rc file (e.g., .bashrc, .zshrc, PowerShell profile) includes the fastfetch/neofetch logic. Alacritty will run your shell, which will display the info automatically. 

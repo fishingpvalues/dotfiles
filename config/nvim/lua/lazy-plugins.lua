@@ -200,6 +200,28 @@ require('lazy').setup({
         '',
       }
 
+      -- Data Science Info (runtime fetch)
+      local function get_data_science_info()
+        local py = vim.fn.system('python --version 2>&1'):gsub('\n', '')
+        local conda = os.getenv('CONDA_DEFAULT_ENV') or 'None'
+        local cuda = vim.fn.system('nvidia-smi --query-gpu=name,driver_version --format=csv,noheader 2>/dev/null | head -n1'):gsub('\n', '')
+        if cuda == '' then cuda = 'Not detected' end
+        local jupyter = vim.fn.system('jupyter --version 2>&1 | head -n1'):gsub('\n', '')
+        if jupyter == '' then jupyter = 'Not detected' end
+        return {
+          '',
+          'Data Science Info:',
+          '  Python: ' .. py,
+          '  Conda Env: ' .. conda,
+          '  CUDA: ' .. cuda,
+          '  Jupyter: ' .. jupyter,
+          '',
+        }
+      end
+      for _, line in ipairs(get_data_science_info()) do
+        table.insert(dune_footer, line)
+      end
+
       -- Use appropriate icons based on nerd font availability
       local icons = {
         update = vim.g.have_nerd_font and "󰚰 " or "Update",
@@ -230,14 +252,20 @@ require('lazy').setup({
             {
               desc = icons.app .. " Apps",
               group = 'DiagnosticHint',
-              action = 'Telescope app',
+              action = 'Telescope find_files cwd=~/Applications',
               key = 'a',
             },
             {
               desc = icons.dotfiles .. " dotfiles",
               group = 'Number',
-              action = 'Telescope dotfiles',
+              action = 'Telescope find_files cwd=~/dotfiles',
               key = 'd',
+            },
+            {
+              desc = 'Yazi',
+              group = 'Label',
+              action = 'Yazi',
+              key = 'y',
             },
           },
           packages = { enable = true },
@@ -497,6 +525,7 @@ require('lazy').setup({
       "L3MON4D3/LuaSnip", -- for snippet support
       "rafamadriz/friendly-snippets", -- optional, for more snippets
     },
+    build = "cargo build --release",
     config = function()
       require("blink.cmp").setup({
         -- Add custom config here if needed
@@ -623,13 +652,26 @@ require('lazy').setup({
       require('actions-preview').setup({})
     end,
   },
+
+  -- Ensure yazi.nvim is in the plugin list
+  {
+    "mikavilpas/yazi.nvim",
+    event = "VeryLazy",
+    dependencies = {
+      "folke/snacks.nvim",
+      "nvim-lua/plenary.nvim"
+    },
+    config = function()
+      -- Optional: custom config for yazi
+    end,
+  },
 }, {
   ui = {
     -- Use Nerd Font icons if available 
     icons = vim.g.have_nerd_font and {} or {
       config = '🛠',
       cmd = '⌘',
-      event = '📅',
+      event = '��',
       ft = '📂',
       init = '⚙',
       plugin = '🔌',

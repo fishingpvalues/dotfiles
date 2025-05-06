@@ -225,4 +225,6 @@ end
 --   hue = 1.0,
 -- }
 
+-- To show fastfetch/neofetch on shell startup, ensure your shell rc file (e.g., .bashrc, .zshrc, PowerShell profile) includes the fastfetch/neofetch logic. WezTerm will run your shell, which will display the info automatically.
+
 return config

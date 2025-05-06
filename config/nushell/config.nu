@@ -351,3 +351,18 @@ sysinfo
 $env.config.hooks.pre_prompt = ($env.config.hooks.pre_prompt | append {
     code: "use-nvm"
 })
+
+# Show fastfetch/neofetch with custom OS logo and conda env
+if (which fastfetch | is-empty) == false {
+  if ($env.CONDA_DEFAULT_ENV? | is-empty) == false {
+    fastfetch --logo ($nu.os-info.name) --custom ("Conda Env: " + $env.CONDA_DEFAULT_ENV)
+  } else {
+    fastfetch --logo ($nu.os-info.name)
+  }
+} else if (which neofetch | is-empty) == false {
+  if ($env.CONDA_DEFAULT_ENV? | is-empty) == false {
+    neofetch --ascii_distro ($nu.os-info.name) --print_info Conda
+  } else {
+    neofetch --ascii_distro ($nu.os-info.name)
+  }
+}

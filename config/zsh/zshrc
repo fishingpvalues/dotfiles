@@ -311,3 +311,18 @@ fi
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 [ -f ~/.zshrc.work ] && source ~/.zshrc.work
 [ -f ~/.zshrc.$(hostname) ] && source ~/.zshrc.$(hostname)
+
+# Show fastfetch/neofetch with custom OS logo and conda env
+if command -v fastfetch >/dev/null 2>&1; then
+  if [ -n "$CONDA_DEFAULT_ENV" ]; then
+    fastfetch --logo "$(uname -s)" --custom "Conda Env: $CONDA_DEFAULT_ENV"
+  else
+    fastfetch --logo "$(uname -s)"
+  fi
+elif command -v neofetch >/dev/null 2>&1; then
+  if [ -n "$CONDA_DEFAULT_ENV" ]; then
+    neofetch --ascii_distro "$(uname -s)" --print_info Conda
+  else
+    neofetch --ascii_distro "$(uname -s)"
+  fi
+fi
