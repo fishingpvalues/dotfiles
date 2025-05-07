@@ -76,6 +76,6 @@ return {
     end, {})
 
     -- Create keymapping for quick access
-    vim.keymap.set("n", "<leader>p", ":PickMe<CR>", { desc = "Open PickMe Menu", silent = true })
+    -- (Removed: now in keymaps.lua)
   end,
 }

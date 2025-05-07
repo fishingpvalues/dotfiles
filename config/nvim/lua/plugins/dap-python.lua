@@ -81,12 +81,6 @@ return {
     -- Set up test mappings
     dap_python.test_runner = 'pytest'
     
-    -- Basic keymaps
-    local keymap = vim.keymap.set
-    keymap('n', '<leader>dpr', function() dap_python.test_method() end, { desc = 'Debug Python Test Method' })
-    keymap('n', '<leader>dpc', function() dap_python.test_class() end, { desc = 'Debug Python Test Class' })
-    keymap('n', '<leader>dps', function() dap_python.debug_selection() end, { desc = 'Debug Python Selection' })
-    
     -- Configure exception breakpoints
     local dap = require('dap')
     dap.configurations.python = {

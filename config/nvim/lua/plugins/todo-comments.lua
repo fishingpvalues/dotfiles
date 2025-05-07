@@ -38,18 +38,6 @@ return {
   config = function(_, opts)
     require("todo-comments").setup(opts)
     
-    -- Add keymaps
-    vim.keymap.set("n", "]t", function()
-      require("todo-comments").jump_next()
-    end, { desc = "Next todo comment" })
-    
-    vim.keymap.set("n", "[t", function()
-      require("todo-comments").jump_prev()
-    end, { desc = "Previous todo comment" })
-    
-    -- List todos in telescope
-    vim.keymap.set("n", "<leader>st", "<cmd>TodoTelescope<cr>", { desc = "Search Todo comments" })
-    
     -- Apply transparency if enabled
     if vim.g.transparent_enabled then
       vim.defer_fn(function()

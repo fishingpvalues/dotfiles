@@ -18,7 +18,6 @@ return {
     vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { bg = "#2c323c", blend = 20 })
 
     -- Add keymaps for navigating between occurrences
-    vim.keymap.set("n", "]]", function() require("illuminate").goto_next_reference() end, { desc = "Next Reference" })
-    vim.keymap.set("n", "[[", function() require("illuminate").goto_prev_reference() end, { desc = "Previous Reference" })
+    -- (Removed: now in keymaps.lua)
   end,
 }

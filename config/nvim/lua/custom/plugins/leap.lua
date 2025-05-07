@@ -15,9 +15,6 @@ return {
     vim.api.nvim_set_hl(0, "LeapLabelSecondary", { fg = "#00dfff", bold = true, nocombine = true })
     
     -- Set up cross-window jumping with transparent UI
-    vim.keymap.set("n", "<leader>j", function()
-      local target_windows = require("leap.leap").get_target_windows()
-      require("leap").leap({ target_windows = target_windows, })
-    end, { desc = "Leap: Jump across windows" })
+    -- (Removed: now in keymaps.lua)
   end,
 }

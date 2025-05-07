@@ -21,7 +21,7 @@ return {
         g = true,
       },
     },
-    win = {
+    window = {
       border = "rounded", -- none, single, double, shadow, rounded
       position = "bottom", -- bottom, top
       margin = { 1, 0, 1, 0 }, -- extra window margin [top, right, bottom, left]
@@ -47,6 +47,7 @@ return {
     
     -- Register key mappings for transparency and UI handling
     wk.register({
+      ["<leader>t"] = { ':split | terminal<CR>', "Open terminal in split" },
       ["<leader>"] = {
         t = {
           name = "Transparency",
@@ -63,5 +64,8 @@ return {
         b = { name = "Buffers" },
       },
     })
+
+    -- Register all additional which-key mappings from centralized keymaps
+    -- pcall(require, 'keymaps')
   end,
 }

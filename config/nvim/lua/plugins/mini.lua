@@ -38,11 +38,10 @@ return {
     })
 
     -- Simple and easy statusline
-    require('mini.statusline').setup({
-      set_vim_settings = true,
-      -- Apply transparency if global setting is enabled
-      use_icons = true,
-    })
+    -- require('mini.statusline').setup({
+    --   set_vim_settings = true,
+    --   use_icons = true,
+    -- })
 
     -- Better comment operations
     require('mini.comment').setup({
@@ -69,8 +68,6 @@ return {
 
     -- Better buffer handling
     require('mini.bufremove').setup({})
-    -- Map Ctrl+w to delete buffer without closing window
-    vim.keymap.set('n', '<C-w>', "<cmd>lua MiniBufremove.delete()<CR>", { desc = 'Delete Buffer' })
     
     -- Apply transparency to mini.nvim components if enabled
     if vim.g.transparent_enabled then

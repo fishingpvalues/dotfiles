@@ -669,47 +669,13 @@ require('lazy').setup({
   
   require 'custom/plugins/persistent-breakpoints',
   
-  -- Lualine with transparent background
-  {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("lualine").setup({
-        options = {
-          icons_enabled = true,
-          theme = vim.g.transparent_enabled and "auto" or "auto", -- Use auto theme regardless of transparency
-          component_separators = { left = "", right = "" },
-          section_separators = { left = "", right = "" },
-          disabled_filetypes = { "dashboard", "alpha" },
-          globalstatus = true,
-        },
-        sections = {
-          lualine_a = { "mode" },
-          lualine_b = { "branch", "diff", "diagnostics" },
-          lualine_c = { "filename" },
-          lualine_x = { "encoding", "fileformat", "filetype" },
-          lualine_y = { "progress" },
-          lualine_z = { "location" },
-        },
-        -- Transparent background
-        extensions = { "neo-tree", "lazy" },
-      })
-      
-      -- Ensure lualine highlights are transparent
-      if vim.g.transparent_enabled then
-        vim.defer_fn(function()
-          require('transparent').clear_prefix('lualine')
-        end, 50) -- Slightly longer delay to ensure lualine has initialized
-      end
-    end,
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-  },
-  
+ 
   require 'custom/plugins/luasnip',
   require 'custom/plugins/web-devicons',
   require 'custom/plugins/neoscroll',
   require 'custom/plugins/rainbow-csv',
   require 'custom/plugins/pickme',
+  require 'custom/plugins/lualine',
   
   -- Blur background plugin (only works in certain environments that support it)
   {

@@ -111,8 +111,6 @@ return {
     end
 
     -- Add keymaps for debugging
-    vim.keymap.set("n", "<leader>du", function() dapui.toggle() end, { desc = "Toggle Debug UI" })
-    vim.keymap.set("n", "<leader>de", function() dapui.eval() end, { desc = "Evaluate Expression" })
-    vim.keymap.set("v", "<leader>de", function() dapui.eval() end, { desc = "Evaluate Expression" })
+    -- (Removed: now in keymaps.lua)
   end,
 }

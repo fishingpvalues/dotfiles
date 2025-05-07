@@ -52,11 +52,7 @@ return {
     require("luasnip.loaders.from_vscode").lazy_load({ paths = { snippet_path } })
     
     -- Keymap for jumping to previous/next snippet position
-    vim.keymap.set({ "i", "s" }, "<C-j>", function()
-      if ls.expand_or_jumpable() then
-        ls.expand_or_jump()
-      end
-    end, { silent = true, desc = "LuaSnip expand or jump" })
+    -- (Removed: now in keymaps.lua)
     
     vim.keymap.set({ "i", "s" }, "<C-k>", function()
       if ls.jumpable(-1) then

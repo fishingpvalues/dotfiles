@@ -15,16 +15,6 @@ return {
     require("persistent-breakpoints").setup(opts)
     
     -- Add keymaps for managing breakpoints
-    vim.keymap.set("n", "<leader>db", 
-      function() require("persistent-breakpoints.api").toggle_breakpoint() end,
-      { desc = "Toggle Breakpoint" })
-    
-    vim.keymap.set("n", "<leader>dB", 
-      function() require("persistent-breakpoints.api").set_conditional_breakpoint() end,
-      { desc = "Set Conditional Breakpoint" })
-      
-    vim.keymap.set("n", "<leader>dc", 
-      function() require("persistent-breakpoints.api").clear_all_breakpoints() end,
-      { desc = "Clear All Breakpoints" })
+    -- (Removed: now in keymaps.lua)
   end,
 }
