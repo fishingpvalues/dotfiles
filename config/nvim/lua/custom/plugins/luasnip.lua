@@ -1,4 +1,4 @@
--- LuaSnip configuration for snippets with transparency support
+-- LuaSnip configuration for snippets
 return {
   "L3MON4D3/LuaSnip",
   lazy = true,
@@ -13,11 +13,9 @@ return {
     ls.config.set_config({
       -- Enable autotriggered snippets
       enable_autosnippets = true,
-      
       -- Use treesitter for getting the current scope/environment
       use_treesitter = true,
-      
-      -- Setup nice visual appearance that works with transparency
+      -- Setup nice visual appearance
       ext_opts = {
         [types.choiceNode] = {
           active = {
@@ -30,13 +28,10 @@ return {
           },
         },
       },
-      
       -- Make history persist across sessions
       history = true,
-      
       -- Update dynamic snippets as you type
       updateevents = "TextChanged,TextChangedI",
-      
       -- Delete snippet when text changes
       delete_check_events = "TextChanged,InsertLeave",
     })

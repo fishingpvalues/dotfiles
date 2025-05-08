@@ -1,4 +1,4 @@
--- Indent-blankline configuration with transparency-friendly settings
+-- Indent-blankline configuration
 return {
   "lukas-reineke/indent-blankline.nvim",
   main = "ibl",
@@ -22,13 +22,6 @@ return {
     -- Load the plugin
     local ibl = require("ibl")
     ibl.setup(opts)
-
-    -- Set up hooks for transparency compatibility
-    local hooks = require("ibl.hooks")
-    hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
-      -- Make indent lines subtle and compatible with transparency
-      vim.api.nvim_set_hl(0, "IblIndent", { fg = "#393f4a", nocombine = true })
-      vim.api.nvim_set_hl(0, "IblScope", { fg = "#4e5666", nocombine = true })
-    end)
+    -- Removed transparency highlight hooks
   end,
 }

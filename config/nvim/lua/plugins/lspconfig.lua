@@ -82,28 +82,6 @@ return {
       vim.keymap.set('n', '<leader>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, vim.tbl_extend('force', opts, { desc = 'List Workspace Folders' }))
     end
 
-    -- Ensure handlers are set up before configuring servers
-    if vim.g.transparent_enabled then
-      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-        vim.lsp.handlers.hover, {
-          border = "rounded",
-        }
-      )
-
-      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-        vim.lsp.handlers.signature_help, {
-          border = "rounded",
-        }
-      )
-      
-      -- Diagnostic configuration
-      vim.diagnostic.config({
-        float = {
-          border = "rounded",
-        },
-      })
-    end
-
     -- Set up servers after everything else is configured
     for _, server_name in ipairs(mason_lspconfig.get_installed_servers()) do
       require('lspconfig')[server_name].setup({

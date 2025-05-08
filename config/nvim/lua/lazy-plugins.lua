@@ -3,128 +3,6 @@ require('lazy').setup({
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
-  -- Transparency and blur support
-  {
-    "xiyaowong/transparent.nvim",
-    lazy = false,
-    priority = 150,
-    config = function()
-      -- Set global transparency flag for plugins to reference
-      vim.g.transparent_enabled = true
-      
-      require("transparent").setup({
-        groups = { -- table: default groups
-          'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
-          'Statement', 'PreProc', 'Type', 'Underlined', 'Todo', 'String', 'Function',
-          'Conditional', 'Repeat', 'Operator', 'Structure', 'LineNr', 'NonText',
-          'SignColumn', 'CursorLine', 'CursorLineNr', 'StatusLine', 'StatusLineNC',
-          'EndOfBuffer',
-        },
-        extra_groups = {
-          -- For floating windows and panels
-          "NormalFloat", "FloatBorder", "TelescopeNormal", "TelescopeBorder",
-          "LspInfoBorder", "WhichKeyFloat", "DashboardHeader", "DashboardCenter",
-          "NeoTreeNormal", "NeoTreeNormalNC",
-          
-          -- For Bufferline and Lualine
-          "BufferLineTabClose", "BufferLineBuffer", "BufferLineBufferSelected",
-          "BufferLineBackground", "BufferLineFill",
-          
-          -- For diagnostic related highlights
-          "DiagnosticVirtualTextError", "DiagnosticVirtualTextWarn",
-          "DiagnosticVirtualTextInfo", "DiagnosticVirtualTextHint",
-          
-          -- For all other UI elements
-          "MsgArea", "FloatShadow", "FloatShadowThrough",
-          
-          -- Notification transparency
-          "NotifyBackground", "NotifyERRORBody", "NotifyWARNBody", 
-          "NotifyINFOBody", "NotifyDEBUGBody", "NotifyTRACEBody",
-          
-          -- LSP and completion floating windows
-          "LspFloatWinNormal", "LspFloatWinBorder", 
-          "CmpDocumentationNormal", "CmpDocumentationBorder",
-          "CmpCompletion", "CmpCompletionBorder",
-
-          -- Yazi file manager integration
-          "YaziFloat", "YaziFloatBorder", "YaziNormal",
-          
-          -- Lazy.nvim UI
-          "LazyNormal", "LazyButton", "LazyButtonActive", "LazyH1", 
-          "LazySpecial", "LazyProp", "LazyValue", "LazyDir",
-          
-          -- Mason UI
-          "MasonNormal", "MasonHeader", "MasonHighlight",
-          
-          -- Trouble UI
-          "TroubleNormal", "TroubleIndent", "TroubleCount",
-          
-          -- Popup menus
-          "Pmenu", "PmenuSel", "PmenuSbar", "PmenuThumb",
-        },
-        exclude_groups = {}, -- table: groups you don't want to clear
-        on_clear = function() 
-          -- Use defer_fn for better startup performance
-          vim.defer_fn(function()
-            -- Clear plugin prefixes for dynamically created highlights
-            require('transparent').clear_prefix('BufferLine')
-            require('transparent').clear_prefix('NeoTree')
-            require('transparent').clear_prefix('lualine')
-            require('transparent').clear_prefix('Telescope')
-            require('transparent').clear_prefix('WhichKey')
-            require('transparent').clear_prefix('Navic')
-            require('transparent').clear_prefix('Dashboard')
-            require('transparent').clear_prefix('Lazy')
-            require('transparent').clear_prefix('Mason')
-            require('transparent').clear_prefix('Notify')
-            require('transparent').clear_prefix('Cmp')
-            require('transparent').clear_prefix('Trouble')
-            require('transparent').clear_prefix('Diagnostic')
-            require('transparent').clear_prefix('Diff')
-            require('transparent').clear_prefix('Git')
-            
-            -- Add lualine specific transparent groups
-            vim.g.transparent_groups = vim.list_extend(
-              vim.g.transparent_groups or {},
-              vim.tbl_map(function(v) return "lualine_" .. v .. "_normal" end, {"a", "b", "c"})
-            )
-            
-            -- Create an autocommand to handle new highlight groups created after initialization
-            vim.api.nvim_create_autocmd("ColorScheme", {
-              callback = function()
-                vim.defer_fn(function()
-                  -- Re-apply transparency to common plugin prefixes
-                  require('transparent').clear_prefix('BufferLine')
-                  require('transparent').clear_prefix('NeoTree')
-                  require('transparent').clear_prefix('lualine')
-                  require('transparent').clear_prefix('Telescope')
-                end, 10)
-              end,
-              group = vim.api.nvim_create_augroup("TransparencyFix", { clear = true }),
-            })
-          end, 10) -- Short delay to avoid blocking startup
-        end,
-      })
-      
-      -- Create a command to fix transparency issues at runtime
-      vim.api.nvim_create_user_command('FixTransparency', function()
-        vim.cmd('TransparentEnable')
-        require('transparent').clear_prefix('BufferLine')
-        require('transparent').clear_prefix('NeoTree')
-        require('transparent').clear_prefix('lualine')
-        require('transparent').clear_prefix('Telescope')
-        require('transparent').clear_prefix('WhichKey')
-        require('transparent').clear_prefix('Navic')
-        require('transparent').clear_prefix('Dashboard')
-      end, { desc = 'Fix transparency issues' })
-      
-      -- Enable transparency on startup
-      if vim.g.transparent_enabled then
-        vim.cmd("TransparentEnable")
-      end
-    end,
-  },
-
   -- Import modules from plugins directory
   require 'plugins/gitsigns',
   require 'custom/plugins/which-key-fix',
@@ -483,15 +361,6 @@ require('lazy').setup({
       vim.api.nvim_set_hl(0, 'DashboardHeader', { fg = '#56C7D0', bold = true })
       vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#D7A752', italic = true })
 
-      -- Create an autocmd to preserve highlight colors when colorscheme changes
-      vim.api.nvim_create_autocmd('ColorScheme', {
-        pattern = '*',
-        callback = function()
-          vim.api.nvim_set_hl(0, 'DashboardHeader', { fg = '#56C7D0', bold = true })
-          vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#D7A752', italic = true })
-        end,
-      })
-
       -- Compose status block (single wide line, compact)
       local function get_status_block_plain()
         local dt = get_datetime_line()[2] or ''
@@ -517,7 +386,7 @@ require('lazy').setup({
   require 'plugins/autopairs',
   require 'custom/plugins/indent-blankline',
   
-  -- Neo-tree file explorer with transparency
+  -- Neo-tree file explorer
   {
     "nvim-neo-tree/neo-tree.nvim",
     branch = "v3.x",
@@ -547,40 +416,19 @@ require('lazy').setup({
             enabled = true,
           },
         },
-        -- Enable transparency for neo-tree
         enable_git_status = true,
         default_component_configs = {
           container = {
             enable_character_fade = true,
           },
         },
-        -- Set up event handler for transparency consistency
-        event_handlers = {
-          {
-            event = "neo_tree_buffer_enter",
-            handler = function()
-              if vim.g.transparent_enabled then
-                -- Ensure NeoTree components are transparent when entering the buffer
-                vim.defer_fn(function()
-                  require('transparent').clear_prefix('NeoTree')
-                end, 10)
-              end
-            end
-          }
-        },
       })
-      
-      -- Add NeoTree-specific highlight groups to transparent groups list
-      vim.g.transparent_groups = vim.list_extend(
-        vim.g.transparent_groups or {},
-        { "NeoTreeNormal", "NeoTreeEndOfBuffer", "NeoTreeVertSplit" }
-      )
     end,
   },
   
   require 'custom/plugins/diffview',
   
-  -- Bufferline with transparency
+  -- Bufferline
   {
     'akinsho/bufferline.nvim',
     version = "*",
@@ -596,15 +444,6 @@ require('lazy').setup({
           show_close_icon = true,
           color_icons = true,
           diagnostics = "nvim_lsp",
-          -- Adapt to transparent background
-          highlights = {
-            background = {
-              bg = { attribute = "bg", highlight = "Normal" },
-            },
-            fill = {
-              bg = { attribute = "bg", highlight = "TabLineFill" },
-            },
-          },
           hover = {
             enabled = true,
             delay = 200,
@@ -612,27 +451,6 @@ require('lazy').setup({
           },
         },
       })
-      
-      -- Add all bufferline highlights to transparent groups for consistent appearance
-      if vim.g.transparent_enabled then
-        vim.defer_fn(function()
-          -- Add all BufferLine highlights to transparent groups
-          if bufferline and bufferline.highlights then
-            local highlights = vim.tbl_values(bufferline.highlights)
-            if highlights then
-              vim.g.transparent_groups = vim.list_extend(
-                vim.g.transparent_groups or {},
-                vim.tbl_map(function(v)
-                  return v and v.hl_group or nil
-                end, highlights)
-              )
-            end
-          end
-          
-          -- Apply transparency
-          require('transparent').clear_prefix('BufferLine')
-        end, 100) -- Add a delay to ensure BufferLine has fully initialized
-      end
     end,
   },
   
@@ -640,28 +458,16 @@ require('lazy').setup({
   require 'custom/plugins/dap-ui',
   require 'custom/plugins/dap-virtual-text',
   
-  -- Fancy notifications with transparency
+  -- Fancy notifications
   {
     "rcarriga/nvim-notify",
     config = function()
       require("notify").setup({
-        background_colour = "#00000000", -- For transparency
+        background_colour = "#1a1b26", -- Use a solid background color
         render = "wrapped-compact",
         stages = "fade",
         timeout = 3000,
-        on_open = function(win)
-          -- Apply transparency to notification windows
-          if vim.g.transparent_enabled then
-            local win_config = vim.api.nvim_win_get_config(win)
-            win_config.zindex = 100
-            vim.api.nvim_win_set_config(win, win_config)
-            
-            -- Make sure highlight groups for notifications are transparent
-            vim.defer_fn(function()
-              require('transparent').clear_prefix('Notify')
-            end, 10)
-          end
-        end
+        -- Removed transparency logic
       })
       vim.notify = require("notify")
     end,

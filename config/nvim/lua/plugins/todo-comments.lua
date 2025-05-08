@@ -37,15 +37,5 @@ return {
   },
   config = function(_, opts)
     require("todo-comments").setup(opts)
-    
-    -- Apply transparency if enabled
-    if vim.g.transparent_enabled then
-      vim.defer_fn(function()
-        for k, _ in pairs(opts.keywords) do
-          require('transparent').clear_prefix('TodoSign' .. k)
-          require('transparent').clear_prefix('TodoBg' .. k)
-        end
-      end, 50)
-    end
   end,
 }

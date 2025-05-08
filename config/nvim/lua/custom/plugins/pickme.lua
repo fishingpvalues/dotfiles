@@ -37,9 +37,6 @@ return {
       mini_pick.builtin.cli({
         source = {
           items = {
-            { text = "Toggle Transparency", value = "toggle_transparency" },
-            { text = "Enable Transparency", value = "enable_transparency" },
-            { text = "Disable Transparency", value = "disable_transparency" },
             { text = "Toggle Line Numbers", value = "toggle_line_numbers" },
             { text = "Theme: GitHub Dark", value = "github_dark" },
             { text = "Theme: GitHub Light", value = "github_light" },
@@ -51,20 +48,7 @@ return {
           cancel = "<Esc>",
         },
         choose = function(item)
-          if item.value == "toggle_transparency" then
-            vim.g.transparent_enabled = not vim.g.transparent_enabled
-            if vim.g.transparent_enabled then
-              vim.cmd("TransparentEnable")
-            else
-              vim.cmd("TransparentDisable")
-            end
-          elseif item.value == "enable_transparency" then
-            vim.g.transparent_enabled = true
-            vim.cmd("TransparentEnable")
-          elseif item.value == "disable_transparency" then
-            vim.g.transparent_enabled = false
-            vim.cmd("TransparentDisable")
-          elseif item.value == "toggle_line_numbers" then
+          if item.value == "toggle_line_numbers" then
             vim.o.number = not vim.o.number
           elseif item.value == "github_dark" then
             vim.cmd("colorscheme github_dark")

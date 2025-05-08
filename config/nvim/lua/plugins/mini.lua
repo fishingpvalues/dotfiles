@@ -68,12 +68,5 @@ return {
 
     -- Better buffer handling
     require('mini.bufremove').setup({})
-    
-    -- Apply transparency to mini.nvim components if enabled
-    if vim.g.transparent_enabled then
-      vim.defer_fn(function()
-        require('transparent').clear_prefix('MiniStatus')
-      end, 50)
-    end
   end,
 }

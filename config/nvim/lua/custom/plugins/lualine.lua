@@ -1,4 +1,4 @@
--- Lualine configuration with transparency support
+-- Lualine configuration
 return {
   "nvim-lualine/lualine.nvim",
   event = "VeryLazy",
@@ -107,19 +107,18 @@ return {
             icon = '',
             padding = { left = 1, right = 1 },
             color = function()
-              -- Mode colors inspired by github_dark and popular themes
               local mode_color = {
-                n = { fg = '#1a1b26', bg = '#61afef', gui = 'bold' },      -- NORMAL: blue
-                i = { fg = '#1a1b26', bg = '#98c379', gui = 'bold' },      -- INSERT: green
-                v = { fg = '#1a1b26', bg = '#e06c75', gui = 'bold' },      -- VISUAL: red
-                V = { fg = '#1a1b26', bg = '#e06c75', gui = 'bold' },      -- VISUAL LINE: red
-                ['\22'] = { fg = '#1a1b26', bg = '#e06c75', gui = 'bold' },-- VISUAL BLOCK: red
-                c = { fg = '#1a1b26', bg = '#e5c07b', gui = 'bold' },      -- COMMAND: yellow
-                R = { fg = '#1a1b26', bg = '#c678dd', gui = 'bold' },      -- REPLACE: magenta
-                s = { fg = '#1a1b26', bg = '#56b6c2', gui = 'bold' },      -- SELECT: cyan
-                S = { fg = '#1a1b26', bg = '#56b6c2', gui = 'bold' },      -- SELECT LINE: cyan
-                ['\19'] = { fg = '#1a1b26', bg = '#56b6c2', gui = 'bold' },-- SELECT BLOCK: cyan
-                t = { fg = '#1a1b26', bg = '#d19a66', gui = 'bold' },      -- TERMINAL: orange
+                n = { fg = '#1a1b26', bg = '#61afef', gui = 'bold' },
+                i = { fg = '#1a1b26', bg = '#98c379', gui = 'bold' },
+                v = { fg = '#1a1b26', bg = '#e06c75', gui = 'bold' },
+                V = { fg = '#1a1b26', bg = '#e06c75', gui = 'bold' },
+                ['\22'] = { fg = '#1a1b26', bg = '#e06c75', gui = 'bold' },
+                c = { fg = '#1a1b26', bg = '#e5c07b', gui = 'bold' },
+                R = { fg = '#1a1b26', bg = '#c678dd', gui = 'bold' },
+                s = { fg = '#1a1b26', bg = '#56b6c2', gui = 'bold' },
+                S = { fg = '#1a1b26', bg = '#56b6c2', gui = 'bold' },
+                ['\19'] = { fg = '#1a1b26', bg = '#56b6c2', gui = 'bold' },
+                t = { fg = '#1a1b26', bg = '#d19a66', gui = 'bold' },
               }
               local mode = vim.fn.mode()
               return mode_color[mode] or { fg = '#1a1b26', bg = '#61afef', gui = 'bold' }
@@ -181,42 +180,6 @@ return {
       winbar = {},
       inactive_winbar = {},
       extensions = { 'neo-tree', 'lazy', 'trouble', 'toggleterm', 'nvim-dap-ui' },
-    })
-
-    -- Make lualine highlights work well with transparency
-    vim.api.nvim_create_autocmd("ColorScheme", {
-      callback = function()
-        local normal_bg = vim.api.nvim_get_hl(0, { name = "Normal" }).bg
-        if normal_bg then
-          vim.api.nvim_set_hl(0, "lualine_c_normal", { bg = normal_bg, fg = "#abb2bf" })
-          vim.api.nvim_set_hl(0, "lualine_c_inactive", { bg = normal_bg, fg = "#6f737b" })
-        end
-      end,
-    })
-
-    -- Force lualine mode highlights for all modes (fixes invisible mode text)
-    vim.api.nvim_create_autocmd("ColorScheme", {
-      callback = function()
-        local mode_hl = {
-          n = { bg = "#61afef" },      -- NORMAL: blue
-          i = { bg = "#98c379" },      -- INSERT: green
-          v = { bg = "#e06c75" },      -- VISUAL: red
-          c = { bg = "#e5c07b" },      -- COMMAND: yellow
-          R = { bg = "#c678dd" },      -- REPLACE: magenta
-          s = { bg = "#56b6c2" },      -- SELECT: cyan
-          t = { bg = "#d19a66" },      -- TERMINAL: orange
-        }
-        local mode_map = {
-          n = "normal", i = "insert", v = "visual", c = "command",
-          R = "replace", s = "select", t = "terminal"
-        }
-        for mode, color in pairs(mode_hl) do
-          local group = "lualine_a_" .. mode_map[mode]
-          if group then
-            vim.api.nvim_set_hl(0, group, { fg = "#1a1b26", bg = color.bg, bold = true })
-          end
-        end
-      end,
     })
   end,
 }

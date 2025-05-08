@@ -114,18 +114,5 @@ return {
         end,
       },
     }
-    
-    -- Apply transparency to DAP UI elements if enabled
-    if vim.g.transparent_enabled then
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "dap-repl", "dapui_*" },
-        callback = function()
-          vim.defer_fn(function()
-            require('transparent').clear_prefix('Dap')
-            require('transparent').clear_prefix('DapUI')
-          end, 10)
-        end,
-      })
-    end
   end,
 }

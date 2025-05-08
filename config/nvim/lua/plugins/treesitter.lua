@@ -91,13 +91,5 @@ return {
         extended_mode = true,
       },
     })
-    
-    -- Apply transparency adjustments if enabled
-    if vim.g.transparent_enabled then
-      vim.defer_fn(function()
-        require('transparent').clear_prefix('TSNode')
-        require('transparent').clear_prefix('TS')
-      end, 50)
-    end
   end,
 }

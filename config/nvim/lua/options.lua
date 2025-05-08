@@ -72,9 +72,7 @@ vim.opt.scrolloff = 10
 -- Ask to save on quit if needed
 vim.opt.confirm = true
 
--- Transparency and background settings
-vim.opt.winblend = 15            -- Window transparency level
-vim.opt.pumblend = 15            -- Popup menu transparency
+-- Removed transparency and background settings
 vim.opt.background = "dark"      -- Dark mode to match dotfile themes
 
 -- vim: ts=2 sts=2 sw=2 et
