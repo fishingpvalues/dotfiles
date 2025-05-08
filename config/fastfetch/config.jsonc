@@ -1,0 +1,83 @@
+{
+  // Use ASCII logo, auto-detect OS, and set logo color to match OS branding
+  "logo": "ascii",
+  "logo_colors": "auto",
+  "separator": "  ",
+  "modules": [
+    "title",
+    "os",
+    "host",
+    "kernel",
+    "uptime",
+    "shell",
+    "terminal",
+    "terminalFont",
+    "display",
+    "cpu",
+    "gpu",
+    "memory",
+    "disk",
+    "battery",
+    {
+      "type": "custom",
+      "text": "Python: $(python3 --version 2>&1 | cut -d' ' -f2)"
+    },
+    {
+      "type": "custom",
+      "text": "Conda Env: $CONDA_DEFAULT_ENV",
+      "when": "$CONDA_DEFAULT_ENV"
+    },
+    {
+      "type": "custom",
+      "text": "CUDA: $(nvcc --version | grep release | awk '{print $6}' | sed 's/,//')",
+      "when": "command -v nvcc"
+    },
+    {
+      "type": "custom",
+      "text": "Jupyter: $(jupyter --version 2>/dev/null | head -n1)",
+      "when": "command -v jupyter"
+    },
+    {
+      "type": "custom",
+      "text": "Pip Env: $PIPENV_ACTIVE",
+      "when": "$PIPENV_ACTIVE"
+    },
+    {
+      "type": "custom",
+      "text": "Poetry Env: $POETRY_ACTIVE",
+      "when": "$POETRY_ACTIVE"
+    },
+    {
+      "type": "custom",
+      "text": "R: $(R --version 2>/dev/null | head -n1)",
+      "when": "command -v R"
+    },
+    {
+      "type": "custom",
+      "text": "Julia: $(julia --version 2>/dev/null | head -n1)",
+      "when": "command -v julia"
+    },
+    {
+      "type": "custom",
+      "text": "Weather:\n$(curl -s 'wttr.in?format=3&0&n' 2>/dev/null || echo 'N/A')"
+    },
+    "localIp",
+    "git",
+    "datetime"
+  ],
+  "colors": {
+    "title": "bold cyan",
+    "os": "bold blue",
+    "host": "bold yellow",
+    "kernel": "bold magenta",
+    "uptime": "green",
+    "shell": "bold green",
+    "terminal": "bold blue",
+    "cpu": "bold red",
+    "gpu": "bold magenta",
+    "memory": "bold cyan",
+    "disk": "bold yellow",
+    "battery": "bold green",
+    "datetime": "bold white"
+  }
+}

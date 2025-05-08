@@ -117,11 +117,9 @@ if ! command -v oh-my-posh &> /dev/null; then
     export PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
 fi
 
-# System information
-if command -v neofetch &> /dev/null; then
-    neofetch
-elif command -v macchina &> /dev/null; then
-    macchina
-else
-    echo "Consider installing neofetch or macchina for system info"
+# Show system info with fastfetch (SOTA) or fallback to neofetch
+if command -v fastfetch >/dev/null 2>&1; then
+  fastfetch --logo ascii
+elif command -v neofetch >/dev/null 2>&1; then
+  neofetch
 fi

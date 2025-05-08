@@ -140,7 +140,7 @@ return {
           { function()
               local clients = vim.lsp.get_clients({ bufnr = 0 })
               if #clients > 0 then
-                return ' ' .. clients[1].name
+                return clients[1].name
               end
               return ''
             end, icon = '', color = { fg = '#98be65' } },

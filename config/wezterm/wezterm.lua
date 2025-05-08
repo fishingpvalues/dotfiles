@@ -9,10 +9,11 @@ end
 
 -- Load GitHub Dark theme
 config.color_scheme_dirs = { 'colors' }
-config.color_scheme = 'github-dark'
+config.color_scheme = 'GitHub Dark'
 
 -- Font configuration
 config.font = wezterm.font_with_fallback {
+  'FiraCode Nerd Font',
   'CaskaydiaCove NF',
   'JetBrains Mono',
   'Cascadia Code',
@@ -21,7 +22,7 @@ config.font_size = 12.0
 config.line_height = 1.1
 
 -- Window appearance with blur effect
-config.window_background_opacity = 0.85
+config.window_background_opacity = 0.7
 config.window_decorations = "TITLE | RESIZE"
 config.window_padding = {
   left = 10,
@@ -85,23 +86,6 @@ config.mouse_bindings = {
 
 -- Key Bindings
 config.keys = {
-  -- Transparency controls
-  {
-    key = ']',
-    mods = 'ALT|CTRL',
-    action = act.IncrementOpacity,
-  },
-  {
-    key = '[',
-    mods = 'ALT|CTRL',
-    action = act.DecrementOpacity,
-  },
-  {
-    key = '\\',
-    mods = 'ALT|CTRL',
-    action = act.ResetOpacity,
-  },
-
   -- Tab management
   {
     key = 't',
@@ -254,4 +238,57 @@ wezterm.on('update-right-status', function(window, pane)
   }))
 end)
 
-return config
+-- bar.wezterm (SOTA status/tab bar)
+local bar = wezterm.plugin.require("https://github.com/adriankarlen/bar.wezterm")
+bar.apply_to_config(config, {
+  position = "bottom",
+  max_width = 32,
+  padding = {
+    left = 1,
+    right = 1,
+    tabs = { left = 0, right = 2 },
+  },
+  separator = {
+    space = 1,
+    left_icon = wezterm.nerdfonts.fa_long_arrow_right,
+    right_icon = wezterm.nerdfonts.fa_long_arrow_left,
+    field_icon = wezterm.nerdfonts.indent_line,
+  },
+  modules = {
+    tabs = { active_tab_fg = 4, inactive_tab_fg = 6, new_tab_fg = 2 },
+    workspace = { enabled = true, icon = wezterm.nerdfonts.cod_window, color = 8 },
+    leader = { enabled = true, icon = wezterm.nerdfonts.oct_rocket, color = 2 },
+    pane = { enabled = true, icon = wezterm.nerdfonts.cod_multiple_windows, color = 7 },
+    username = { enabled = true, icon = wezterm.nerdfonts.fa_user, color = 6 },
+    hostname = { enabled = true, icon = wezterm.nerdfonts.cod_server, color = 8 },
+    clock = { enabled = true, icon = wezterm.nerdfonts.md_calendar_clock, format = "%H:%M", color = 5 },
+    cwd = { enabled = true, icon = wezterm.nerdfonts.oct_file_directory, color = 7 },
+    -- Uncomment to enable Spotify integration (requires spotify-tui)
+    -- spotify = { enabled = true, icon = wezterm.nerdfonts.fa_spotify, color = 3, max_width = 64, throttle = 15 },
+  },
+})
+
+-- wezterm-tmux-navigator (seamless pane/tmux navigation)
+-- Removed broken plugin reference; use built-in key bindings below
+
+local act = wezterm.action
+config.keys = config.keys or {}
+for _, key in ipairs({
+  {key="LeftArrow",  mods="CTRL|SHIFT", action=act.ActivatePaneDirection("Left")},
+  {key="DownArrow",  mods="CTRL|SHIFT", action=act.ActivatePaneDirection("Down")},
+  {key="UpArrow",    mods="CTRL|SHIFT", action=act.ActivatePaneDirection("Up")},
+  {key="RightArrow", mods="CTRL|SHIFT", action=act.ActivatePaneDirection("Right")},
+}) do
+  table.insert(config.keys, key)
+end
+
+-- Enable SSH multiplexing
+config.ssh_domains = wezterm.default_ssh_domains()
+
+-- Enable QuickSelect for URLs and file paths
+config.quick_select_patterns = {
+  "https?://\\S+",
+  "/[\\w\\-./]+",
+}
+
+return config 

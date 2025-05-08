@@ -47,14 +47,14 @@ return {
     
     -- Register key mappings for transparency and UI handling
     wk.register({
-      ["<leader>t"] = { ':split | terminal<CR>', "Open terminal in split" },
+      ["<leader>T"] = { ':split | terminal<CR>', "Open terminal in split" },
+      ["<leader>u"] = {
+        name = "Transparency",
+        t = { "<cmd>lua vim.g.transparent_enabled = not vim.g.transparent_enabled; if vim.g.transparent_enabled then vim.cmd('TransparentEnable') else vim.cmd('TransparentDisable') end<cr>", "Toggle Transparency" },
+        e = { "<cmd>TransparentEnable<cr>", "Enable Transparency" },
+        d = { "<cmd>TransparentDisable<cr>", "Disable Transparency" },
+      },
       ["<leader>"] = {
-        t = {
-          name = "Transparency",
-          t = { "<cmd>lua vim.g.transparent_enabled = not vim.g.transparent_enabled; if vim.g.transparent_enabled then vim.cmd('TransparentEnable') else vim.cmd('TransparentDisable') end<cr>", "Toggle Transparency" },
-          e = { "<cmd>TransparentEnable<cr>", "Enable Transparency" },
-          d = { "<cmd>TransparentDisable<cr>", "Disable Transparency" },
-        },
         -- Other groups and mappings
         f = { name = "Find/Telescope" },
         e = { name = "Explorer" },

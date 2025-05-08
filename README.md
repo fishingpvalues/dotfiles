@@ -8,8 +8,8 @@
 
 1. **Clone this repo** to your machine.
 2. **Run the setup script for your OS:**
-   - Windows: `bootstrap/setup-chezmoi.ps1` (add `-Reinit` to force reinit)
-   - macOS/Linux: `bootstrap/setup-chezmoi.sh` (add `--reinit` to force reinit)
+   - Windows: `bootstrap/setup-dotfiles.ps1` (add `-Reinit` to force reinit)
+   - macOS/Linux: `bootstrap/setup-dotfiles.sh` (add `--reinit` to force reinit)
 3. **Install all tools and fonts:**
    - This is now handled automatically by the setup script, which calls the appropriate install script:
      - Windows: `bootstrap/scripts/windows/install.ps1`
@@ -203,8 +203,8 @@ dotfiles/
       install.sh
       healer.sh
       install-oh-my-posh.sh
-  setup-chezmoi.ps1
-  setup-chezmoi.sh
+  setup-dotfiles.ps1
+  setup-dotfiles.sh
   setup-chezmoi-arch.sh
   reinit-chezmoi.ps1
   media/
@@ -469,11 +469,11 @@ After installation, you can launch Cursor from your applications menu or with th
 ## Entry Points
 
 - **Windows:**
-  - `bootstrap/setup-chezmoi.ps1` — Initial chezmoi and dotfiles setup
+  - `bootstrap/setup-dotfiles.ps1` — Initial chezmoi and dotfiles setup
   - `bootstrap/scripts/windows/install.ps1` — Install all tools and fonts, fix profile
   - `bootstrap/scripts/windows/healer.ps1` — Heal/fix common issues (run if you have errors)
 - **macOS/Linux:**
-  - `bootstrap/setup-chezmoi.sh` — Initial chezmoi and dotfiles setup
+  - `bootstrap/setup-dotfiles.sh` — Initial chezmoi and dotfiles setup
   - `bootstrap/scripts/unix/install.sh` — Install all tools and fonts
   - `bootstrap/scripts/unix/healer.sh` — Heal/fix common issues (run if you have errors)
 
@@ -521,8 +521,8 @@ dotfiles/
       install.sh
       healer.sh
       install-oh-my-posh.sh
-  setup-chezmoi.ps1
-  setup-chezmoi.sh
+  setup-dotfiles.ps1
+  setup-dotfiles.sh
   setup-chezmoi-arch.sh
   reinit-chezmoi.ps1
   media/
@@ -651,3 +651,15 @@ To keep documentation up to date after changes, scan the root directory for all 
 ---
 
 For more details, see `test/README.md` and `config/nvim/lua/custom/tests/README.md`.
+
+## Local CI Testing with act
+
+You can use [act](https://github.com/nektos/act) to test your GitHub Actions workflows locally, including macOS workflows (with some limitations):
+
+```sh
+# Run all workflows as if on GitHub Actions
+act
+
+# Run a specific workflow/job
+act -j <job-name>
+```

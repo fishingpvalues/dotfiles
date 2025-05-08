@@ -39,9 +39,9 @@ chezmoi diff
 chezmoi apply
 
 # 4. Run the macOS setup script (for system/app tweaks)
-./bootstrap/setup-chezmoi.sh
+./bootstrap/setup-dotfiles.sh
 # or, for a fresh setup, add --reinit
-./bootstrap/setup-chezmoi.sh --reinit
+./bootstrap/setup-dotfiles.sh --reinit
 ```
 
 ---
@@ -94,7 +94,7 @@ dotfiles/
   bootstrap/           # macOS-specific scripts and app configs
   config/           # App and tool configs (cross-platform)
   scripts/          # Helper scripts (unix/windows)
-  bootstrap/setup-chezmoi.sh  # Main macOS/Linux setup script
+  bootstrap/setup-dotfiles.sh  # Main macOS/Linux setup script
   bootstrap/dot_Brewfile      # Homebrew bundle file (macOS)
   ...
 ```

@@ -160,7 +160,7 @@ if pcall(require, 'conform') then
 end
 
 -- Toggle transparent background
-vim.keymap.set('n', '<leader>tt', function()
+vim.keymap.set('n', '<leader>u', function()
   vim.g.transparent_enabled = not vim.g.transparent_enabled
   if vim.g.transparent_enabled then
     vim.cmd('TransparentEnable')
@@ -170,6 +170,8 @@ vim.keymap.set('n', '<leader>tt', function()
     print('Transparency disabled')
   end
 end, { desc = 'Toggle transparency' })
+
+vim.keymap.set('n', '<leader>T', ':split | terminal<CR>', { desc = 'Open terminal in split' })
 
 -- Register main which-key groups
 -- if pcall(require, 'which-key') then
