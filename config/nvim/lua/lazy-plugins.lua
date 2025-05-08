@@ -175,6 +175,7 @@ require('lazy').setup({
 
       -- Dune quote for footer (reduced blank lines)
       local dune_footer = {
+        '', '', -- Add more space before the quote
         'I must not fear.',
         'Fear is the mind-killer.',
         'Fear is the little-death that brings total obliteration.',
@@ -183,7 +184,7 @@ require('lazy').setup({
         'And when it has gone past, I will turn the inner eye to see its path.',
         'Where the fear has gone there will be nothing. Only I will remain.',
         '— Bene Gesserit Litany Against Fear',
-        '', -- Add blank line before Python/Data Science info
+        '', '', -- Add more space after the quote
       }
 
       -- Data Science Info (condensed to one line)
@@ -359,7 +360,7 @@ require('lazy').setup({
 
       -- Set an attractive color palette that matches your terminal theme
       vim.api.nvim_set_hl(0, 'DashboardHeader', { fg = '#56C7D0', bold = true })
-      vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#D7A752', italic = true })
+      vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#6c7086', italic = true })
 
       -- Compose status block (single wide line, compact)
       local function get_status_block_plain()

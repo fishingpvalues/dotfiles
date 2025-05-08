@@ -22,7 +22,7 @@ config.font_size = 12.0
 config.line_height = 1.1
 
 -- Window appearance with blur effect
-config.window_background_opacity = 0.7
+config.window_background_opacity = 0.5
 config.window_decorations = "TITLE | RESIZE"
 config.window_padding = {
   left = 10,
@@ -211,62 +211,42 @@ end
 
 -- To show fastfetch/neofetch on shell startup, ensure your shell rc file (e.g., .bashrc, .zshrc, PowerShell profile) includes the fastfetch/neofetch logic. WezTerm will run your shell, which will display the info automatically.
 
--- Status bar: CPU, RAM, and time (Windows)
-wezterm.on('update-right-status', function(window, pane)
-  local time = wezterm.strftime('%H:%M:%S')
-  local cpu = ''
-  local ram = ''
-  -- Nerd Font icons
-  local clock_icon = '󰥔'
-  local cpu_icon = '󰍛'
-  local ram_icon = '󰍛'
-  if wezterm.target_triple:find('windows') then
-    -- Get CPU usage (average of all cores)
-    local cpu_out = wezterm.run_child_process({'powershell', '-NoProfile', '-Command', "Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average | Select -ExpandProperty Average"})
-    if cpu_out and #cpu_out > 0 then
-      cpu = string.format('%s %s%%', cpu_icon, cpu_out:gsub('\n', ''))
-    end
-    -- Get RAM usage (used/total in GB)
-    local ram_out = wezterm.run_child_process({'powershell', '-NoProfile', '-Command', "Get-CimInstance Win32_OperatingSystem | ForEach-Object { [math]::Round(($_.TotalVisibleMemorySize- $_.FreePhysicalMemory)/1MB,1) }"})
-    local ram_total = wezterm.run_child_process({'powershell', '-NoProfile', '-Command', "Get-CimInstance Win32_OperatingSystem | ForEach-Object { [math]::Round($_.TotalVisibleMemorySize/1MB,1) }"})
-    if ram_out and ram_total and #ram_out > 0 and #ram_total > 0 then
-      ram = string.format('%s %s/%sGB', ram_icon, ram_out:gsub('\n', ''), ram_total:gsub('\n', ''))
-    end
-  end
-  window:set_right_status(wezterm.format({
-    {Text = string.format('%s %s   %s   %s', clock_icon, time, cpu, ram)}
-  }))
-end)
+-- Add tabline.wez plugin
+local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
+local battery = wezterm.plugin.require("https://github.com/rootiest/battery.wez")
+battery.invert = true
+battery.apply_to_config(config)
 
--- bar.wezterm (SOTA status/tab bar)
-local bar = wezterm.plugin.require("https://github.com/adriankarlen/bar.wezterm")
-bar.apply_to_config(config, {
-  position = "bottom",
-  max_width = 32,
-  padding = {
-    left = 1,
-    right = 1,
-    tabs = { left = 0, right = 2 },
+-- Remove custom used_ram and network_usage from tabline_x, use only built-in plugin components
+
+tabline.setup({
+  options = {
+    icons_enabled = true,
+    theme = 'GitHub Dark',
+    tabs_enabled = true,
+    section_separators = { left = '│', right = '│' },
+    component_separators = { left = '│', right = '│' },
+    tab_separators = { left = '│', right = '│' },
   },
-  separator = {
-    space = 1,
-    left_icon = wezterm.nerdfonts.fa_long_arrow_right,
-    right_icon = wezterm.nerdfonts.fa_long_arrow_left,
-    field_icon = wezterm.nerdfonts.indent_line,
+  sections = {
+    tabline_a = {},
+    tabline_b = { 'workspace', 'hostname' },
+    tabline_c = { 'cwd', 'process' },
+    tab_active = {
+      'index',
+      { 'cwd', padding = { left = 0, right = 1 } },
+      { 'zoomed', padding = 0 },
+    },
+    tab_inactive = { 'index', { 'process', padding = { left = 0, right = 1 } } },
+    tabline_x = { 'ram', 'cpu', 'network' },
+    tabline_y = { 'datetime' },
+    tabline_z = { battery.get_battery_icons },
   },
-  modules = {
-    tabs = { active_tab_fg = 4, inactive_tab_fg = 6, new_tab_fg = 2 },
-    workspace = { enabled = true, icon = wezterm.nerdfonts.cod_window, color = 8 },
-    leader = { enabled = true, icon = wezterm.nerdfonts.oct_rocket, color = 2 },
-    pane = { enabled = true, icon = wezterm.nerdfonts.cod_multiple_windows, color = 7 },
-    username = { enabled = true, icon = wezterm.nerdfonts.fa_user, color = 6 },
-    hostname = { enabled = true, icon = wezterm.nerdfonts.cod_server, color = 8 },
-    clock = { enabled = true, icon = wezterm.nerdfonts.md_calendar_clock, format = "%H:%M", color = 5 },
-    cwd = { enabled = true, icon = wezterm.nerdfonts.oct_file_directory, color = 7 },
-    -- Uncomment to enable Spotify integration (requires spotify-tui)
-    -- spotify = { enabled = true, icon = wezterm.nerdfonts.fa_spotify, color = 3, max_width = 64, throttle = 15 },
-  },
+  extensions = {},
 })
+
+tabline.apply_to_config(config)
+config.tab_bar_at_bottom = true
 
 -- wezterm-tmux-navigator (seamless pane/tmux navigation)
 -- Removed broken plugin reference; use built-in key bindings below
@@ -291,4 +271,23 @@ config.quick_select_patterns = {
   "/[\\w\\-./]+",
 }
 
-return config 
+-- Add modal.wezterm plugin
+config.colors = wezterm.get_builtin_color_schemes()[config.color_scheme]
+local modal = wezterm.plugin.require("https://github.com/MLFlexer/modal.wezterm")
+modal.apply_to_config(config)
+
+-- Add presentation.wez plugin
+local presentation = wezterm.plugin.require("https://gitlab.com/xarvex/presentation.wez")
+presentation.apply_to_config(config, {
+  font_size_multiplier = 1.8,
+  presentation = {
+    keybind = { key = "o", mods = "CTRL|ALT" },
+  },
+  presentation_full = {
+    keybind = { key = "o", mods = "CTRL|ALT|SHIFT" },
+    font_size_multiplier = 2.4,
+    font_weight = "Bold",
+  },
+})
+
+return config
