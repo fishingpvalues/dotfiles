@@ -93,8 +93,8 @@ return {
       options = {
         icons_enabled = true,
         theme = 'auto',
-        component_separators = { left = '', right = '' },
-        section_separators = { left = '', right = '' },
+        component_separators = { left = '|', right = '|' },
+        section_separators = { left = '', right = '' },
         disabled_filetypes = { statusline = { 'dashboard', 'alpha' }, winbar = {} },
         globalstatus = true,
         always_divide_middle = true,
@@ -127,7 +127,7 @@ return {
         },
         lualine_b = {
           { 'branch', icon = '' },
-          { 'diff' },
+          { 'diff', symbols = { added = ' ', modified = ' ', removed = ' ' } },
           { 'diagnostics', sources = { 'nvim_diagnostic' }, symbols = { error = ' ', warn = ' ', info = ' ', hint = ' ' } },
         },
         lualine_c = {
@@ -168,14 +168,6 @@ return {
         lualine_x = { 'location' },
         lualine_y = {},
         lualine_z = {},
-      },
-      tabline = {
-        lualine_a = { 'buffers' },
-        lualine_b = {},
-        lualine_c = {},
-        lualine_x = {},
-        lualine_y = {},
-        lualine_z = { 'tabs' },
       },
       winbar = {},
       inactive_winbar = {},

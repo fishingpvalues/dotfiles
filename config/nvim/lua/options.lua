@@ -75,4 +75,7 @@ vim.opt.confirm = true
 -- Removed transparency and background settings
 vim.opt.background = "dark"      -- Dark mode to match dotfile themes
 
+-- Always show the tabline (required for bufferline)
+vim.opt.showtabline = 2
+
 -- vim: ts=2 sts=2 sw=2 et
