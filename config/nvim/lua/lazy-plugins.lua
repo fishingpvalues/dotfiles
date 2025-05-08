@@ -199,26 +199,33 @@ require('lazy').setup({
         }
         local py = vim.fn.system('python --version 2>&1'):gsub('\n', '')
         if py == '' or py:match('not found') then
-          py = icons.python .. ' Python: Not found'
+          py = icons.python .. ' ¬ Python'
         else
-          py = icons.python .. ' ' .. py
+          py = icons.python .. ' ⊢ ' .. py
         end
         local conda_env = os.getenv('CONDA_DEFAULT_ENV')
-        local conda = conda_env and #conda_env > 0 and (icons.conda .. ' ' .. conda_env) or (icons.conda .. ' No Conda')
-        local cuda = vim.fn.system('nvidia-smi --query-gpu=name,driver_version --format=csv,noheader 2>/dev/null | head -n1'):gsub('\n', '')
-        if cuda == '' or cuda:match('not found') then
-          cuda = icons.cuda .. ' No CUDA'
+        local conda = conda_env and #conda_env > 0 and (icons.conda .. ' ∈ ' .. conda_env) or (icons.conda .. ' ∉ Conda')
+        -- CUDA: check for nvcc
+        local nvcc_path = vim.fn.exepath('nvcc')
+        local cuda
+        if not nvcc_path or nvcc_path == '' then
+          cuda = icons.cuda .. ' ¬ CUDA'
         else
-          cuda = icons.cuda .. ' ' .. cuda
+          local cuda_version = vim.fn.system('nvcc --version 2>&1'):match('release ([%d%.]+)')
+          if cuda_version then
+            cuda = icons.cuda .. ' ⊢ CUDA ' .. cuda_version
+          else
+            cuda = icons.cuda .. ' ⊢ CUDA (∄ version)'
+          end
         end
         local jupyter = vim.fn.system('jupyter --version 2>&1 | head -n1'):gsub('\n', '')
         if jupyter == '' or jupyter:match('not found') then
-          jupyter = icons.jupyter .. ' No Jupyter'
+          jupyter = icons.jupyter .. ' ∄ Jupyter'
         else
-          jupyter = icons.jupyter .. ' ' .. jupyter
+          jupyter = icons.jupyter .. ' ∃ ' .. jupyter
         end
         local yazi_path = vim.fn.exepath('yazi')
-        local yazi = yazi_path and #yazi_path > 0 and (icons.yazi .. ' Yazi') or (icons.yazi .. ' No Yazi')
+        local yazi = yazi_path and #yazi_path > 0 and (icons.yazi .. ' ⊢ Yazi') or (icons.yazi .. ' ¬ Yazi')
         return {
           string.format('󰅩  %s   %s   %s   %s   %s', py, conda, cuda, jupyter, yazi)
         }
@@ -314,12 +321,6 @@ require('lazy').setup({
               key = 'f',
             },
             {
-              desc = safe_apps_label,
-              group = 'DiagnosticHint',
-              action = 'lua require("custom.commands.dashboard_actions").apps_shortcut_action()',
-              key = 'a',
-            },
-            {
               desc = icons.dotfiles .. " dotfiles",
               group = 'Number',
               action = 'lua require("custom.commands.dashboard_actions").dotfiles_shortcut_action()',
@@ -338,19 +339,30 @@ require('lazy').setup({
               action = 'lua require("custom.commands.dashboard_actions").new_project_action()',
             },
           },
-          packages = { enable = true },
-          project = { 
-            enable = true, 
-            limit = 8, 
-            icon = icons.project_icon, 
-            label = '', 
-            action = 'Telescope find_files cwd=' 
+          packages = { enable = false }, -- disable plugin count
+          -- Remove the 'project' section (recent folders)
+          -- project = { 
+          --   enable = true, 
+          --   limit = 8, 
+          --   icon = icons.project_icon, 
+          --   label = '', 
+          --   action = 'Telescope find_files cwd=' 
+          -- },
+          -- Add a 'recent sessions' section above recent files, using persisted.nvim
+          recent_sessions = {
+            enable = true,
+            limit = 5,
+            icon = icons.project_icon or (vim.g.have_nerd_font and '󰄉' or 'Sessions'),
+            label = 'Sessions',
+            group = 'Label',
+            action = 'lua require("custom.commands.dashboard_actions").recent_sessions_action()',
           },
           mru = {
             enable = true,
             limit = 10,
-            icon = icons.mru_icon,
-            label = '',
+            icon = (icons.mru_icon or (vim.g.have_nerd_font and '󰋚' or 'Recent')) .. '  ',
+            label = '  Recent Files',
+            group = 'Label',
             cwd_only = false,
             action = 'lua require("custom.commands.dashboard_actions").mru_action()',
           },
@@ -359,8 +371,25 @@ require('lazy').setup({
       })
 
       -- Set an attractive color palette that matches your terminal theme
+      -- Header: vibrant cyan
       vim.api.nvim_set_hl(0, 'DashboardHeader', { fg = '#56C7D0', bold = true })
-      vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#6c7086', italic = true })
+      -- Shortcuts: purple
+      vim.api.nvim_set_hl(0, 'DashboardShortcut', { fg = '#c678dd', bold = true })
+      -- Sessions: blue
+      vim.api.nvim_set_hl(0, 'DashboardSessions', { fg = '#61afef', bold = true })
+      -- Recent Files: green
+      vim.api.nvim_set_hl(0, 'DashboardRecent', { fg = '#98c379', bold = true })
+      -- Footer/Quote: subtle grey
+      vim.api.nvim_set_hl(0, 'DashboardFooter', { fg = '#5c6370', italic = true })
+      -- Bottom line: brand colors (GitHub, Python, Conda, CUDA, Jupyter, Yazi)
+      -- Compose a rainbow bar using highlight groups
+      vim.api.nvim_set_hl(0, 'DashboardBrandGitHub', { fg = '#24292f', bg = '#ffffff', bold = true })
+      vim.api.nvim_set_hl(0, 'DashboardBrandPython', { fg = '#3776ab', bg = '#ffd43b', bold = true })
+      vim.api.nvim_set_hl(0, 'DashboardBrandConda', { fg = '#44a833', bg = '#ffffff', bold = true })
+      vim.api.nvim_set_hl(0, 'DashboardBrandCUDA', { fg = '#76b900', bg = '#000000', bold = true })
+      vim.api.nvim_set_hl(0, 'DashboardBrandJupyter', { fg = '#f37626', bg = '#ffffff', bold = true })
+      vim.api.nvim_set_hl(0, 'DashboardBrandYazi', { fg = '#ffb86c', bg = '#282a36', bold = true })
+      -- Optionally, you can draw a colored bar at the bottom using virtual text or a custom footer line.
 
       -- Compose status block (single wide line, compact)
       local function get_status_block_plain()
@@ -379,6 +408,26 @@ require('lazy').setup({
       local cat_end = #cat_header
       for i, v in ipairs(get_status_block_plain()) do
         table.insert(cat_header, cat_end + i, v)
+      end
+
+      -- Timer to refresh the dashboard time every 10 minutes (600000 ms)
+      local function refresh_dashboard_time()
+        -- Remove old status block
+        for _ = 1, 2 do table.remove(cat_header, cat_end + 1) end
+        -- Insert new status block
+        for i, v in ipairs(get_status_block_plain()) do
+          table.insert(cat_header, cat_end + i, v)
+        end
+        -- Redraw dashboard
+        if vim.api.nvim_get_var and pcall(vim.api.nvim_command, 'echo') then
+          pcall(vim.cmd, 'redraw')
+        end
+      end
+      if vim.fn.has('nvim') == 1 and vim.loop then
+        vim.defer_fn(function()
+          refresh_dashboard_time()
+          vim.defer_fn(refresh_dashboard_time, 600000) -- 10 minutes
+        end, 600000)
       end
     end,
     dependencies = { { 'nvim-tree/nvim-web-devicons' } }
@@ -556,7 +605,18 @@ require('lazy').setup({
   {
     'olimorris/persisted.nvim',
     config = function()
-      require('persisted').setup({})
+      require('persisted').setup({
+        dir = vim.fn.stdpath("state") .. "/sessions/", -- directory where session files are saved
+        use_git_branch = true, -- use git branch to save session
+        autosave = true, -- automatically save session on exit
+        autoload = false, -- do not autoload session
+        follow_cwd = true, -- update session file name on cwd change
+        allowed_dirs = nil, -- allow all dirs
+        ignored_dirs = { vim.fn.stdpath("config") }, -- ignore config dir
+        telescope = {
+          enabled = true,
+        },
+      })
     end,
   },
 
