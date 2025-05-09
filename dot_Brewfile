@@ -109,3 +109,26 @@ cask "vlc"
 
 # Mac App Store
 mas "OneSwitch", id: 1477630474
+
+# Cross-platform CLI utilities
+brew "dog"
+brew "duf"
+brew "dust"
+brew "glow"
+brew "httpie"
+brew "lsd"
+brew "procs"
+
+# Add after existing CLI utilities
+brew "broot"
+brew "bottom"
+brew "as-tree"
+brew "dua-cli"
+brew "delta"
+brew "difftastic"
+brew "just"
+brew "atuin"
+brew "bandwhich"
+brew "hyperfine"
+brew "miniserve"
+brew "choose"

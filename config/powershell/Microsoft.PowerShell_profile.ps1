@@ -11,4 +11,24 @@ if (Get-Command fastfetch -ErrorAction SilentlyContinue) {
     } else {
         neofetch --ascii_distro $env:OS
     }
-} 
+}
+
+# Rust-powered tool aliases
+Set-Alias find fd
+Set-Alias grep rg
+Set-Alias cat bat
+Set-Alias du dust
+Set-Alias diff delta
+Set-Alias tree as-tree
+Set-Alias top bottom
+Set-Alias broot broot
+Set-Alias dua dua
+Set-Alias dua-cli dua-cli
+Set-Alias ncdu ncdu
+Set-Alias just just
+Set-Alias atuin atuin
+Set-Alias bandwhich bandwhich
+Set-Alias hyperfine hyperfine
+Set-Alias miniserve miniserve
+Set-Alias dog dog
+Set-Alias choose choose 

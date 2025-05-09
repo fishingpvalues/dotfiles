@@ -159,6 +159,71 @@ Platform-specific applications are installed through the respective package mana
 
 - **Nerd Fonts**: MesloLGS NF, Fira Code Nerd Font, etc.
 
+## Modern Rust-powered CLI Tools
+
+The following modern, Rust-powered (and Rust-inspired) CLI tools are included and aliased for a faster, richer terminal experience:
+
+### File Search & Content Viewing
+
+- **fd**: Fast, user-friendly replacement for find
+- **ripgrep (rg)**: Fast recursive search (better grep)
+- **bat**: cat with syntax highlighting
+
+### Directory Navigation & Listing
+
+- **broot**: TUI directory tree and fuzzy search
+- **bottom**: Graphical process/system monitor (alternative to htop)
+- **as-tree**: Modern tree command
+
+### File & Disk Management
+
+- **dust**: Intuitive du replacement
+- **dua (dua-cli)**: Disk usage analyzer with delete support
+- **ncdu**: Curses-based disk usage explorer
+
+### Git & Development Productivity
+
+- **delta**: Syntax-highlighting pager for git diff/grep
+- **difftastic**: Syntax-aware diff tool
+- **just**: Modern command runner (like make)
+
+### Miscellaneous Utilities
+
+- **atuin**: Enhanced shell history manager
+- **bandwhich**: Real-time bandwidth monitor
+- **hyperfine**: Command benchmarking tool
+- **miniserve**: Instant static file server
+- **dog**: Modern DNS client (dig replacement)
+- **choose**: Fast, human-friendly cut/awk alternative
+- **procs**: Modern ps replacement
+- **lsd**: Modern ls replacement
+- **duf**: Modern df replacement
+- **glow**: Markdown previewer
+- **httpie**: User-friendly HTTP client
+
+All tools are installed and configured cross-platform (macOS, Linux, Windows/WSL).
+
+## Aliases for Modern Tools
+
+To maximize productivity, standard commands are aliased to their modern Rust-powered equivalents in all supported shells (bash, zsh, fish, PowerShell, Nushell):
+
+| Standard | Rust-powered Replacement |
+|----------|-------------------------|
+| find     | fd                      |
+| grep     | rg                      |
+| cat      | bat --paging=never      |
+| du       | dust                    |
+| diff     | delta                   |
+| tree     | as-tree                 |
+| top      | bottom                  |
+| ...      | ...                     |
+
+Other tools (broot, dua, ncdu, just, atuin, bandwhich, hyperfine, miniserve, dog, choose, etc.) are also available and aliased for convenience.
+
+**Aliases are set up automatically for bash, zsh, fish, PowerShell, and Nushell.**
+
+See the respective shell config files for details.
+
 ## Structure
 
 ```
