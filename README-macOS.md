@@ -175,4 +175,18 @@ To keep documentation up to date after changes, scan the root directory for all 
 
 ---
 
+## Directory Navigation with zoxide
+
+This dotfiles setup includes [zoxide](https://github.com/ajeetdsouza/zoxide) for fast directory jumping:
+
+- **Shells**: zoxide is initialized in supported shells (bash, zsh, fish, etc.). Use `z <pattern>` to jump to frequently used directories.
+- **Neovim**: zoxide is integrated via the [telescope-zoxide](https://github.com/jvgrootveld/telescope-zoxide) plugin. Use `:Telescope zoxide list` to fuzzy-find and jump to directories inside Neovim.
+
+To install zoxide:
+
+- On most systems: `brew install zoxide` or `sudo apt install zoxide`
+- For more info, see the [zoxide GitHub page](https://github.com/ajeetdsouza/zoxide).
+
+---
+
 Enjoy your automated, reproducible, and secure macOS setup!

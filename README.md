@@ -663,3 +663,78 @@ act
 # Run a specific workflow/job
 act -j <job-name>
 ```
+
+## Directory Navigation with zoxide
+
+This dotfiles setup includes [zoxide](https://github.com/ajeetdsouza/zoxide) for fast directory jumping:
+
+| Shell/Tool   | Supported | Config Location                        | Usage Example         |
+|--------------|-----------|----------------------------------------|-----------------------|
+| bash         | ✅         | `config/bash/.bashrc`                  | `z <pattern>`         |
+| zsh          | ✅         | `config/zsh/zshrc`                     | `z <pattern>`         |
+| fish         | ✅         | `config/fish/config.fish`              | `z <pattern>`         |
+| nushell      | ✅         | `config/nushell/config.nu`             | `z <pattern>`         |
+| PowerShell   | ✅         | `config/powershell/user_profile.ps1`   | `z <pattern>`         |
+| Neovim       | ✅         | `config/nvim/lua/lazy-plugins.lua`     | `:Telescope zoxide`   |
+
+- **Shells**: zoxide is initialized in supported shells (bash, zsh, fish, nushell, PowerShell, etc.). Use `z <pattern>` to jump to frequently used directories.
+- **Neovim**: zoxide is integrated via the [telescope-zoxide](https://github.com/jvgrootveld/telescope-zoxide) plugin. Use `:Telescope zoxide list` to fuzzy-find and jump to directories inside Neovim.
+
+To install zoxide:
+
+- On most systems: `brew install zoxide` or `sudo apt install zoxide`
+- For more info, see the [zoxide GitHub page](https://github.com/ajeetdsouza/zoxide).
+
+## DataFrame Debugging with bear.nvim
+
+- **Plugin:** [bear.nvim](https://github.com/nelnn/bear.nvim) is included for debugging pandas and polars DataFrames in Python.
+- **Keymap:** Use `<leader>df` in normal or visual mode to visualize the DataFrame under the cursor.
+- **Command:** Use `:DFView` to input a DataFrame variable for visualization.
+- **Requirements:**
+  - [nvim-dap](https://github.com/mfussenegger/nvim-dap) (installed automatically)
+  - [visidata](https://www.visidata.org/) (install globally: `pip install visidata`)
+  - [pandas](https://pandas.pydata.org/) and/or [polars](https://www.pola.rs/) in your Python environment
+
+## Edit History Time Travel with time-machine.nvim
+
+- **Plugin:** [time-machine.nvim](https://github.com/y3owk1n/time-machine.nvim) is included for advanced undo/redo, timeline, and edit history management.
+- **Keymaps:**
+  - `<leader>tt`: Toggle the time machine panel
+  - `<leader>tx`: Purge current buffer's undo history
+  - `<leader>tX`: Purge all undo histories
+  - `<leader>tl`: Show the time machine log
+- **which-key:** All keymaps are discoverable via which-key under the `[t] Time Machine` group.
+- **Requirements:**
+  - Neovim 0.11+
+  - A diff tool in your PATH: either `difft` (recommended for syntax-aware diffs) or `diff` (standard)
+  - If neither is found, you will see a clear error message in Neovim
+- **Recommended Neovim settings:**
+
+  ```lua
+  vim.opt.undofile = true
+  vim.opt.undodir = vim.fn.expand("~/.undodir")
+  ```
+
+## Terminal Management with neaterminal.nvim
+
+- **Plugin:** [neaterminal.nvim](https://github.com/bassamsdata/neaterminal.nvim) is included for advanced terminal and TUI app management in Neovim.
+- **Features:**
+  - Floating and split terminals
+  - Terminal toggling and management
+  - Support for TUI apps (lazygit, yazi, btop, etc.)
+  - Resizing, maximizing, and process monitoring
+  - Custom app integration (e.g., btop, yazi)
+  - Error messages if required apps are not in PATH (e.g., btop)
+  - Does **not** override default terminal spawning; only used when explicitly invoked
+  - Works on all platforms and terminals, including wezterm
+- **Keymaps:**
+  - `<leader>tf`: Open floating terminal
+  - `<leader>ts`: Open split terminal
+  - `<leader>lg`: Run lazygit in float
+  - `<leader>tm`: Maximize current terminal
+  - `<leader>bt`: Open btop (float, with error if not installed)
+  - `<leader>ya`: Open yazi (float, with error if not installed)
+- **which-key:** All keymaps are discoverable under `[t] Terminal` group.
+- **Requirements:**
+  - Neovim 0.11+
+  - TUI apps (lazygit, yazi, btop, etc.) should be installed and in PATH for their respective keymaps to work.
