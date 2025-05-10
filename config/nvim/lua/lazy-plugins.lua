@@ -597,7 +597,48 @@ require('lazy').setup({
     'akinsho/toggleterm.nvim',
     version = '*',
     config = function()
-      require('toggleterm').setup({})
+      require('toggleterm').setup({
+        size = function(term)
+          if term.direction == "horizontal" then
+            return 15
+          elseif term.direction == "vertical" then
+            return vim.o.columns * 0.4
+          end
+        end,
+        open_mapping = { [[<C-\\>]], [[<leader>tt]] },
+        insert_mappings = true,
+        terminal_mappings = true,
+        shade_terminals = true,
+        shading_factor = 2,
+        start_in_insert = true,
+        persist_size = true,
+        persist_mode = true,
+        direction = 'horizontal',
+        close_on_exit = true,
+        shell = vim.o.shell,
+        float_opts = {
+          border = 'curved',
+          winblend = 3,
+        },
+        winbar = { enabled = false },
+      })
+      -- SOTA commands
+      local Terminal = require('toggleterm.terminal').Terminal
+      local lazygit = Terminal:new({ cmd = 'lazygit', hidden = true, direction = 'float' })
+      function _LAZYGIT_TOGGLE()
+        lazygit:toggle()
+      end
+      vim.api.nvim_set_keymap('n', '<leader>tg', '<cmd>lua _LAZYGIT_TOGGLE()<CR>', { noremap = true, silent = true, desc = 'Toggle Lazygit' })
+      local htop = Terminal:new({ cmd = 'htop', hidden = true, direction = 'float' })
+      function _HTOP_TOGGLE()
+        htop:toggle()
+      end
+      vim.api.nvim_set_keymap('n', '<leader>th', '<cmd>lua _HTOP_TOGGLE()<CR>', { noremap = true, silent = true, desc = 'Toggle htop' })
+      local python = Terminal:new({ cmd = 'python', hidden = true, direction = 'float' })
+      function _PYTHON_TOGGLE()
+        python:toggle()
+      end
+      vim.api.nvim_set_keymap('n', '<leader>tp', '<cmd>lua _PYTHON_TOGGLE()<CR>', { noremap = true, silent = true, desc = 'Toggle Python REPL' })
     end,
   },
 
@@ -707,6 +748,459 @@ require('lazy').setup({
     },
     config = function()
       -- Optional: custom config for yazi
+    end,
+  },
+
+  {
+    "nelnn/bear.nvim",
+    dependencies = {
+      "mfussenegger/nvim-dap",
+    },
+    opts = {
+      cache_dir = "~/.cache/nvim/bear",
+      file_name = "df_debug_" .. os.time() .. ".csv",
+      window = {
+        width = 0.9,
+        height = 0.8,
+        border = "rounded"
+      },
+      keymap = {
+        visualise = "<Leader>df"
+      }
+    },
+    config = function(_, opts)
+      local ok, df_visidata = pcall(require, "bear")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("bear.nvim failed to load!", vim.log.levels.ERROR, {title = "bear.nvim"})
+        end)
+        return
+      end
+      df_visidata.setup(opts)
+    end,
+    ft = { "python" },
+  },
+
+  {
+    'FredeHoey/tardis.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local ok, tardis = pcall(require, 'tardis-nvim')
+      if not ok then
+        vim.schedule(function()
+          vim.notify('tardis.nvim failed to load!', vim.log.levels.ERROR, {title = 'tardis.nvim'})
+        end)
+        return
+      end
+      tardis.setup {
+        keymap = {
+          ["next"] = '<C-j>',
+          ["prev"] = '<C-k>',
+          ["quit"] = 'q',
+          ["revision_message"] = '<C-m>',
+          ["commit"] = '<C-g>',
+        },
+        initial_revisions = 10,
+        max_revisions = 256,
+      }
+    end,
+    cmd = { 'Tardis' },
+    keys = {
+      { '<leader>ut', '<cmd>Tardis git<cr>', desc = '[Tardis] Git Timetravel' },
+    },
+  },
+
+  {
+    "typicode/bg.nvim",
+    lazy = false,
+    config = function()
+      local ok, bg = pcall(require, "bg")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("bg.nvim failed to load!", vim.log.levels.ERROR, {title = "bg.nvim"})
+        end)
+        return
+      end
+      bg.setup({})
+    end,
+  },
+
+  {
+    "rachartier/tiny-glimmer.nvim",
+    event = "VeryLazy",
+    priority = 10,
+    config = function()
+      local ok, glimmer = pcall(require, "tiny-glimmer")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("tiny-glimmer.nvim failed to load!", vim.log.levels.ERROR, {title = "tiny-glimmer.nvim"})
+        end)
+        return
+      end
+      glimmer.setup({
+        enabled = true,
+        disable_warnings = true,
+        refresh_interval_ms = 8,
+        transparency_color = "#181a1b", -- subtle, nearly transparent dark
+        overwrite = {
+          auto_map = true,
+          yank = {
+            enabled = true,
+            default_animation = "fade",
+          },
+          search = {
+            enabled = false,
+            default_animation = "pulse",
+            next_mapping = "n",
+            prev_mapping = "N",
+          },
+          paste = {
+            enabled = true,
+            default_animation = "reverse_fade",
+            paste_mapping = "p",
+            Paste_mapping = "P",
+          },
+          undo = {
+            enabled = false,
+          },
+          redo = {
+            enabled = false,
+          },
+        },
+        animations = {
+          fade = {
+            max_duration = 350,
+            min_duration = 250,
+            easing = "outQuad",
+            chars_for_max_duration = 10,
+            from_color = "#23272e", -- github dark subtle selection
+            to_color = "Normal",
+          },
+          reverse_fade = {
+            max_duration = 320,
+            min_duration = 220,
+            easing = "outBack",
+            chars_for_max_duration = 10,
+            from_color = "#23272e",
+            to_color = "Normal",
+          },
+          pulse = {
+            max_duration = 400,
+            min_duration = 300,
+            chars_for_max_duration = 15,
+            pulse_count = 2,
+            intensity = 1.1,
+            from_color = "#23272e",
+            to_color = "Normal",
+          },
+        },
+      })
+    end,
+  },
+
+  {
+    "xzbdmw/colorful-menu.nvim",
+    event = "VeryLazy",
+    config = function()
+      local ok, cmenu = pcall(require, "colorful-menu")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("colorful-menu.nvim failed to load!", vim.log.levels.ERROR, {title = "colorful-menu.nvim"})
+        end)
+        return
+      end
+      cmenu.setup({
+        ls = {
+          pylsp = {
+            extra_info_hl = "@comment",
+            arguments_hl = "@comment",
+          },
+          pyright = {
+            extra_info_hl = "@comment",
+          },
+          basedpyright = {
+            extra_info_hl = "@comment",
+          },
+          lua_ls = {
+            arguments_hl = "@comment",
+          },
+          rust_analyzer = {
+            extra_info_hl = "@comment",
+            align_type_to_right = true,
+            preserve_type_when_truncate = true,
+          },
+          ["rust-analyzer"] = {
+            extra_info_hl = "@comment",
+            align_type_to_right = true,
+            preserve_type_when_truncate = true,
+          },
+          gopls = {
+            align_type_to_right = true,
+            preserve_type_when_truncate = true,
+          },
+          tsserver = {
+            extra_info_hl = "@comment",
+          },
+          ts_ls = {
+            extra_info_hl = "@comment",
+          },
+          vtsls = {
+            extra_info_hl = "@comment",
+          },
+          clangd = {
+            extra_info_hl = "@comment",
+            align_type_to_right = true,
+            import_dot_hl = "@comment",
+            preserve_type_when_truncate = true,
+          },
+          zls = {
+            align_type_to_right = true,
+          },
+          roslyn = {
+            extra_info_hl = "@comment",
+          },
+          dartls = {
+            extra_info_hl = "@comment",
+          },
+          intelephense = {
+            extra_info_hl = "@comment",
+          },
+          fallback = true,
+          fallback_extra_info_hl = "@comment",
+        },
+        fallback_highlight = "@variable",
+        max_width = 60,
+      })
+      -- Integrate with blink.cmp if present
+      local ok_blink, blink = pcall(require, "blink.cmp")
+      if ok_blink and blink.setup then
+        blink.setup({
+          completion = {
+            menu = {
+              draw = {
+                columns = { { "kind_icon" }, { "label", gap = 1 } },
+                components = {
+                  label = {
+                    text = function(ctx)
+                      return require("colorful-menu").blink_components_text(ctx)
+                    end,
+                    highlight = function(ctx)
+                      return require("colorful-menu").blink_components_highlight(ctx)
+                    end,
+                  },
+                },
+              },
+            },
+          },
+        })
+      end
+    end,
+  },
+
+  {
+    "ya2s/nvim-cursorline",
+    event = "VeryLazy",
+    config = function()
+      local ok, cursorline = pcall(require, "nvim-cursorline")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("nvim-cursorline failed to load!", vim.log.levels.ERROR, {title = "nvim-cursorline"})
+        end)
+        return
+      end
+      cursorline.setup {
+        cursorline = {
+          enable = true,
+          timeout = 1000,
+          number = false,
+        },
+        cursorword = {
+          enable = true,
+          min_length = 3,
+          hl = { underline = true },
+        },
+      }
+    end,
+  },
+
+  {
+    "EtiamNullam/deferred-clipboard.nvim",
+    event = "VeryLazy",
+    config = function()
+      local ok, dclip = pcall(require, "deferred-clipboard")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("deferred-clipboard.nvim failed to load!", vim.log.levels.ERROR, {title = "deferred-clipboard.nvim"})
+        end)
+        return
+      end
+      dclip.setup {
+        fallback = 'unnamedplus',
+        lazy = true,
+      }
+    end,
+  },
+
+  {
+    "wurli/visimatch.nvim",
+    event = "VeryLazy",
+    config = function()
+      local ok, visimatch = pcall(require, "visimatch")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("visimatch.nvim failed to load!", vim.log.levels.ERROR, {title = "visimatch.nvim"})
+        end)
+        return
+      end
+      visimatch.setup({
+        -- Use defaults: highlights with 'Search', case-insensitive for markdown/text/help
+      })
+    end,
+  },
+
+  {
+    'aaronik/treewalker.nvim',
+    event = 'VeryLazy',
+    config = function()
+      local ok, treewalker = pcall(require, 'treewalker')
+      if not ok then
+        vim.schedule(function()
+          vim.notify('treewalker.nvim failed to load!', vim.log.levels.ERROR, {title = 'treewalker.nvim'})
+        end)
+        return
+      end
+      treewalker.setup({
+        highlight = true,
+        highlight_duration = 250,
+        highlight_group = 'CursorLine',
+      })
+    end,
+  },
+
+  {
+    "jake-stewart/multicursor.nvim",
+    branch = "1.0",
+    config = function()
+      local ok, mc = pcall(require, "multicursor-nvim")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("multicursor.nvim failed to load!", vim.log.levels.ERROR, {title = "multicursor.nvim"})
+        end)
+        return
+      end
+      mc.setup()
+      local set = vim.keymap.set
+      -- Add or skip cursor above/below the main cursor.
+      set({"n", "x"}, "<up>", function() mc.lineAddCursor(-1) end, { desc = "Add cursor above" })
+      set({"n", "x"}, "<down>", function() mc.lineAddCursor(1) end, { desc = "Add cursor below" })
+      set({"n", "x"}, "<leader><up>", function() mc.lineSkipCursor(-1) end, { desc = "Skip cursor above" })
+      set({"n", "x"}, "<leader><down>", function() mc.lineSkipCursor(1) end, { desc = "Skip cursor below" })
+      -- Add or skip adding a new cursor by matching word/selection
+      set({"n", "x"}, "<leader>n", function() mc.matchAddCursor(1) end, { desc = "Add cursor to next match" })
+      set({"n", "x"}, "<leader>s", function() mc.matchSkipCursor(1) end, { desc = "Skip next match" })
+      set({"n", "x"}, "<leader>N", function() mc.matchAddCursor(-1) end, { desc = "Add cursor to prev match" })
+      set({"n", "x"}, "<leader>S", function() mc.matchSkipCursor(-1) end, { desc = "Skip prev match" })
+      -- Add and remove cursors with control + left click.
+      set("n", "<c-leftmouse>", mc.handleMouse, { desc = "Add/remove cursor (mouse)" })
+      set("n", "<c-leftdrag>", mc.handleMouseDrag, { desc = "Drag cursor (mouse)" })
+      set("n", "<c-leftrelease>", mc.handleMouseRelease, { desc = "Release cursor (mouse)" })
+      -- Disable and enable cursors.
+      set({"n", "x"}, "<c-q>", mc.toggleCursor, { desc = "Toggle multicursor mode" })
+      -- Mappings defined in a keymap layer only apply when there are multiple cursors.
+      mc.addKeymapLayer(function(layerSet)
+        layerSet({"n", "x"}, "<left>", mc.prevCursor)
+        layerSet({"n", "x"}, "<right>", mc.nextCursor)
+        layerSet({"n", "x"}, "<leader>x", mc.deleteCursor)
+        layerSet("n", "<esc>", function()
+          if not mc.cursorsEnabled() then
+            mc.enableCursors()
+          else
+            mc.clearCursors()
+          end
+        end)
+      end)
+      -- Highlight groups for subtle, modern look
+      local hl = vim.api.nvim_set_hl
+      hl(0, "MultiCursorCursor", { reverse = true })
+      hl(0, "MultiCursorVisual", { link = "Visual" })
+      hl(0, "MultiCursorSign", { link = "SignColumn" })
+      hl(0, "MultiCursorMatchPreview", { link = "Search" })
+      hl(0, "MultiCursorDisabledCursor", { reverse = true })
+      hl(0, "MultiCursorDisabledVisual", { link = "Visual" })
+      hl(0, "MultiCursorDisabledSign", { link = "SignColumn" })
+    end,
+  },
+
+  {
+    "sphamba/smear-cursor.nvim",
+    opts = {
+      smear_between_buffers = true,
+      smear_between_neighbor_lines = true,
+      scroll_buffer_space = true,
+      legacy_computing_symbols_support = false,
+      smear_insert_mode = true,
+      cursor_color = "#d3cdc3", -- Subtle, soft beige for GitHub Dark
+    },
+    config = function(_, opts)
+      local ok, smear = pcall(require, "smear_cursor")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("smear-cursor.nvim failed to load!", vim.log.levels.ERROR, {title = "smear-cursor.nvim"})
+        end)
+        return
+      end
+      smear.setup(opts)
+    end,
+  },
+
+  {
+    "hat0uma/csvview.nvim",
+    opts = {
+      parser = { comments = { "#", "//" } },
+      view = {
+        display_mode = "highlight", -- subtle, modern delimiter highlight
+        header_lnum = 1, -- sticky header for first line
+      },
+      keymaps = {
+        textobject_field_inner = { "if", mode = { "o", "x" } },
+        textobject_field_outer = { "af", mode = { "o", "x" } },
+        jump_next_field_end = { "<Tab>", mode = { "n", "v" } },
+        jump_prev_field_end = { "<S-Tab>", mode = { "n", "v" } },
+        jump_next_row = { "<Enter>", mode = { "n", "v" } },
+        jump_prev_row = { "<S-Enter>", mode = { "n", "v" } },
+      },
+    },
+    config = function(_, opts)
+      local ok, csvview = pcall(require, "csvview")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("csvview.nvim failed to load!", vim.log.levels.ERROR, {title = "csvview.nvim"})
+        end)
+        return
+      end
+      csvview.setup(opts)
+    end,
+    ft = { "csv", "tsv" },
+    cmd = { "CsvViewEnable", "CsvViewDisable", "CsvViewToggle" },
+  },
+
+  {
+    "mrjones2014/smart-splits.nvim",
+    priority = 1001,
+    lazy = false,
+    config = function()
+      local ok, smart_splits = pcall(require, "smart-splits")
+      if not ok then
+        vim.schedule(function()
+          vim.notify("smart-splits.nvim failed to load!", vim.log.levels.ERROR, {title = "smart-splits.nvim"})
+        end)
+        return
+      end
+      smart_splits.setup({
+        at_edge = "wrap",
+        multiplexer_integration = "wezterm",
+        log_level = "warn",
+      })
     end,
   },
 }, {

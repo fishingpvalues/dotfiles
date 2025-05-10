@@ -1,0 +1,637 @@
+
+==============================================================================
+auto-dark-mode:                       require("auto-dark-mode.health").check()
+
+auto-dark-mode.nvim ~
+- ✅ OK Setup is correct
+- Detected operating system: Windows_NT
+- Using query command: `reg.exe Query HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize /v AppsUseLightTheme`
+- Benchmark: 6.66ms avg / 5.48ms min / 9.29ms max
+- ✅ OK Update interval (1000ms) is 150.12x the average query time
+
+==============================================================================
+dap:                                             require("dap.health").check()
+
+dap: Adapters ~
+
+dap.adapter: debugpy ~
+- Adapter is a function. Can't validate it
+
+dap.adapter: python ~
+- Adapter is a function. Can't validate it
+
+dap: Sessions ~
+- ✅ OK No active sessions
+
+==============================================================================
+lazy:                                           require("lazy.health").check()
+
+lazy.nvim ~
+- {lazy.nvim} version `11.17.1`
+- Query response:
+  stdout: 
+  HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize
+      AppsUseLightTheme    REG_DWORD    0x0
+
+
+  stderr: 
+
+- ✅ OK {git} `version 2.49.0.windows.1`
+- ✅ OK no existing packages found by other package managers
+- ✅ OK packer_compiled.lua not found
+
+luarocks ~
+- checking `hererocks` installation
+- ✅ OK no plugins require `luarocks`, so you can ignore any warnings below
+- ✅ OK {python3} `Python 3.12.7`
+- ❌ ERROR {C:/Users/danie/AppData/Local/nvim-data/lazy-rocks/hererocks/bin/luarocks} not installed
+- ⚠️ WARNING {C:/Users/danie/AppData/Local/nvim-data/lazy-rocks/hererocks/bin/lua} version `5.1` not installed
+- ⚠️ WARNING Lazy won't be able to install plugins that require `luarocks`.
+  Here's what you can do:
+   - fix your `luarocks` installation
+   - disable *hererocks* with `opts.rocks.hererocks = false`
+   - disable `luarocks` support completely with `opts.rocks.enabled = false`
+
+==============================================================================
+lspconfig:                                 require("lspconfig.health").check()
+
+- Skipped. This healthcheck is redundant with `:checkhealth vim.lsp`.
+
+==============================================================================
+mason:                                         require("mason.health").check()
+
+mason.nvim ~
+- ✅ OK mason.nvim version v2.0.0
+- ✅ OK PATH: prepend
+- ✅ OK Providers: 
+    mason.providers.registry-api
+    mason.providers.client
+- ✅ OK neovim version >= 0.10.0
+
+mason.nvim [Registries] ~
+- ✅ OK Registry `github.com/mason-org/mason-registry version: 2025-05-09-versed-socks` is installed.
+
+mason.nvim [Core utils] ~
+- ⚠️ WARNING unzip: not available
+  - ADVICE:
+    - spawn: unzip failed with exit code - and signal -. Could not find executable "unzip" in PATH.
+
+- ⚠️ WARNING wget: not available
+  - ADVICE:
+    - spawn: wget failed with exit code - and signal -. Could not find executable "wget" in PATH.
+
+- ✅ OK curl: `curl 8.12.1 (Windows) libcurl/8.12.1 Schannel zlib/1.3 WinIDN`
+- ⚠️ WARNING gzip: not available
+  - ADVICE:
+    - spawn: gzip failed with exit code - and signal -. Could not find executable "gzip" in PATH.
+
+- ✅ OK tar: `bsdtar 3.7.7 - libarchive 3.7.7 zlib/1.2.13.1-motley liblzma/5.4.3 bz2lib/1.0.8 libzstd/1.5.5 `
+- ✅ OK pwsh: `7.5.1 Microsoft Windows 10.0.26100 Win32NT`
+- ✅ OK 7z: `7-Zip 24.09 (x64) : Copyright (c) 1999-2024 Igor Pavlov : 2024-11-29`
+
+mason.nvim [Languages] ~
+- ⚠️ WARNING Go: not available
+  - ADVICE:
+    - spawn: go failed with exit code - and signal -. Could not find executable "go" in PATH.
+
+- ⚠️ WARNING luarocks: not available
+  - ADVICE:
+    - spawn: luarocks failed with exit code - and signal -. Could not find executable "luarocks" in PATH.
+
+- ⚠️ WARNING Ruby: not available
+  - ADVICE:
+    - spawn: ruby failed with exit code - and signal -. Could not find executable "ruby" in PATH.
+
+- ⚠️ WARNING RubyGem: not available
+  - ADVICE:
+    - spawn: gem failed with exit code - and signal -. Could not find executable "gem" in PATH.
+
+- ⚠️ WARNING Composer: not available
+  - ADVICE:
+    - spawn: composer failed with exit code - and signal -. Could not find executable "composer" in PATH.
+
+- ⚠️ WARNING PHP: not available
+  - ADVICE:
+    - spawn: php failed with exit code - and signal -. Could not find executable "php" in PATH.
+
+- ✅ OK cargo: `cargo 1.88.0-nightly (7918c7eb5 2025-04-27)`
+- ⚠️ WARNING julia: not available
+  - ADVICE:
+    - spawn: julia failed with exit code - and signal -. Could not find executable "julia" in PATH.
+
+- ✅ OK node: `v23.3.0`
+- ✅ OK python: `Python 3.12.9`
+- ✅ OK java: `java version "23.0.1" 2024-10-15`
+- ✅ OK javac: `javac 23.0.1`
+- ✅ OK npm: `10.9.0`
+- ✅ OK pip: `pip 25.0.1 from C:\Users\danie\miniforge3\Lib\site-packages\pip (python 3.12)`
+- ✅ OK python venv: `Ok`
+
+==============================================================================
+neo-tree:                                   require("neo-tree.health").check()
+
+Neo-tree ~
+- ✅ OK nvim-web-devicons is installed
+- ✅ OK plenary.nvim is installed
+- ✅ OK nui.nvim is installed
+- ✅ OK Configuration conforms to schema
+- (Config schema checking is not comprehensive yet)
+
+==============================================================================
+nvim-treesitter:                     require("nvim-treesitter.health").check()
+
+Installation ~
+- ⚠️ WARNING `tree-sitter` executable not found (parser generator, only needed for :TSInstallFromGrammar, not required for :TSInstall)
+- ✅ OK `node` found v23.3.0 (only needed for :TSInstallFromGrammar)
+- ✅ OK `git` executable found.
+- ✅ OK `cc` executable found. Selected from { vim.NIL, "cc", "gcc", "clang", "cl", "zig" }
+  Version: cc (Rev2, Built by MSYS2 project) 14.2.0
+- ✅ OK Neovim was compiled with tree-sitter runtime ABI version 15 (required >=13). Parsers must be compatible with runtime ABI.
+
+OS Info:
+{
+  machine = "x86_64",
+  release = "10.0.26100",
+  sysname = "Windows_NT",
+  version = "Windows 11 Pro"
+} ~
+
+Parser/Features         H L F I J
+  - bash                ✓ ✓ ✓ . ✓
+  - c                   ✓ ✓ ✓ ✓ ✓
+  - cpp                 ✓ ✓ ✓ ✓ ✓
+  - css                 ✓ . ✓ ✓ ✓
+  - diff                ✓ . ✓ . ✓
+  - go                  ✓ ✓ ✓ ✓ ✓
+  - html                ✓ ✓ ✓ ✓ ✓
+  - javascript          ✓ ✓ ✓ ✓ ✓
+  - json                ✓ ✓ ✓ ✓ .
+  - lua                 ✓ ✓ ✓ ✓ ✓
+  - luadoc              ✓ . . . .
+  - markdown            ✓ . ✓ ✓ ✓
+  - markdown_inline     ✓ . . . ✓
+  - python              ✓ ✓ ✓ ✓ ✓
+  - query               ✓ ✓ ✓ ✓ ✓
+  - rust                ✓ ✓ ✓ ✓ ✓
+  - tsx                 ✓ ✓ ✓ ✓ ✓
+  - typescript          ✓ ✓ ✓ ✓ ✓
+  - vim                 ✓ ✓ ✓ . ✓
+  - vimdoc              ✓ . . . ✓
+
+  Legend: H[ighlight], L[ocals], F[olds], I[ndents], In[j]ections
+         +) multiple parsers found, only one will be used
+         x) errors found in the query, try to run :TSUpdate {lang} ~
+
+==============================================================================
+telescope:                                 require("telescope.health").check()
+
+Checking for required plugins ~
+- ✅ OK plenary installed.
+- ✅ OK nvim-treesitter installed.
+
+Checking external dependencies ~
+- ✅ OK rg: found ripgrep 14.1.0 (rev e50df40a19)
+- ✅ OK fd: found fd 10.2.0
+
+===== Installed extensions ===== ~
+
+Telescope Extension: `fzf` ~
+- ✅ OK lib working as expected
+- ✅ OK file_sorter correctly configured
+- ✅ OK generic_sorter correctly configured
+
+Telescope Extension: `zoxide` ~
+- No healthcheck provided
+
+==============================================================================
+vim.deprecated:                       require("vim.deprecated.health").check()
+
+ ~
+- ⚠️ WARNING vim.validate is deprecated. Feature will be removed in Nvim 1.0
+  - ADVICE:
+    - use vim.validate(name, value, validator, optional_or_msg) instead.
+    - stack traceback:
+        C:/Users/danie/AppData/Local/nvim-data/lazy/auto-dark-mode.nvim/lua/auto-dark-mode/init.lua:22
+        C:/Users/danie/AppData/Local/nvim-data/lazy/auto-dark-mode.nvim/lua/auto-dark-mode/init.lua:163
+        C:\Users\danie\OneDrive\Privates\nvim/lua/lazy-plugins.lua:540
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/core/loader.lua:380
+        [C]:-1
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/core/util.lua:135
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/core/loader.lua:395
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/core/loader.lua:362
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/core/loader.lua:197
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/core/loader.lua:127
+        C:\Users\danie\AppData\Local\nvim-data\lazy\lazy.nvim/lua/lazy/init.lua:112
+        C:\Users\danie\OneDrive\Privates\nvim/lua/lazy-plugins.lua:2
+        [C]:-1
+        C:\Users\danie\OneDrive\Privates\nvim\init.lua:30
+    - stack traceback:
+        C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-notify/lua/notify/service/notification.lua:37
+        C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-notify/lua/notify/instance.lua:111
+        C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-notify/lua/notify/init.lua:202
+        [C]:-1
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/async.lua:113
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/manage/process.lua:235
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/health.lua:40
+        C:/Users/danie/AppData/Local/nvim-data/lazy/lazy.nvim/lua/lazy/health.lua:72
+        equire("lazy.health").check():1
+        [C]:-1
+        C:/Program Files/Neovim/share/nvim/runtime/lua/vim/health.lua:409
+        nvim>:1
+
+==============================================================================
+vim.health:                               require("vim.health.health").check()
+
+Configuration ~
+- ✅ OK no issues found
+
+Runtime ~
+- ✅ OK $VIMRUNTIME: C:\Program Files\Neovim\share/nvim/runtime
+
+Performance ~
+- ✅ OK Build type: Release
+
+Remote Plugins ~
+- ✅ OK Up to date
+
+External Tools ~
+- ✅ OK ripgrep 14.1.0 (rev e50df40a19) (C:\ProgramData\chocolatey\bin\rg.EXE)
+
+==============================================================================
+vim.lsp:                                     require("vim.lsp.health").check()
+
+- LSP log level : WARN
+- Log path: C:/Users/danie/AppData/Local/nvim-data/lsp.log
+- Log size: 27 KB
+
+vim.lsp: Active Clients ~
+- No active clients
+
+vim.lsp: Enabled Configurations ~
+- ansiblels:
+  - cmd: { "ansible-language-server", "--stdio" }
+  - filetypes: yaml.ansible
+  - root_markers: ansible.cfg, .ansible-lint
+  - settings: {
+      ansible = {
+        ansible = {
+          path = "ansible"
+        },
+        executionEnvironment = {
+          enabled = false
+        },
+        python = {
+          interpreterPath = "python"
+        },
+        validation = {
+          enabled = true,
+          lint = {
+            enabled = true,
+            path = "ansible-lint"
+          }
+        }
+      }
+    }
+
+- bashls:
+  - cmd: { "bash-language-server", "start" }
+  - filetypes: bash, sh
+  - root_markers: .git
+  - settings: {
+      bashIde = {
+        globPattern = "*@(.sh|.inc|.bash|.command)"
+      }
+    }
+
+- clangd:
+  - capabilities: {
+      offsetEncoding = { "utf-8", "utf-16" },
+      textDocument = {
+        completion = {
+          editsNearCursor = true
+        }
+      }
+    }
+  - cmd: { "clangd" }
+  - filetypes: c, cpp, objc, objcpp, cuda, proto
+  - on_attach: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/clangd.lua:80>
+  - root_markers: .clangd, .clang-tidy, .clang-format, compile_commands.json, compile_flags.txt, configure.ac, .git
+
+- cssls:
+  - cmd: { "vscode-css-language-server", "--stdio" }
+  - filetypes: css, scss, less
+  - init_options: {
+      provideFormatter = true
+    }
+  - root_markers: package.json, .git
+  - settings: {
+      css = {
+        validate = true
+      },
+      less = {
+        validate = true
+      },
+      scss = {
+        validate = true
+      }
+    }
+
+- dockerls:
+  - cmd: { "docker-langserver", "--stdio" }
+  - filetypes: dockerfile
+  - root_markers: Dockerfile
+
+- eslint:
+  - before_init: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/eslint.lua:120>
+  - cmd: { "vscode-eslint-language-server", "--stdio" }
+  - filetypes: javascript, javascriptreact, javascript.jsx, typescript, typescriptreact, typescript.tsx, vue, svelte, astro
+  - handlers: {
+      ["eslint/confirmESLintExecution"] = <function 1>,
+      ["eslint/noLibrary"] = <function 2>,
+      ["eslint/openDoc"] = <function 3>,
+      ["eslint/probeFailed"] = <function 4>
+    }
+  - on_attach: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/eslint.lua:48>
+  - root_dir: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/eslint.lua:65>
+  - settings: {
+      codeAction = {
+        disableRuleComment = {
+          enable = true,
+          location = "separateLine"
+        },
+        showDocumentation = {
+          enable = true
+        }
+      },
+      codeActionOnSave = {
+        enable = false,
+        mode = "all"
+      },
+      experimental = {
+        useFlatConfig = false
+      },
+      format = true,
+      nodePath = "",
+      onIgnoredFiles = "off",
+      problems = {
+        shortenToSingleLine = false
+      },
+      quiet = false,
+      rulesCustomizations = {},
+      run = "onType",
+      useESLintClass = false,
+      validate = "on",
+      workingDirectory = {
+        mode = "location"
+      }
+    }
+  - workspace_required: true
+
+- graphql:
+  - cmd: { "graphql-lsp", "server", "-m", "stream" }
+  - filetypes: graphql, typescriptreact, javascriptreact
+  - root_dir: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/graphql.lua:18>
+
+- html:
+  - cmd: { "vscode-html-language-server", "--stdio" }
+  - filetypes: html, templ
+  - init_options: {
+      configurationSection = { "html", "css", "javascript" },
+      embeddedLanguages = {
+        css = true,
+        javascript = true
+      },
+      provideFormatter = true
+    }
+  - root_markers: package.json, .git
+  - settings: {}
+
+- intelephense:
+  - cmd: { "intelephense", "--stdio" }
+  - filetypes: php
+  - root_dir: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/intelephense.lua:31>
+
+- jdtls:
+  - cmd: { "jdtls", "-configuration", "C:\\Users\\danie/.cache/jdtls/config", "-data", "C:\\Users\\danie/.cache/jdtls/workspace" }
+  - filetypes: java
+  - handlers: {
+      ["language/status"] = <function 1>,
+      ["textDocument/codeAction"] = <function 2>,
+      ["textDocument/rename"] = <function 3>,
+      ["workspace/applyEdit"] = <function 4>
+    }
+  - init_options: {
+      jvm_args = {},
+      workspace = "C:\\Users\\danie/.cache/jdtls/workspace"
+    }
+  - root_markers: .git, build.gradle, build.gradle.kts, build.xml, pom.xml, settings.gradle, settings.gradle.kts
+
+- jsonls:
+  - cmd: { "vscode-json-language-server", "--stdio" }
+  - filetypes: json, jsonc
+  - init_options: {
+      provideFormatter = true
+    }
+  - root_markers: .git
+
+- lua_ls:
+  - cmd: { "lua-language-server" }
+  - filetypes: lua
+  - root_markers: .luarc.json, .luarc.jsonc, .luacheckrc, .stylua.toml, stylua.toml, selene.toml, selene.yml, .git
+
+- marksman:
+  - cmd: { "marksman", "server" }
+  - filetypes: markdown, markdown.mdx
+  - root_markers: .marksman.toml, .git
+
+- phpactor:
+  - cmd: { "phpactor", "language-server" }
+  - filetypes: php
+  - root_dir: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/phpactor.lua:10>
+
+- pyright:
+  - cmd: { "pyright-langserver", "--stdio" }
+  - filetypes: python
+  - on_attach: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/pyright.lua:43>
+  - root_markers: pyproject.toml, setup.py, setup.cfg, requirements.txt, Pipfile, pyrightconfig.json, .git
+  - settings: {
+      python = {
+        analysis = {
+          autoSearchPaths = true,
+          diagnosticMode = "openFilesOnly",
+          useLibraryCodeForTypes = true
+        }
+      }
+    }
+
+- rust_analyzer:
+  - before_init: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/rust_analyzer.lua:108>
+  - capabilities: {
+      experimental = {
+        serverStatusNotification = true
+      }
+    }
+  - cmd: { "rust-analyzer" }
+  - filetypes: rust
+  - on_attach: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/rust_analyzer.lua:114>
+  - root_dir: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/rust_analyzer.lua:57>
+
+- sqlls:
+  - cmd: { "sql-language-server", "up", "--method", "stdio" }
+  - filetypes: sql, mysql
+  - root_markers: .sqllsrc.json
+  - settings: {}
+
+- svelte:
+  - cmd: { "svelteserver", "--stdio" }
+  - filetypes: svelte
+  - on_attach: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/nvim-lspconfig/lsp/svelte.lua:16>
+  - root_markers: package.json, .git
+
+- twiggy_language_server:
+  - cmd: { "twiggy-language-server", "--stdio" }
+  - filetypes: twig
+  - root_markers: composer.json, .git
+
+- volar:
+  - before_init: <function @C:/Users/danie/AppData/Local/nvim-data/lazy/mason-lspconfig.nvim/lua/mason-lspconfig/lsp/volar.lua:2>
+  - cmd: { "vue-language-server", "--stdio" }
+  - filetypes: vue
+  - init_options: {
+      typescript = {
+        tsdk = ""
+      }
+    }
+  - root_markers: package.json
+
+- vuels:
+  - cmd: { "vls" }
+  - filetypes: vue
+  - init_options: {
+      config = {
+        css = {},
+        emmet = {},
+        html = {
+          suggest = {}
+        },
+        javascript = {
+          format = {}
+        },
+        stylusSupremacy = {},
+        typescript = {
+          format = {}
+        },
+        vetur = {
+          completion = {
+            autoImport = false,
+            tagCasing = "kebab",
+            useScaffoldSnippets = false
+          },
+          format = {
+            defaultFormatter = {
+              js = "none",
+              ts = "none"
+            },
+            defaultFormatterOptions = {},
+            scriptInitialIndent = false,
+            styleInitialIndent = false
+          },
+          useWorkspaceDependencies = false,
+          validation = {
+            script = true,
+            style = true,
+            template = true
+          }
+        }
+      }
+    }
+  - root_markers: package.json, vue.config.js
+
+- yamlls:
+  - cmd: { "yaml-language-server", "--stdio" }
+  - filetypes: yaml, yaml.docker-compose, yaml.gitlab
+  - root_markers: .git
+  - settings: {
+      redhat = {
+        telemetry = {
+          enabled = false
+        }
+      }
+    }
+
+
+vim.lsp: File Watcher ~
+- file watching "(workspace/didChangeWatchedFiles)" disabled on all clients
+
+vim.lsp: Position Encodings ~
+- No active clients
+
+==============================================================================
+vim.provider:                           require("vim.provider.health").check()
+
+Clipboard (optional) ~
+- ✅ OK Clipboard tool found: win32yank
+
+Node.js provider (optional) ~
+- Node.js: v23.3.0
+
+- Nvim node.js host: C:\Users\danie\AppData\Roaming\npm\node_modules/neovim/bin/cli.js
+
+Perl provider (optional) ~
+- ⚠️ WARNING "Neovim::Ext" cpan module is not installed
+  - ADVICE:
+    - See :help |provider-perl| for more information.
+    - You can disable this provider (and warning) by adding `let g:loaded_perl_provider = 0` to your init.vim
+- ⚠️ WARNING No usable perl executable found
+
+Python 3 provider (optional) ~
+- `g:python3_host_prog` is not set. Searching for python in the environment.
+- Executable: C:\Users\danie\miniforge3\python.EXE
+- Python version: 3.12.9
+- pynvim version: 0.5.2
+- ✅ OK Latest pynvim is installed.
+
+Python virtualenv ~
+- ✅ OK no $VIRTUAL_ENV
+
+Ruby provider (optional) ~
+- ⚠️ WARNING `ruby` and `gem` must be in $PATH.
+  - ADVICE:
+    - Install Ruby and verify that `ruby` and `gem` commands work.
+
+==============================================================================
+vim.treesitter:                       require("vim.treesitter.health").check()
+
+Treesitter features ~
+- Treesitter ABI support: min 13, max 15
+- WASM parser support: false
+
+Treesitter parsers ~
+- ✅ OK Parser: bash                 ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\bash.so
+- ✅ OK Parser: c                    ABI: 14, path: C:\Program Files\Neovim\lib\nvim\parser\c.dll
+- ✅ OK Parser: c                    ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\c.so
+- ✅ OK Parser: cpp                  ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\cpp.so
+- ✅ OK Parser: css                  ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\css.so
+- ✅ OK Parser: diff                 ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\diff.so
+- ✅ OK Parser: go                   ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\go.so
+- ✅ OK Parser: html                 ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\html.so
+- ✅ OK Parser: javascript           ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\javascript.so
+- ✅ OK Parser: json                 ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\json.so
+- ✅ OK Parser: lua                  ABI: 14, path: C:\Program Files\Neovim\lib\nvim\parser\lua.dll
+- ✅ OK Parser: lua                  ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\lua.so
+- ✅ OK Parser: luadoc               ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\luadoc.so
+- ✅ OK Parser: markdown             ABI: 14, path: C:\Program Files\Neovim\lib\nvim\parser\markdown.dll
+- ✅ OK Parser: markdown             ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\markdown.so
+- ✅ OK Parser: markdown_inline      ABI: 14, path: C:\Program Files\Neovim\lib\nvim\parser\markdown_inline.dll
+- ✅ OK Parser: markdown_inline      ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\markdown_inline.so
+- ✅ OK Parser: python               ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\python.so
+- ✅ OK Parser: query                ABI: 14, path: C:\Program Files\Neovim\lib\nvim\parser\query.dll
+- ✅ OK Parser: query                ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\query.so
+- ✅ OK Parser: rust                 ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\rust.so
+- ✅ OK Parser: tsx                  ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\tsx.so
+- ✅ OK Parser: typescript           ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\typescript.so
+- ✅ OK Parser: vim                  ABI: 14, path: C:\Program Files\Neovim\lib\nvim\parser\vim.dll
+- ✅ OK Parser: vim                  ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\vim.so
+- ✅ OK Parser: vimdoc               ABI: 14, path: C:\Program Files\Neovim\lib\nvim\parser\vimdoc.dll
+- ✅ OK Parser: vimdoc               ABI: 14, path: C:\Users\danie\AppData\Local\nvim-data\lazy\nvim-treesitter\parser\vimdoc.so
+

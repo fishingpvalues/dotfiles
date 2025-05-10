@@ -159,26 +159,204 @@ if pcall(require, 'conform') then
   end, { desc = 'Format file or range (in visual mode)' })
 end
 
-vim.keymap.set('n', '<leader>T', ':split | terminal<CR>', { desc = 'Open terminal in split' })
+-- ToggleTerm keymaps
+vim.keymap.set('n', '<C-\\>', '<cmd>ToggleTerm<CR>', { desc = 'Toggle Terminal' })
+vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = 'Toggle Terminal (Horizontal)' })
+vim.keymap.set('n', '<leader>tv', '<cmd>ToggleTerm direction=vertical<CR>', { desc = 'Toggle Terminal (Vertical)' })
+vim.keymap.set('n', '<leader>tf', '<cmd>ToggleTerm direction=float<CR>', { desc = 'Toggle Terminal (Float)' })
+vim.keymap.set('n', '<leader>ta', '<cmd>ToggleTermToggleAll<CR>', { desc = 'Toggle All Terminals' })
+vim.keymap.set('n', '<leader>ts', '<cmd>TermSelect<CR>', { desc = 'Select Terminal' })
+vim.keymap.set('n', '<leader>te', function()
+  vim.ui.input({ prompt = "TermExec cmd=" }, function(input)
+    if input then
+      vim.cmd("TermExec cmd=\"" .. input .. "\"")
+    end
+  end)
+end, { desc = 'Exec in Terminal' })
+vim.keymap.set("v", "<leader>tsl", function()
+  require("toggleterm").send_lines_to_terminal("visual_selection", true, { args = vim.v.count })
+end, { desc = "Send selection to terminal" })
+
+-- Overwrite default terminal split
+vim.keymap.set('n', '<leader>T', '', { desc = '' }) -- Remove old mapping
 
 -- Register main which-key groups
--- if pcall(require, 'which-key') then
---   local wk = require('which-key')
---   wk.register({
---     ["<leader>"] = {
---       t = { name = "Transparency" },
---       f = { name = "Find/Telescope" },
---       e = { name = "Explorer" },
---       g = { name = "Git" },
---       c = { name = "Code/LSP" },
---       d = { name = "Debug" },
---       b = { name = "Buffers" },
---       s = { name = "Search/Todo" },
---       h = { name = "Git Hunk" },
---       m = { name = "Format/Meta" },
---       p = { name = "PickMe" },
---     },
---   })
--- end
+if pcall(require, 'which-key') then
+  local wk = require('which-key')
+  wk.register({
+    ["<leader>"] = {
+      t = {
+        name = "Terminal",
+        tt = "Toggle Horizontal Terminal",
+        tv = "Toggle Vertical Terminal",
+        tf = "Toggle Floating Terminal",
+        ta = "Toggle All Terminals",
+        ts = "Select Terminal",
+        te = "Execute in Terminal",
+        tsl = "Send Selection to Terminal",
+        tg = "Toggle Lazygit",
+        th = "Toggle htop",
+        tp = "Toggle Python REPL",
+      },
+      tw = {
+        name = "Treewalker",
+        h = "Move Left",
+        j = "Move Down",
+        k = "Move Up",
+        l = "Move Right",
+        H = "Swap Left",
+        J = "Swap Down",
+        K = "Swap Up",
+        L = "Swap Right",
+      },
+      df = { "Visualize DataFrame" },
+      u = {
+        ut = "Git Timetravel (Tardis)",
+      },
+      f = { name = "Find" },
+      e = { name = "Explorer" },
+      g = {
+        name = "Goto",
+        gd = "Go to Definition",
+        gD = "Go to Declaration",
+        gi = "Go to Implementation",
+        gr = "Go to References",
+        K = "Show Hover Documentation",
+        ["<C-k>"] = "Signature Help",
+      },
+      c = {
+        name = "Code",
+        rn = "Rename Symbol",
+        ca = "Code Action",
+        lf = "Format Buffer",
+        wa = "Add Workspace Folder",
+        wr = "Remove Workspace Folder",
+        wl = "List Workspace Folders",
+      },
+      d = {
+        name = "Debug",
+        dpr = "Debug Python Method",
+        dpc = "Debug Python Class",
+        dps = "Debug Python Selection",
+        du = "Toggle Debug UI",
+        de = "Evaluate Expression",
+        db = "Toggle Breakpoint",
+        dB = "Set Conditional Breakpoint",
+        dc = "Clear All Breakpoints",
+      },
+      b = { name = "Buffers" },
+      s = {
+        name = "Search/Todo",
+        st = "Search Todo Comments",
+      },
+      h = {
+        name = "Git Hunk",
+        s = "Stage Hunk",
+        r = "Reset Hunk",
+        S = "Stage Buffer",
+        u = "Undo Stage Hunk",
+        R = "Reset Buffer",
+        p = "Preview Hunk",
+        b = "Blame Line",
+        d = "Diff Against Index",
+        D = "Diff Against Last Commit",
+      },
+      m = {
+        name = "Multicursor",
+        n = "Add Cursor to Next Match",
+        N = "Add Cursor to Previous Match",
+        s = "Skip Next Match",
+        S = "Skip Previous Match",
+        ["<up>"] = "Add Cursor Above",
+        ["<down>"] = "Add Cursor Below",
+        ["<leader><up>"] = "Skip Cursor Above",
+        ["<leader><down>"] = "Skip Cursor Below",
+        x = "Delete Current Cursor",
+        ["<c-q>"] = "Toggle Multicursor Mode",
+      },
+      p = { name = "PickMe" },
+      w = {
+        name = "Window/Splits",
+        ["<C-h>"] = "Move to left split/pane",
+        ["<C-j>"] = "Move to lower split/pane",
+        ["<C-k>"] = "Move to upper split/pane",
+        ["<C-l>"] = "Move to right split/pane",
+        ["<C-\\>"] = "Move to previous split/pane",
+        ["<A-h>"] = "Resize split left",
+        ["<A-j>"] = "Resize split down",
+        ["<A-k>"] = "Resize split up",
+        ["<A-l>"] = "Resize split right",
+        ["<leader><leader>h"] = "Swap buffer left",
+        ["<leader><leader>j"] = "Swap buffer down",
+        ["<leader><leader>k"] = "Swap buffer up",
+        ["<leader><leader>l"] = "Swap buffer right",
+      },
+    },
+    ["<C-h>"] = "Move to left pane (Wezterm/Nvim)",
+    ["<C-j>"] = "Move to lower pane (Wezterm/Nvim)",
+    ["<C-k>"] = "Move to upper pane (Wezterm/Nvim)",
+    ["<C-l>"] = "Move to right pane (Wezterm/Nvim)",
+  })
+end
+
+-- Terminal window navigation (in terminal mode)
+function _G.set_terminal_keymaps()
+  local opts = {buffer = 0}
+  vim.keymap.set('t', '<esc>', [[<C-\\><C-n>]], opts)
+  vim.keymap.set('t', 'jk', [[<C-\\><C-n>]], opts)
+  vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
+  vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
+  vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
+  vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
+  vim.keymap.set('t', '<C-w>', [[<C-\\><C-n><C-w>]], opts)
+end
+vim.cmd('autocmd! TermOpen term://*toggleterm#* lua set_terminal_keymaps()')
+
+-- Bear.nvim DataFrame visualisation
+vim.keymap.set('n', '<leader>df', function()
+  local ok, bear = pcall(require, 'bear')
+  if ok and bear.visualise then
+    bear.visualise()
+  else
+    vim.notify('bear.nvim is not available or not loaded!', vim.log.levels.ERROR, {title = 'bear.nvim'})
+  end
+end, { desc = 'Visualise DataFrame (bear.nvim)' })
+
+-- Treewalker keymaps
+vim.keymap.set({ 'n', 'v' }, '<C-k>', '<cmd>Treewalker Up<cr>', { silent = true, desc = 'Treewalker Up' })
+vim.keymap.set({ 'n', 'v' }, '<C-j>', '<cmd>Treewalker Down<cr>', { silent = true, desc = 'Treewalker Down' })
+vim.keymap.set({ 'n', 'v' }, '<C-h>', '<cmd>Treewalker Left<cr>', { silent = true, desc = 'Treewalker Left' })
+vim.keymap.set({ 'n', 'v' }, '<C-l>', '<cmd>Treewalker Right<cr>', { silent = true, desc = 'Treewalker Right' })
+vim.keymap.set('n', '<C-S-k>', '<cmd>Treewalker SwapUp<cr>', { silent = true, desc = 'Treewalker Swap Up' })
+vim.keymap.set('n', '<C-S-j>', '<cmd>Treewalker SwapDown<cr>', { silent = true, desc = 'Treewalker Swap Down' })
+vim.keymap.set('n', '<C-S-h>', '<cmd>Treewalker SwapLeft<cr>', { silent = true, desc = 'Treewalker Swap Left' })
+vim.keymap.set('n', '<C-S-l>', '<cmd>Treewalker SwapRight<cr>', { silent = true, desc = 'Treewalker Swap Right' })
+
+-- Smart Splits keymaps (navigation, resizing, swapping)
+do
+  local ok, smart_splits = pcall(require, 'smart-splits')
+  if not ok then
+    vim.schedule(function()
+      vim.notify('smart-splits.nvim failed to load!', vim.log.levels.ERROR, {title = 'smart-splits.nvim'})
+    end)
+    return
+  end
+  -- Navigation between splits (works with WezTerm/tmux/Kitty panes)
+  vim.keymap.set('n', '<C-h>', smart_splits.move_cursor_left, { desc = 'Move to left split/pane' })
+  vim.keymap.set('n', '<C-j>', smart_splits.move_cursor_down, { desc = 'Move to lower split/pane' })
+  vim.keymap.set('n', '<C-k>', smart_splits.move_cursor_up, { desc = 'Move to upper split/pane' })
+  vim.keymap.set('n', '<C-l>', smart_splits.move_cursor_right, { desc = 'Move to right split/pane' })
+  vim.keymap.set('n', '<C-\\>', smart_splits.move_cursor_previous, { desc = 'Move to previous split/pane' })
+  -- Resizing splits
+  vim.keymap.set('n', '<A-h>', smart_splits.resize_left, { desc = 'Resize split left' })
+  vim.keymap.set('n', '<A-j>', smart_splits.resize_down, { desc = 'Resize split down' })
+  vim.keymap.set('n', '<A-k>', smart_splits.resize_up, { desc = 'Resize split up' })
+  vim.keymap.set('n', '<A-l>', smart_splits.resize_right, { desc = 'Resize split right' })
+  -- Buffer swapping
+  vim.keymap.set('n', '<leader><leader>h', smart_splits.swap_buf_left, { desc = 'Swap buffer left' })
+  vim.keymap.set('n', '<leader><leader>j', smart_splits.swap_buf_down, { desc = 'Swap buffer down' })
+  vim.keymap.set('n', '<leader><leader>k', smart_splits.swap_buf_up, { desc = 'Swap buffer up' })
+  vim.keymap.set('n', '<leader><leader>l', smart_splits.swap_buf_right, { desc = 'Swap buffer right' })
+end
 
 -- vim: ts=2 sts=2 sw=2 et

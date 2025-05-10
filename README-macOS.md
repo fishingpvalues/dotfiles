@@ -78,6 +78,13 @@ git submodule update --init --recursive
 ### Apps & Tools (installed/configured via Homebrew and scripts)
 
 - **Terminal Emulators:** WezTerm, kitty
+  - *WezTerm is installed automatically via Homebrew. To install manually:*
+
+    ```sh
+    brew tap wez/wezterm
+    brew install --cask wez/wezterm/wezterm
+    ```
+
 - **Shells:** zsh (with Powerlevel10k), bash
 - **CLI Tools:** exa, bat, fzf, ripgrep, fd, starship, lazygit, neofetch, btop, tmux, wget, curl, git, ssh
 - **Editors:** Neovim (custom config), VSCode (optional)
