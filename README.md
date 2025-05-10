@@ -803,3 +803,79 @@ To install zoxide:
 - **Requirements:**
   - Neovim 0.11+
   - TUI apps (lazygit, yazi, btop, etc.) should be installed and in PATH for their respective keymaps to work.
+
+## Python Type Checking with ty
+
+We use [ty](https://github.com/astral-sh/ty), an extremely fast Python type checker and language server.
+
+### Installation
+
+- ty is installed automatically by our setup scripts (`setup-dotfiles.sh` or `setup-dotfiles.ps1`).
+- User-level config is managed at `~/.config/ty/ty.toml` (Linux/macOS) or `%APPDATA%\ty\ty.toml` (Windows), sourced from `config/ty/ty.toml` in this repo.
+
+### Usage
+
+- To check your code, run:
+
+  ```sh
+  ty check
+  ```
+
+- To start the language server (for editor integration):
+
+  ```sh
+  ty server
+  ```
+
+### Configuration
+
+- User-level config: `config/ty/ty.toml` (copied to the appropriate location by setup scripts)
+- Project-level config: Add a `[tool.ty]` section to your `pyproject.toml` if needed
+
+See the [ty documentation](https://github.com/astral-sh/ty) for more details.
+
+## Yazi File Manager
+
+We use [Yazi](https://github.com/sxyazi/yazi), a blazing fast terminal file manager written in Rust, with a state-of-the-art configuration and plugin setup for productivity and Neovim integration.
+
+### Configuration
+
+- The Yazi config is managed at `config/yazi/yazi.toml` in this repo.
+- Symlink or copy it to `~/.config/yazi/yazi.toml` after setup.
+
+### SOTA Features
+
+- Hidden files shown, natural sorting, icons, previews, image previews, wide preview pane.
+- Catppuccin Mocha theme for a beautiful UI.
+- Git integration enabled.
+- Smart case search.
+- Large preview size, image previews via ueberzug.
+
+### Plugins
+
+The following plugins are enabled for a modern workflow:
+
+- `eza-preview.yazi`, `glow.yazi`, `rich-preview.yazi`, `hexyl.yazi`, `lsar.yazi`, `mediainfo.yazi`
+- `bunny.yazi`, `easyjump.yazi`, `projects.yazi`
+- `compress.yazi`, `diff.yazi`, `system-clipboard.yazi`
+- `dual-pane.yazi`, `starship.yazi`
+- `lazygit.yazi`, `DreamMaoMao/git.yazi`
+- `fm-nvim`, `mikavilpas/yazi.nvim`
+
+### Plugin Installation
+
+Yazi plugins are managed with the `ya` assistant (bundled with Yazi):
+
+```sh
+# Install plugins (run in your yazi config directory)
+ya pack -a eza-preview.yazi glow.yazi rich-preview.yazi hexyl.yazi lsar.yazi mediainfo.yazi \
+  bunny.yazi easyjump.yazi projects.yazi compress.yazi diff.yazi system-clipboard.yazi \
+  dual-pane.yazi starship.yazi lazygit.yazi DreamMaoMao/git.yazi fm-nvim mikavilpas/yazi.nvim
+```
+
+### Neovim Integration
+
+- The plugins `fm-nvim` and `mikavilpas/yazi.nvim` allow you to use Yazi as a file picker/manager inside Neovim.
+- Add `mikavilpas/yazi.nvim` to your Neovim plugin list for seamless integration.
+
+---

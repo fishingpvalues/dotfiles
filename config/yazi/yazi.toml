@@ -1,0 +1,50 @@
+# Yazi File Manager Configuration
+# SOTA config for dotfiles + Neovim integration
+
+[manager]
+show_hidden = true
+sort_by = "natural"
+reverse_sort = false
+show_icons = true
+preview = true
+preview_max_width = 120
+preview_max_height = 40
+preview_images = true
+preview_images_method = "ueberzug"
+
+[preview]
+max_size = 10485760 # 10MB
+
+[search]
+smart_case = true
+
+[ui]
+theme = "catppuccin-mocha"
+
+[git]
+enable = true
+show_status = true
+
+[plugins]
+# List of enabled plugins (see below for installation)
+plugins = [
+  "eza-preview.yazi",
+  "glow.yazi",
+  "rich-preview.yazi",
+  "hexyl.yazi",
+  "lsar.yazi",
+  "mediainfo.yazi",
+  "bunny.yazi",
+  "easyjump.yazi",
+  "projects.yazi",
+  "compress.yazi",
+  "diff.yazi",
+  "system-clipboard.yazi",
+  "dual-pane.yazi",
+  "starship.yazi",
+  "lazygit.yazi",
+  "DreamMaoMao/git.yazi",
+  "fm-nvim",
+  "mikavilpas/yazi.nvim"
+]
+# For more plugin options, see https://github.com/AnirudhG07/awesome-yazi" 

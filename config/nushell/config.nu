@@ -201,24 +201,26 @@ alias v = nvim
 alias lg = lazygit
 alias ld = lazydocker
 alias y = yazi
-alias find = fd
-alias grep = rg
-alias cat = bat --paging=never
-alias du = dust
-alias diff = delta
-alias tree = as-tree
-alias top = bottom
-alias broot = broot
-alias dua = dua
-alias dua-cli = dua-cli
-alias ncdu = ncdu
-alias just = just
-alias atuin = atuin
-alias bandwhich = bandwhich
-alias hyperfine = hyperfine
-alias miniserve = miniserve
-alias dog = dog
-alias choose = choose
+alias find = (if (which fd | length) > 0 { fd } else { find })
+alias grep = (if (which rg | length) > 0 { rg } else { grep })
+alias cat = (if (which bat | length) > 0 { bat --paging=never } else { cat })
+alias du = (if (which dust | length) > 0 { dust } else { du })
+alias diff = (if (which delta | length) > 0 { delta } else { diff })
+alias tree = (if (which as-tree | length) > 0 { as-tree } else { tree })
+alias top = (if (which bottom | length) > 0 { bottom } else { top })
+alias broot = (if (which broot | length) > 0 { broot } else { broot })
+alias dua = (if (which dua | length) > 0 { dua } else { dua })
+alias dua-cli = (if (which dua-cli | length) > 0 { dua-cli } else { dua-cli })
+alias ncdu = (if (which ncdu | length) > 0 { ncdu } else { ncdu })
+alias just = (if (which just | length) > 0 { just } else { just })
+alias atuin = (if (which atuin | length) > 0 { atuin } else { atuin })
+alias bandwhich = (if (which bandwhich | length) > 0 { bandwhich } else { bandwhich })
+alias hyperfine = (if (which hyperfine | length) > 0 { hyperfine } else { hyperfine })
+alias miniserve = (if (which miniserve | length) > 0 { miniserve } else { miniserve })
+alias dog = (if (which dog | length) > 0 { dog } else { dog })
+alias choose = (if (which choose | length) > 0 { choose } else { choose })
+alias zoxide = (if (which zoxide | length) > 0 { zoxide } else { zoxide })
+alias zi = (if (which zoxide | length) > 0 { zoxide } else { zoxide })
 
 # Modern Unix Replacements
 def gcp [src, dst] {

@@ -85,25 +85,28 @@ if (Get-Command fastfetch -ErrorAction SilentlyContinue) {
     }
 }
 
-# Rust-powered tool aliases
-Set-Alias find fd
-Set-Alias grep rg
-Set-Alias cat bat
-Set-Alias du dust
-Set-Alias diff delta
-Set-Alias tree as-tree
-Set-Alias top bottom
-Set-Alias broot broot
-Set-Alias dua dua
-Set-Alias dua-cli dua-cli
-Set-Alias ncdu ncdu
-Set-Alias just just
-Set-Alias atuin atuin
-Set-Alias bandwhich bandwhich
-Set-Alias hyperfine hyperfine
-Set-Alias miniserve miniserve
-Set-Alias dog dog
-Set-Alias choose choose
+# Modern CLI tool aliases with graceful fallback
+if (Get-Command fd -ErrorAction SilentlyContinue) { Set-Alias find fd } else { Set-Alias find find }
+if (Get-Command rg -ErrorAction SilentlyContinue) { Set-Alias grep rg } else { Set-Alias grep grep }
+if (Get-Command bat -ErrorAction SilentlyContinue) { Set-Alias cat bat } else { Set-Alias cat cat }
+if (Get-Command dust -ErrorAction SilentlyContinue) { Set-Alias du dust } else { Set-Alias du du }
+if (Get-Command delta -ErrorAction SilentlyContinue) { Set-Alias diff delta } else { Set-Alias diff diff }
+if (Get-Command as-tree -ErrorAction SilentlyContinue) { Set-Alias tree as-tree } else { Set-Alias tree tree }
+if (Get-Command bottom -ErrorAction SilentlyContinue) { Set-Alias top bottom } else { Set-Alias top top }
+if (Get-Command broot -ErrorAction SilentlyContinue) { Set-Alias broot broot }
+if (Get-Command dua -ErrorAction SilentlyContinue) { Set-Alias dua dua }
+if (Get-Command 'dua-cli' -ErrorAction SilentlyContinue) { Set-Alias dua-cli dua-cli }
+if (Get-Command ncdu -ErrorAction SilentlyContinue) { Set-Alias ncdu ncdu }
+if (Get-Command just -ErrorAction SilentlyContinue) { Set-Alias just just }
+if (Get-Command atuin -ErrorAction SilentlyContinue) { Set-Alias atuin atuin }
+if (Get-Command bandwhich -ErrorAction SilentlyContinue) { Set-Alias bandwhich bandwhich }
+if (Get-Command hyperfine -ErrorAction SilentlyContinue) { Set-Alias hyperfine hyperfine }
+if (Get-Command miniserve -ErrorAction SilentlyContinue) { Set-Alias miniserve miniserve }
+if (Get-Command dog -ErrorAction SilentlyContinue) { Set-Alias dog dog }
+if (Get-Command choose -ErrorAction SilentlyContinue) { Set-Alias choose choose }
+if (Get-Command zoxide -ErrorAction SilentlyContinue) { Set-Alias z zoxide; Set-Alias zi zoxide }
+if (Get-Command yazi -ErrorAction SilentlyContinue) { Set-Alias y yazi }
+if (Get-Command lazygit -ErrorAction SilentlyContinue) { Set-Alias lg lazygit }
 
 # Other useful aliases
 Set-Alias vim nvim -ErrorAction SilentlyContinue

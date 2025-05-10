@@ -3,22 +3,22 @@ gui:
   theme:
     lightTheme: false
     activeBorderColor:
-      - "#58a6ff" # GitHub blue
+      - "#58a6ff"
       - bold
     inactiveBorderColor:
-      - "#8b949e" # GitHub muted text
+      - "#444c56"
     optionsTextColor:
-      - "#58a6ff" # GitHub blue
+      - "#c9d1d9"
     selectedLineBgColor:
-      - "#30363d" # GitHub selection background
+      - "#264f78"
     selectedRangeBgColor:
       - "#30363d" # GitHub selection background
     cherryPickedCommitBgColor:
-      - "#0d1117" # GitHub background
+      - "#bc8cff"
     cherryPickedCommitFgColor:
-      - "#3fb950" # GitHub green
+      - "#0d1117"
     unstagedChangesColor:
-      - "#ff7b72" # GitHub red
+      - "#ff7b72"
     defaultFgColor:
       - "#c9d1d9" # GitHub foreground text
   
@@ -72,7 +72,7 @@ git:
   paging:
     colorArg: always
     useConfig: true
-    pager: delta --dark --paging=never --24-bit-color=never
+    pager: delta --dark --paging=never
   
   # Git merge settings
   merging:

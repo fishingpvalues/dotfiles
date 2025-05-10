@@ -87,8 +87,9 @@ if command -v exa &> /dev/null; then
   alias lt='exa --tree --level=2'
 fi
 
-if command -v bat &> /dev/null; then
-  alias cat='bat'
+# Use bat as cat if available
+if command -v bat >/dev/null 2>&1; then
+  alias cat='bat --paging=never'
 fi
 
 # OS-specific aliases
@@ -272,25 +273,85 @@ alias dotapply='chezmoi apply'
 alias k='kubectl'
 alias tf='terraform'
 
-# Rust-powered tool aliases
-alias find='fd'
-alias grep='rg'
-alias cat='bat --paging=never'
-alias du='dust'
-alias diff='delta'
-alias tree='as-tree'
-alias top='bottom'
-alias broot='broot'
-alias dua='dua'
-alias dua-cli='dua-cli'
-alias ncdu='ncdu'
-alias just='just'
-alias atuin='atuin'
-alias bandwhich='bandwhich'
-alias hyperfine='hyperfine'
-alias miniserve='miniserve'
-alias dog='dog'
-alias choose='choose'
+# Modern CLI tool aliases with graceful fallback
+if command -v fd >/dev/null 2>&1; then
+  alias find='fd'
+else
+  alias find='find'
+fi
+if command -v rg >/dev/null 2>&1; then
+  alias grep='rg'
+else
+  alias grep='grep'
+fi
+if command -v bat >/dev/null 2>&1; then
+  alias cat='bat --paging=never'
+else
+  alias cat='cat'
+fi
+if command -v dust >/dev/null 2>&1; then
+  alias du='dust'
+else
+  alias du='du'
+fi
+if command -v delta >/dev/null 2>&1; then
+  alias diff='delta'
+else
+  alias diff='diff'
+fi
+if command -v as-tree >/dev/null 2>&1; then
+  alias tree='as-tree'
+else
+  alias tree='tree'
+fi
+if command -v bottom >/dev/null 2>&1; then
+  alias top='bottom'
+else
+  alias top='top'
+fi
+if command -v broot >/dev/null 2>&1; then
+  alias broot='broot'
+fi
+if command -v dua >/dev/null 2>&1; then
+  alias dua='dua'
+fi
+if command -v dua-cli >/dev/null 2>&1; then
+  alias dua-cli='dua-cli'
+fi
+if command -v ncdu >/dev/null 2>&1; then
+  alias ncdu='ncdu'
+fi
+if command -v just >/dev/null 2>&1; then
+  alias just='just'
+fi
+if command -v atuin >/dev/null 2>&1; then
+  alias atuin='atuin'
+fi
+if command -v bandwhich >/dev/null 2>&1; then
+  alias bandwhich='bandwhich'
+fi
+if command -v hyperfine >/dev/null 2>&1; then
+  alias hyperfine='hyperfine'
+fi
+if command -v miniserve >/dev/null 2>&1; then
+  alias miniserve='miniserve'
+fi
+if command -v dog >/dev/null 2>&1; then
+  alias dog='dog'
+fi
+if command -v choose >/dev/null 2>&1; then
+  alias choose='choose'
+fi
+if command -v zoxide >/dev/null 2>&1; then
+  alias z='zoxide'
+  alias zi='zoxide'
+fi
+if command -v yazi >/dev/null 2>&1; then
+  alias y='yazi'
+fi
+if command -v lazygit >/dev/null 2>&1; then
+  alias lg='lazygit'
+fi
 
 # Plugins
 # The following block loads plugins from custom_plugins and oh-my-zsh plugins

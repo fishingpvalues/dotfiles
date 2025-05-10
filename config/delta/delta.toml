@@ -1,0 +1,5 @@
+theme = "GitHub"
+side-by-side = true
+syntax-theme = "GitHub Dark"
+line-numbers = true
+navigate = true 
