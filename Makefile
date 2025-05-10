@@ -127,8 +127,9 @@ install-packages:
 			texlive-most \
 			obsidian \
 			p7zip \
+			# hashcat 
+			# nmap 
 			hashcat \
-			nmap \
 			cmake \
 			make \
 			rustup \
@@ -212,7 +213,7 @@ install-aur: install-yay
 		# Install Ghidra if not already installed \
 		if ! pacman -Q ghidra &>/dev/null; then \
 			echo "Installing Ghidra..."; \
-			yay -S --needed --noconfirm ghidra || echo "WARNING: Ghidra installation failed."; \
+			# yay -S --needed --noconfirm ghidra || echo "WARNING: Ghidra installation failed."; \
 		fi; \
 	else \
 		echo "Not running on Arch Linux, skipping AUR package installation"; \

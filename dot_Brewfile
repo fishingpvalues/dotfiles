@@ -49,11 +49,11 @@ brew "vim"
 brew "slimtoolkit/slim/slim"
 
 # Security and Hacking Tools
-brew "aircrack-ng"
-brew "hashcat"
-brew "john"
-brew "nmap"
-brew "wireshark"
+# brew "aircrack-ng"
+# brew "hashcat"
+# brew "john"
+# brew "nmap"
+# brew "wireshark"
 
 # AI and ML Tools
 brew "ollama"
