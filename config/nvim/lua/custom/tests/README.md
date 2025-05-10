@@ -3,7 +3,7 @@
 This directory contains **Neovim-specific tests** for your configuration, using [plenary.nvim](https://github.com/nvim-lua/plenary.nvim).
 
 - These tests are for plugins, keymaps, and Neovim Lua config only.
-- They are run automatically as part of the full system test suite (see `../test/README.md` for act/system tests), but can also be run directly inside Neovim for development.
+- They are run automatically as part of the full system test suite (see the main [README.md](../../../../../README.md) for general test instructions), but can also be run directly inside Neovim for development.
 
 ## What is tested?
 
@@ -29,7 +29,7 @@ This directory contains **Neovim-specific tests** for your configuration, using 
    - If you want to test with your full config, you can omit the `minimal_init` argument or point it to your main `init.lua`.
 
 3. **Integration with System Tests:**
-   - These tests are also run automatically as part of the full system test suite using act (see `../test/README.md`).
+   - These tests are also run automatically as part of the full system test suite using act (see the main [README.md](../../../../../README.md)).
 
 ## Adding More Tests
 

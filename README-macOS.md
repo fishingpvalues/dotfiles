@@ -1,175 +1,46 @@
-> **Note:** No pirated, unlicensed, or non-company-approved software is installed. All apps are open source or from official sources.
->
-> **Security/AI tools (aircrack-ng, hashcat, john, nmap, wireshark, ollama) have been removed for work compliance.**
-
 # macOS Dotfiles & System Automation
 
-This guide explains how to set up and use these dotfiles for a highly customized, developer-friendly macOS environment. All configurations are managed with [chezmoi](https://www.chezmoi.io/) and automated scripts.
+> For general installation and usage, see [README.md](README.md).
+
+This guide covers macOS-specific setup, tips, and troubleshooting for this dotfiles repo. All configuration is managed with [chezmoi](https://www.chezmoi.io/) and automated scripts.
 
 ---
 
-## Features
+## Features (macOS)
 
-- **Automated macOS System Tweaks:** UI/UX, keyboard, trackpad, Finder, Dock, Safari, Mail, Terminal, Chrome, Spotlight, and more
-- **App Install & Configuration:** Homebrew, CLI tools, terminal emulators, developer tools, fonts
-- **Cross-Platform Dotfiles:** Shared config for zsh, bash, git, neovim, kitty, wezterm, starship, tmux, fzf, and more
-- **Safe & Reproducible:** No pirated or unapproved software; all scripts are idempotent and can be re-run safely
+- Automated system tweaks: UI/UX, keyboard, Finder, Dock, Safari, Mail, Terminal, Chrome, Spotlight, and more
+- App install & configuration: Homebrew, CLI tools, terminal emulators, developer tools, fonts
+- Cross-platform dotfiles: Shared config for zsh, bash, git, neovim, kitty, wezterm, starship, tmux, fzf, and more
+- Safe & reproducible: All scripts are idempotent and can be re-run safely
 
 ---
 
 ## Prerequisites
 
-- macOS (tested on recent versions, but some tweaks may need updates for the latest releases)
+- macOS (recent version recommended)
 - [Xcode Command Line Tools](https://developer.apple.com/xcode/resources/): `xcode-select --install`
 - [Homebrew](https://brew.sh/): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 - [chezmoi](https://www.chezmoi.io/): `brew install chezmoi`
 
 ---
 
-## Quick Start
+## Quick Start (macOS)
 
 ```sh
-# 1. Clone the repository
 chezmoi init https://github.com/fishingpvalues/dotfiles.git
-
-# 2. Preview changes
-chezmoi diff
-
-# 3. Apply dotfiles
 chezmoi apply
-
-# 4. Run the macOS setup script (for system/app tweaks)
 ./bootstrap/setup-dotfiles.sh
-# or, for a fresh setup, add --reinit
+# For a fresh setup, add --reinit
 ./bootstrap/setup-dotfiles.sh --reinit
-```
-
----
-
-## Cloning with Submodules
-
-This repository uses a submodule for the bootstrap scripts. To clone with all dependencies:
-
-```sh
-git clone --recurse-submodules https://github.com/fishingpvalues/dotfiles.git
-```
-
-If you already cloned without submodules, run:
-
-```sh
-git submodule update --init --recursive
 ```
 
 ---
 
 ## What Gets Configured?
 
-### System Tweaks (via `bootstrap/.macos/.macos` and `bootstrap/.macos/apps/*`)
-
-- **General UI/UX:** Scrollbars, highlight color, save/print panels, fast window resize, disable transparency, etc.
-- **Keyboard/Trackpad:** Tap-to-click, fast key repeat, disable smart quotes/dashes, full keyboard access
-- **Finder:** Show hidden files, default view, sidebar, search, etc.
-- **Dock:** Size, autohide, hot corners, recent apps, minimize effects
-- **Safari, Chrome, Mail:** Privacy, dev features, keyboard shortcuts, gestures
-- **Terminal:** UTF-8, secure keyboard entry, custom themes
-- **Spotlight:** Search result customization, indexing tweaks
-- **System:** Energy saving, screen, login window, Notification Center, etc.
-
-### Apps & Tools (installed/configured via Homebrew and scripts)
-
-- **Terminal Emulators:** WezTerm, kitty
-  - *WezTerm is installed automatically via Homebrew. To install manually:*
-
-    ```sh
-    brew tap wez/wezterm
-    brew install --cask wez/wezterm/wezterm
-    ```
-
-- **Shells:** zsh (with Powerlevel10k), bash
-- **CLI Tools:** exa, bat, fzf, ripgrep, fd, starship, lazygit, neofetch, btop, tmux, wget, curl, git, ssh
-- **Editors:** Neovim (custom config), VSCode (optional)
-- **Fonts:** Nerd Fonts (MesloLGS NF, Fira Code, etc.)
-- **Window Management:** Rectangle, Amethyst (optional)
-- **Other:** starship prompt, custom scripts, and more
-
-## Modern Rust-powered CLI Tools
-
-The following modern, Rust-powered (and Rust-inspired) CLI tools are included and aliased for a faster, richer terminal experience:
-
-### File Search & Content Viewing
-
-- **fd**: Fast, user-friendly replacement for find
-- **ripgrep (rg)**: Fast recursive search (better grep)
-- **bat**: cat with syntax highlighting
-
-### Directory Navigation & Listing
-
-- **broot**: TUI directory tree and fuzzy search
-- **bottom**: Graphical process/system monitor (alternative to htop)
-- **as-tree**: Modern tree command
-
-### File & Disk Management
-
-- **dust**: Intuitive du replacement
-- **dua (dua-cli)**: Disk usage analyzer with delete support
-- **ncdu**: Curses-based disk usage explorer
-
-### Git & Development Productivity
-
-- **delta**: Syntax-highlighting pager for git diff/grep
-- **difftastic**: Syntax-aware diff tool
-- **just**: Modern command runner (like make)
-
-### Miscellaneous Utilities
-
-- **atuin**: Enhanced shell history manager
-- **bandwhich**: Real-time bandwidth monitor
-- **hyperfine**: Command benchmarking tool
-- **miniserve**: Instant static file server
-- **dog**: Modern DNS client (dig replacement)
-- **choose**: Fast, human-friendly cut/awk alternative
-- **procs**: Modern ps replacement
-- **lsd**: Modern ls replacement
-- **duf**: Modern df replacement
-- **glow**: Markdown previewer
-- **httpie**: User-friendly HTTP client
-
-All tools are installed and configured cross-platform (macOS, Linux, Windows/WSL).
-
-## Aliases for Modern Tools
-
-To maximize productivity, standard commands are aliased to their modern Rust-powered equivalents in all supported shells (bash, zsh, fish, PowerShell, Nushell):
-
-| Standard | Rust-powered Replacement |
-|----------|-------------------------|
-| find     | fd                      |
-| grep     | rg                      |
-| cat      | bat --paging=never      |
-| du       | dust                    |
-| diff     | delta                   |
-| tree     | as-tree                 |
-| top      | bottom                  |
-| ...      | ...                     |
-
-Other tools (broot, dua, ncdu, just, atuin, bandwhich, hyperfine, miniserve, dog, choose, etc.) are also available and aliased for convenience.
-
-**Aliases are set up automatically for bash, zsh, fish, PowerShell, and Nushell.**
-
-See the respective shell config files for details.
-
----
-
-## Directory Structure
-
-```
-dotfiles/
-  bootstrap/           # macOS-specific scripts and app configs
-  config/           # App and tool configs (cross-platform)
-  scripts/          # Helper scripts (unix/windows)
-  bootstrap/setup-dotfiles.sh  # Main macOS/Linux setup script
-  bootstrap/dot_Brewfile      # Homebrew bundle file (macOS)
-  ...
-```
+- System tweaks (UI/UX, keyboard, Finder, Dock, etc.)
+- App installs (WezTerm, kitty, zsh, bash, exa, bat, fzf, ripgrep, fd, starship, lazygit, neofetch, btop, tmux, wget, curl, git, ssh, Neovim, VSCode, Nerd Fonts, Rectangle, Amethyst, and more)
+- All tools are open source or from official sources. No hacking/security tools are installed (for work compliance).
 
 ---
 
@@ -184,80 +55,31 @@ dotfiles/
 
 ---
 
-## Troubleshooting & Notes
+## Troubleshooting & FAQ
 
-- Some settings require **sudo** or Security & Privacy approval
-- Xcode Command Line Tools and Homebrew are required for most automation
-- Some tweaks may not work on the latest macOS without updates
-- Backup your system before running large automation scripts
-- If you have issues, re-run the setup script or check the logs
+**Q: Some settings require sudo or Security & Privacy approval?**
+A: Yes, especially for system tweaks. Grant permissions as prompted.
 
----
+**Q: Xcode Command Line Tools or Homebrew missing?**
+A: Install them as shown above before running the setup script.
 
-## More Info
+**Q: Some tweaks don't work on the latest macOS?**
+A: Some settings may need updates for the latest OS. Check for errors and update scripts as needed.
 
-- [Main README](README.md) — Cross-platform overview
-- [CHEZMOI.md](CHEZMOI.md) — Chezmoi usage and advanced tips
-- [Arch README](README-ARCH.md) — Linux/Hyprland setup
-- [Chezmoi Documentation](https://www.chezmoi.io/)
+**Q: How do I re-run the setup?**
+A: Just run `./bootstrap/setup-dotfiles.sh` again. It's idempotent.
 
----
+**Q: Are any hacking/security tools installed?**
+A: No. All such tools have been removed for work compliance.
 
-## Automated Testing Framework
-
-This repository includes a robust, cross-platform testing framework to ensure all setup scripts, dotfiles, and functions work as expected on all supported platforms (Linux, macOS, Windows).
-
-### How It Works
-
-- **Docker-based matrix testing** for Ubuntu, Fedora, Arch, and Alpine Linux using Dockerfiles in `test/`.
-- **GitHub Actions CI** runs all tests on every push and pull request, including:
-  - All Linux Docker containers
-  - macOS runner
-  - Windows runner
-- **Test scripts** (`test/test.sh`, `test/test.ps1`) source all shell profiles and run all key functions/aliases, checking for errors and expected output.
-- **Idempotency**: Install scripts are run multiple times to ensure re-runs are safe.
-
-### Running Tests Locally
-
-#### Linux (Docker required)
-
-```sh
-./test/run-all.sh
-```
-
-#### macOS
-
-```sh
-./test/test.sh
-```
-
-#### Windows (PowerShell)
-
-```powershell
-./test/test.ps1
-```
-
-### In CI
-
-- All tests run automatically via `.github/workflows/test-dotfiles.yml`.
-
-### Refreshing All READMEs
-
-To keep documentation up to date after changes, scan the root directory for all `README*.md` files and update them with any new features, scripts, or test instructions. You can automate this with a script or manually review and update each README as needed.
+**Q: Where do I find more info or advanced usage?**
+A: See [README.md](README.md) and [CHEZMOI.md](CHEZMOI.md).
 
 ---
 
-## Directory Navigation with zoxide
+## Automated Testing
 
-This dotfiles setup includes [zoxide](https://github.com/ajeetdsouza/zoxide) for fast directory jumping:
-
-- **Shells**: zoxide is initialized in supported shells (bash, zsh, fish, etc.). Use `z <pattern>` to jump to frequently used directories.
-- **Neovim**: zoxide is integrated via the [telescope-zoxide](https://github.com/jvgrootveld/telescope-zoxide) plugin. Use `:Telescope zoxide list` to fuzzy-find and jump to directories inside Neovim.
-
-To install zoxide:
-
-- On most systems: `brew install zoxide` or `sudo apt install zoxide`
-- For more info, see the [zoxide GitHub page](https://github.com/ajeetdsouza/zoxide).
+- All setup scripts and configs are tested in CI and can be tested locally with the scripts in the `test/` directory.
 
 ---
 

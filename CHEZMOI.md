@@ -1,11 +1,12 @@
 # Chezmoi Dotfiles Management Guide
 
-This guide explains how to use [chezmoi](https://www.chezmoi.io/) to manage your dotfiles across multiple machines and operating systems.
+> For general installation and usage, see [README.md](README.md).
+
+This guide explains how to use [chezmoi](https://www.chezmoi.io/) to manage your dotfiles across multiple machines and operating systems. It covers advanced usage, templating, and secret management.
 
 ## Table of Contents
 
 - [Getting Started](#getting-started)
-- [Installation](#installation)
 - [Basic Commands](#basic-commands)
 - [Configuration Structure](#configuration-structure)
 - [Templates and Variables](#templates-and-variables)
@@ -24,48 +25,9 @@ Chezmoi is a powerful dotfiles manager that helps you:
 - Securely handle sensitive information
 - Work across different operating systems
 
-## Installation
-
-This repository includes setup scripts for all major operating systems:
-
-### Windows
-
-```powershell
-# Clone the repository
-git clone https://github.com/fishingpvalues/dotfiles.git
-cd dotfiles
-
-# Run the setup script
-powershell -ExecutionPolicy Bypass -File bootstrap/setup-chezmoi.ps1
-```
-
-### macOS/Linux
-
-```bash
-# Clone the repository
-git clone https://github.com/fishingpvalues/dotfiles.git
-cd dotfiles
-
-# Run the setup script
-chmod +x bootstrap/setup-chezmoi.sh
-./bootstrap/setup-chezmoi.sh
-```
-
-### Arch Linux
-
-```bash
-# Clone the repository
-git clone https://github.com/fishingpvalues/dotfiles.git
-cd dotfiles
-
-# Run the Arch-specific setup script
-chmod +x bootstrap/setup-chezmoi-arch.sh
-./bootstrap/setup-chezmoi-arch.sh
-```
-
 ## Basic Commands
 
-After installation, you can use the following commands to manage your dotfiles:
+After installation (see [README.md](README.md)), you can use the following commands to manage your dotfiles:
 
 ### View Status
 
@@ -126,9 +88,7 @@ dotfiles/
 │   ├── nvim/             # Neovim configuration
 │   ├── vscode/           # VS Code settings
 │   └── ...               # Other tool configurations
-├── bootstrap/setup-chezmoi.ps1     # Windows setup script
-├── bootstrap/setup-chezmoi.sh      # macOS/Linux setup script
-└── bootstrap/setup-chezmoi-arch.sh # Arch Linux specific setup
+├── bootstrap/            # Setup scripts
 ```
 
 When you run the setup scripts, they will:
@@ -242,11 +202,8 @@ encryption = "age"
 ### Common Issues
 
 1. **Changes not applying**: Run `chezmoi diff` to see what would change, then `chezmoi apply -v` for verbose output.
-
 2. **Conflicts with existing files**: Use `chezmoi merge` to resolve conflicts.
-
 3. **Command not found**: Make sure chezmoi is in your PATH. The setup scripts should add it automatically.
-
 4. **Template errors**: Check your template syntax and ensure variables are defined in `.chezmoi.toml`.
 
 ### Getting Help

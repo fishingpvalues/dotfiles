@@ -1,881 +1,162 @@
 # Cross-Platform Dotfiles
 
-> **Arch Linux user?** 👉 [See the Arch-specific setup guide here!](README-ARCH.md)
->
-> **macOS user?** 👉 [See the macOS-specific setup guide here!](README-macOS.md)
+Welcome! This repository contains a fully cross-platform dotfiles and developer environment setup for macOS, Linux (Arch), and Windows. All configuration is managed with [chezmoi](https://www.chezmoi.io/) and automated scripts.
 
-## Start Here
+## 🚀 Quick Start (All Platforms)
 
-1. **Clone this repo** to your machine.
-2. **Run the setup script for your OS:**
-   - Windows: `bootstrap/setup-dotfiles.ps1` (add `-Reinit` to force reinit)
-   - macOS/Linux: `bootstrap/setup-dotfiles.sh` (add `--reinit` to force reinit)
-3. **Install all tools and fonts:**
-   - This is now handled automatically by the setup script, which calls the appropriate install script:
-     - Windows: `bootstrap/scripts/windows/install.ps1`
-     - macOS/Linux: `bootstrap/scripts/unix/install.sh`
-     - These may call `brew bundle`, `make`, or other package managers as needed.
-4. **If you have issues, run the healer script:**
-   - Windows: `bootstrap/scripts/windows/healer.ps1`
-   - macOS/Linux: `bootstrap/scripts/unix/healer.sh`
-5. **To edit dotfiles:**
-   - Use `chezmoi edit <file>`
-6. **To push/pull changes:**
-   - Use `chezmoi cd` to enter the source directory, then use `git` commands (`git add`, `git commit`, `git push`, `git pull`)
-   - Or use `chezmoi git <args>` from anywhere (e.g., `chezmoi git status`)
+1. **Install chezmoi** (see [chezmoi.io/install](https://www.chezmoi.io/install/) for more options):
 
-This repository contains my personal configuration files (dotfiles) for multiple operating systems, managed with [chezmoi](https://www.chezmoi.io/).
+   - **macOS (with Homebrew):**
 
-## Features
+     ```sh
+     brew install chezmoi
+     ```
 
-- **Cross-Platform Support**: Works on macOS, Linux, and Windows
-- **Package Management**: Using OS-specific package managers (Homebrew, pacman, winget)
-- **Shell Configuration**: zsh, bash, PowerShell with customizations
-- **Terminal Utilities**: exa, bat, ripgrep, fzf, etc.
-- **Development Environment**: VSCode, Neovim, Docker, Python, Rust, and more
-- **Window Management**: Rectangle, Hammerspoon (macOS), and system-specific alternatives
-- **System Settings**: Sensible defaults for developer-focused setups
-- **Cross-platform bootstrap scripts** (Linux, macOS, Windows)
-- **Modular Neovim config** (plugins, custom commands, etc.)
-- **Centralized LSP server list** (`.lsp-servers`)
-- **Unified test entry points for all platforms**
+   - **Arch Linux:**
 
-## macOS Configuration
+     ```sh
+     pacman -S chezmoi
+     ```
 
-The repository includes extensive macOS system configurations in the `.macos` directory:
+   - **Windows (with Scoop):**
 
-### Application-Specific Settings
+     ```powershell
+     scoop install chezmoi
+     ```
 
-- **Finder**: Custom view options, showing hidden files, and improved navigation
-- **Dock**: Optimized appearance and behavior, hot corners setup
-- **Safari**: Enhanced privacy and developer features
-- **Terminal**: UTF-8 support, secure keyboard entry, and custom theme
-- **Chrome**: Gesture controls and print dialog settings
-- **Mail**: Improved email handling and keyboard shortcuts
-- **Spotlight**: Customized search results and indexing
-- **System**: Energy saving, screen behavior, and UI/UX preferences
+   - **Any OS (universal script):**
 
-### Known Issues and Warnings
+     ```sh
+     sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
+     # or for Windows PowerShell
+     (irm -useb get.chezmoi.io/ps1) | powershell -c -
+     ```
 
-1. **Permission Requirements**:
-   - Many commands require sudo access
-   - Some settings may need Security & Privacy approval
-   - Full Disk Access may be required for certain operations
-
-2. **Compatibility Notes**:
-   - Some settings might not work on newer macOS versions
-   - Xcode Command Line Tools are required
-   - Some features depend on specific applications being installed
-
-3. **Potential Risks**:
-   - Disabling System Integrity Protection might be required for some settings
-   - Some security features are modified (e.g., Gatekeeper settings)
-   - Backup your system before applying settings
-
-4. **Bug Fixes Required**:
-   - Terminal theme installation needs path verification
-   - Some PlistBuddy commands might fail silently
-   - Spotlight indexing commands might need adjustment for newer OS versions
-
-## Installation
-
-### Prerequisites
-
-1. Install [chezmoi](https://www.chezmoi.io/):
-
-```bash
-# macOS with Homebrew
-brew install chezmoi
-
-# Arch Linux
-pacman -S chezmoi
-
-# Windows with Scoop
-scoop install chezmoi
-
-# Direct installation (macOS/Linux)
-sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
-
-# Direct installation (Windows PowerShell)
-(irm -useb get.chezmoi.io/ps1) | powershell -c -
-```
-
-2. **macOS Additional Requirements**:
-   - Install Xcode Command Line Tools: `xcode-select --install`
-   - Install Homebrew: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-   - Grant necessary permissions in System Preferences
-
-### Quick Start
-
-```bash
-# Initialize chezmoi with this repository
-chezmoi init https://github.com/fishingpvalues/dotfiles.git
-
-# Preview changes
-chezmoi diff
-
-# Apply dotfiles
-chezmoi apply
-```
-
-### Detailed Setup
-
-OS-specific installation scripts will run automatically during setup.
-
-5. **Configure system settings**:
-
-System-specific settings will be applied automatically during setup.
-
-## Included Software & Tools
-
-### Terminal & Shell
-
-- **Cross-Platform**: zsh, bash, PowerShell with customizations
-- **Themes**: Powerlevel10k (zsh), Oh My Posh (PowerShell)
-- **Terminal Utilities**: exa, bat, fzf, ripgrep, fd, etc.
-- **Terminal Emulators**: WezTerm, kitty, Windows Terminal
-
-### Development Tools
-
-- **VSCode**: With extensions for various languages and tools
-- **Neovim**: Text editor with custom configurations
-- **Git**: With lazygit for easier Git operations
-- **Docker & Kubernetes**: Docker, kubectl, helm, k9s
-- **Programming Languages**: Python, Rust (via rustup)
-- **AI & ML**: Ollama, Jan AI, etc.
-
-### Productivity
-
-- **Window Management**:
-  - macOS: Rectangle, Hammerspoon, Amethyst
-  - Windows: PowerToys
-  - Linux: System-specific tools
-
-### Applications
-
-Platform-specific applications are installed through the respective package managers.
-
-## Fonts
-
-- **Nerd Fonts**: MesloLGS NF, Fira Code Nerd Font, etc.
-
-## Modern Rust-powered CLI Tools
-
-The following modern, Rust-powered (and Rust-inspired) CLI tools are included and aliased for a faster, richer terminal experience:
-
-### File Search & Content Viewing
-
-- **fd**: Fast, user-friendly replacement for find
-- **ripgrep (rg)**: Fast recursive search (better grep)
-- **bat**: cat with syntax highlighting
-
-### Directory Navigation & Listing
-
-- **broot**: TUI directory tree and fuzzy search
-- **bottom**: Graphical process/system monitor (alternative to htop)
-- **as-tree**: Modern tree command
-
-### File & Disk Management
-
-- **dust**: Intuitive du replacement
-- **dua (dua-cli)**: Disk usage analyzer with delete support
-- **ncdu**: Curses-based disk usage explorer
-
-### Git & Development Productivity
-
-- **delta**: Syntax-highlighting pager for git diff/grep
-- **difftastic**: Syntax-aware diff tool
-- **just**: Modern command runner (like make)
-
-### Miscellaneous Utilities
-
-- **atuin**: Enhanced shell history manager
-- **bandwhich**: Real-time bandwidth monitor
-- **hyperfine**: Command benchmarking tool
-- **miniserve**: Instant static file server
-- **dog**: Modern DNS client (dig replacement)
-- **choose**: Fast, human-friendly cut/awk alternative
-- **procs**: Modern ps replacement
-- **lsd**: Modern ls replacement
-- **duf**: Modern df replacement
-- **glow**: Markdown previewer
-- **httpie**: User-friendly HTTP client
-
-All tools are installed and configured cross-platform (macOS, Linux, Windows/WSL).
-
-## Aliases for Modern Tools
-
-To maximize productivity, standard commands are aliased to their modern Rust-powered equivalents in all supported shells (bash, zsh, fish, PowerShell, Nushell):
-
-| Standard | Rust-powered Replacement |
-|----------|-------------------------|
-| find     | fd                      |
-| grep     | rg                      |
-| cat      | bat --paging=never      |
-| du       | dust                    |
-| diff     | delta                   |
-| tree     | as-tree                 |
-| top      | bottom                  |
-| ...      | ...                     |
-
-Other tools (broot, dua, ncdu, just, atuin, bandwhich, hyperfine, miniserve, dog, choose, etc.) are also available and aliased for convenience.
-
-**Aliases are set up automatically for bash, zsh, fish, PowerShell, and Nushell.**
-
-See the respective shell config files for details.
-
-## Structure
-
-```
-dotfiles/
-  README.md
-  CHEZMOI.md
-  LICENSE
-  .chezmoi.toml
-  .chezmoi.toml.tmpl
-  .chezmoiignore
-  .editorconfig
-  .gitignore
-  dot_Brewfile
-  Makefile
-  bin/
-    chezmoi.exe
-  config/
-    bash/
-    zsh/
-    nvim/
-    kitty/
-    wezterm/
-    windows-terminal/
-    powershell/
-    starship/
-    git/
-    ssh/
-    fzf/
-    lazygit/
-    nushell/
-    wget/
-    curl/
-    tmux/
-    idea/
-  scripts/
-    README.md
-    windows/
-      install.ps1
-      healer.ps1
-      install-packages.ps1
-    unix/
-      install.sh
-      healer.sh
-      install-oh-my-posh.sh
-  setup-dotfiles.ps1
-  setup-dotfiles.sh
-  setup-chezmoi-arch.sh
-  reinit-chezmoi.ps1
-  media/
-    wallpapers/
-  .macos/
-  .conda/
-  .lsp-servers
-  config/nvim/init.lua
-  config/nvim/lua/plugins/
-  config/nvim/lua/custom/plugins/
-  config/nvim/lua/custom/commands/
-  config/nvim/lua/custom/init.lua
-  test/
-```
-
-- All scripts are grouped by OS in `bootstrap/scripts/`.
-- Use the main README and `bootstrap/scripts/README.md` for guidance.
-- Use chezmoi as your main dotfiles manager: `chezmoi edit`, `chezmoi apply`, `chezmoi cd`, `chezmoi git <args>`.
-
-## Customization
-
-To modify or add new dotfiles:
-
-1. Make changes to the local files in the chezmoi source directory:
-
-```bash
-# Edit files
-chezmoi edit $FILE
-
-# Apply changes
-chezmoi apply
-
-# Update repository
-chezmoi cd
-git add .
-git commit -m "Update dotfiles"
-git push
-```
-
-### Adding New Configurations
-
-```bash
-# Add new file to chezmoi
-chezmoi add ~/.config/newconfig
-```
-
-### Modifying macOS Settings
-
-1. Edit the relevant file in `bootstrap/.macos/apps/`
-2. Test the changes in a clean environment
-3. Update the documentation if needed
-
-## Troubleshooting
-
-### Common Issues
-
-- **Permission Errors**: Run with sudo when required, check System Preferences → Security & Privacy, grant Full Disk Access to Terminal/iTerm2
-- **Failed Commands**: Verify OS version compatibility, check for required applications, review system logs for errors
-- **Settings Not Applied**: Logout/restart might be required, check command syntax for OS version, verify paths and permissions
-
-### Recovery
-
-```bash
-# Before applying changes
-defaults read > defaults.before
-
-# Revert specific setting
-defaults delete com.apple.finder NewWindowTarget
-
-# Restart affected application
-killall Finder
-```
-
-## License
-
-MIT
-
-## Platform-Specific Setup Guides
-
-- [Arch Linux Setup](README-ARCH.md)
-- [macOS Setup](README-macOS.md)
-- [Chezmoi Usage](CHEZMOI.md)
-
-## Windows PowerShell + Dotfiles Setup Guide
-
-Follow these steps to ensure your PowerShell loads your dotfiles profile and Oh My Posh works correctly, even with OneDrive and script security:
-
-### 1. Install All Tools and Fonts
-
-Run the provided script (as Administrator):
-
-```powershell
-./install-everything.ps1
-```
-
-This will install all required tools and fonts, and symlink your PowerShell profile.
-
-### 2. OneDrive Profile Loader (if needed)
-
-If your `$PROFILE` is in OneDrive (common on Windows), create a loader profile at:
-
-```
-C:\Users\<YourUser>\OneDrive\Dokumente\PowerShell\Microsoft.PowerShell_profile.ps1
-```
-
-with this content:
-
-```powershell
-. 'C:\dotfiles\config\powershell\user_profile.ps1'
-```
-
-This ensures PowerShell always loads your dotfiles profile.
-
-### 3. Set Execution Policy
-
-Open PowerShell as Administrator and run:
-
-```powershell
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-This allows local scripts to run.
-
-### 4. Unblock All Dotfiles Scripts
-
-If you get errors about scripts not being digitally signed, unblock them:
-
-```powershell
-Get-ChildItem -Path C:\dotfiles -Recurse -Filter *.ps1 | Unblock-File
-```
-
-### 5. Ensure Oh My Posh is on PATH
-
-The profile includes logic to add common install locations for `oh-my-posh` to your PATH. Make sure it is installed and accessible:
-
-```powershell
-oh-my-posh --version
-```
-
-### 6. Restart PowerShell
-
-Open a new PowerShell window. You should see your custom prompt and settings.
-
----
-
-**Troubleshooting:**
-
-- If you see errors about digital signatures, make sure you have set the execution policy and unblocked your scripts.
-- If your profile is not loading, check `$PROFILE` and ensure the loader or symlink is in the correct location.
-- If Oh My Posh is not found, ensure it is installed and on your PATH.
-
----
-
-This guide summarizes the steps that made the setup work as discussed in this chat. Use it for future reference or when setting up on a new machine!
-
-## macOS & Linux Shell + Dotfiles Setup Guide
-
-Follow these steps to ensure your shell (zsh, bash, fish, etc.) loads your dotfiles profile and prompt tools (like Starship or Oh My Posh) work correctly:
-
-### 1. Install All Tools and Fonts
-
-Run the provided script:
-
-```bash
-./install-everything.sh
-```
-
-This will install all required tools and fonts, and symlink your shell profiles.
-
-### 2. Symlink or Source Your Dotfiles Profile
-
-For each shell you use, ensure your system profile sources your dotfiles version.  
-For example, for zsh:
-
-```bash
-# In ~/.zshrc (or ~/.bashrc, ~/.bash_profile, ~/.config/fish/config.fish, etc.)
-source ~/dotfiles/config/zsh/zshrc
-```
-
-Or, symlink:
-
-```bash
-ln -sf ~/dotfiles/config/zsh/zshrc ~/.zshrc
-```
-
-Repeat for other shells as needed.
-
-### 3. Ensure Prompt Tool is Installed and on PATH
-
-For Starship:
-
-```bash
-starship --version
-```
-
-For Oh My Posh:
-
-```bash
-oh-my-posh --version
-```
-
-If not found, install via Homebrew, apt, or your package manager.
-
-### 4. Set Script Permissions
-
-If you get "permission denied" errors, make scripts executable:
-
-```bash
-chmod +x ~/dotfiles/bootstrap/scripts/unix/*.sh
-```
-
-### 5. Install Fonts
-
-Make sure you have a Nerd Font installed and selected in your terminal emulator for prompt icons to display correctly.
-
-### 6. Restart Your Terminal
-
-Open a new terminal window to see your custom prompt and settings.
-
----
-
-**Troubleshooting:**
-
-- If your profile is not loading, check that your shell's config file sources or symlinks to your dotfiles profile.
-- If your prompt tool is not found, ensure it is installed and on your PATH.
-- If icons are missing, ensure a Nerd Font is installed and selected in your terminal.
-- If you get "permission denied" errors, check script permissions.
-
----
-
-This guide summarizes the steps to ensure your dotfiles and prompt tools work on macOS and Linux, just like on Windows.
-
-## Cursor Editor
-
-[Cursor](https://www.cursor.so/) is a modern AI-powered code editor. To install Cursor:
-
-### Windows
-
-Download and run the installer from:
-<https://www.cursor.so/download/windows>
-
-### macOS
-
-Download and run the installer from:
-<https://www.cursor.so/download/mac>
-
-Or install via Homebrew:
-
-```bash
-brew install --cask cursor
-```
-
-### Linux
-
-Download the AppImage from:
-<https://www.cursor.so/download/linux>
-
-Or use the .deb or .rpm packages as provided on the website.
-
-After installation, you can launch Cursor from your applications menu or with the `cursor` command.
-
-## Entry Points
-
-- **Windows:**
-  - `bootstrap/setup-dotfiles.ps1` — Initial chezmoi and dotfiles setup
-  - `bootstrap/scripts/windows/install.ps1` — Install all tools and fonts, fix profile
-  - `bootstrap/scripts/windows/healer.ps1` — Heal/fix common issues (run if you have errors)
-- **macOS/Linux:**
-  - `bootstrap/setup-dotfiles.sh` — Initial chezmoi and dotfiles setup
-  - `bootstrap/scripts/unix/install.sh` — Install all tools and fonts
-  - `bootstrap/scripts/unix/healer.sh` — Heal/fix common issues (run if you have errors)
-
-## Recommended Structure
-
-```
-dotfiles/
-  README.md
-  CHEZMOI.md
-  LICENSE
-  .chezmoi.toml
-  .chezmoi.toml.tmpl
-  .chezmoiignore
-  .editorconfig
-  .gitignore
-  dot_Brewfile
-  Makefile
-  bin/
-    chezmoi.exe
-  config/
-    bash/
-    zsh/
-    nvim/
-    kitty/
-    wezterm/
-    windows-terminal/
-    powershell/
-    starship/
-    git/
-    ssh/
-    fzf/
-    lazygit/
-    nushell/
-    wget/
-    curl/
-    tmux/
-    idea/
-  scripts/
-    README.md
-    windows/
-      install.ps1
-      healer.ps1
-      install-packages.ps1
-    unix/
-      install.sh
-      healer.sh
-      install-oh-my-posh.sh
-  setup-dotfiles.ps1
-  setup-dotfiles.sh
-  setup-chezmoi-arch.sh
-  reinit-chezmoi.ps1
-  media/
-    wallpapers/
-  .macos/
-  .conda/
-  .lsp-servers
-  config/nvim/init.lua
-  config/nvim/lua/plugins/
-  config/nvim/lua/custom/plugins/
-  config/nvim/lua/custom/commands/
-  config/nvim/lua/custom/init.lua
-  test/
-```
-
-- Remove any empty or obsolete folders (e.g., `nvim.old/`, `.chezmoi/source/`, `.vscode/` if not needed)
-- Consolidate install scripts to one per OS
-- Use the healer scripts to fix common issues
-
-## Arch Linux: Automated Hyprland/macOS-like Setup
-
-1. **Install all required packages and dotfiles:**
+2. **Clone and apply your dotfiles:**
 
    ```sh
-   make install-hyprland
+   chezmoi init https://github.com/fishingpvalues/dotfiles.git
+   chezmoi apply
    ```
 
-   This will install Hyprland, Waybar, Kitty, Dunst, Rofi, WezTerm, Anyrun, Cairo Dock/Eww, WhiteSur themes, Nerd Fonts, and all plugins/deps, then apply your dotfiles.
+3. **Run the setup script for your OS:**
+   - **macOS/Linux:**
 
-2. **Theme switching:**
-   - Use `bootstrap/scripts/unix/set_theme.sh <forest|water|desert>` to set a theme.
-   - Use `bootstrap/scripts/unix/cycle_theme.sh` to cycle through themes (bind to a key, e.g. Super+T in Hyprland).
-   - Wallpapers are switched automatically based on theme and must be named `forest_*`, `water_*`, or `desert_*` in `~/Pictures/Wallpapers/`.
+     ```sh
+     ./bootstrap/setup-dotfiles.sh
+     # For a fresh setup, add --reinit
+     ./bootstrap/setup-dotfiles.sh --reinit
+     ```
 
-3. **Modular config structure:**
-   - All themeable configs (Waybar, Kitty, WezTerm, Rofi, etc.) use symlinks to `current-theme` files, switched by the scripts.
-   - Add new themes by creating new color files and updating the scripts if needed.
+   - **Windows:**
 
-4. **Customize further:**
-   - See `bootstrap/scripts/unix/set_theme.sh` for how to add more apps or theme logic.
-   - See the Makefile for all installable targets.
+     ```powershell
+     ./bootstrap/setup-dotfiles.ps1
+     # For a fresh setup, add -Reinit
+     ./bootstrap/setup-dotfiles.ps1 -Reinit
+     ```
 
-## Cloning with Submodules
-
-This repository uses a submodule for the bootstrap scripts. To clone with all dependencies:
-
-```sh
-git clone --recurse-submodules https://github.com/fishingpvalues/dotfiles.git
-```
-
-If you already cloned without submodules, run:
-
-```sh
-git submodule update --init --recursive
-```
-
-## Automated Testing Framework
-
-This repository includes a robust, cross-platform testing framework to ensure all setup scripts, dotfiles, and functions work as expected on all supported platforms (Linux, macOS, Windows).
-
-### How It Works
-
-- **Docker-based matrix testing** for Ubuntu, Fedora, Arch, and Alpine Linux using Dockerfiles in `test/`.
-- **GitHub Actions CI** runs all tests on every push and pull request, including:
-  - All Linux Docker containers
-  - macOS runner
-  - Windows runner
-- **Test scripts** (`test/test.sh`, `test/test.ps1`) source all shell profiles and run all key functions/aliases, checking for errors and expected output.
-- **Idempotency**: Install scripts are run multiple times to ensure re-runs are safe.
-
-### Running Tests Locally
-
-#### Linux (Docker required)
-
-```sh
-./test/run-all.sh
-```
-
-#### macOS
-
-```sh
-./test/test.sh
-```
-
-#### Windows (PowerShell)
-
-```powershell
-./test/test.ps1
-```
-
-### In CI
-
-- All tests run automatically via `.github/workflows/test-dotfiles.yml`.
-
-### Refreshing All READMEs
-
-To keep documentation up to date after changes, scan the root directory for all `README*.md` files and update them with any new features, scripts, or test instructions. You can automate this with a script or manually review and update each README as needed.
-
-## Extending Neovim Config
-
-- Add new plugins to `config/nvim/lua/plugins/` or `config/nvim/lua/custom/plugins/`.
-- Add new custom commands to `config/nvim/lua/custom/commands/`.
-- Require your new modules in `config/nvim/lua/custom/init.lua`.
-
-## Testing
-
-- Run all tests on any platform:
-
-  ```sh
-  ./test/run-all.sh
-  # or on Windows
-  pwsh ./test/run-all.ps1
-  ```
-
-- All bootstrap scripts, LSP install scripts, and Neovim Plenary tests are run and checked for errors.
-
-## LSP Servers
-
-- Edit `.lsp-servers` to add/remove npm-based LSP servers for all platforms.
-
-## Contributing
-
-- Keep all new scripts and configs modular.
-- Add tests for new functionality in `test/` or `config/nvim/lua/custom/tests/`.
+4. **Done!** All tools, fonts, and configs will be installed automatically. See OS-specific guides for extra features and troubleshooting.
 
 ---
 
-For more details, see `test/README.md` and `config/nvim/lua/custom/tests/README.md`.
+## 🖥️ OS-Specific Guides
 
-## Local CI Testing with act
-
-You can use [act](https://github.com/nektos/act) to test your GitHub Actions workflows locally, including macOS workflows (with some limitations):
-
-```sh
-# Run all workflows as if on GitHub Actions
-act
-
-# Run a specific workflow/job
-act -j <job-name>
-```
-
-## Directory Navigation with zoxide
-
-This dotfiles setup includes [zoxide](https://github.com/ajeetdsouza/zoxide) for fast directory jumping:
-
-| Shell/Tool   | Supported | Config Location                        | Usage Example         |
-|--------------|-----------|----------------------------------------|-----------------------|
-| bash         | ✅         | `config/bash/.bashrc`                  | `z <pattern>`         |
-| zsh          | ✅         | `config/zsh/zshrc`                     | `z <pattern>`         |
-| fish         | ✅         | `config/fish/config.fish`              | `z <pattern>`         |
-| nushell      | ✅         | `config/nushell/config.nu`             | `z <pattern>`         |
-| PowerShell   | ✅         | `config/powershell/user_profile.ps1`   | `z <pattern>`         |
-| Neovim       | ✅         | `config/nvim/lua/lazy-plugins.lua`     | `:Telescope zoxide`   |
-
-- **Shells**: zoxide is initialized in supported shells (bash, zsh, fish, nushell, PowerShell, etc.). Use `z <pattern>` to jump to frequently used directories.
-- **Neovim**: zoxide is integrated via the [telescope-zoxide](https://github.com/jvgrootveld/telescope-zoxide) plugin. Use `:Telescope zoxide list` to fuzzy-find and jump to directories inside Neovim.
-
-To install zoxide:
-
-- On most systems: `brew install zoxide` or `sudo apt install zoxide`
-- For more info, see the [zoxide GitHub page](https://github.com/ajeetdsouza/zoxide).
-
-## DataFrame Debugging with bear.nvim
-
-- **Plugin:** [bear.nvim](https://github.com/nelnn/bear.nvim) is included for debugging pandas and polars DataFrames in Python.
-- **Keymap:** Use `<leader>df` in normal or visual mode to visualize the DataFrame under the cursor.
-- **Command:** Use `:DFView` to input a DataFrame variable for visualization.
-- **Requirements:**
-  - [nvim-dap](https://github.com/mfussenegger/nvim-dap) (installed automatically)
-  - [visidata](https://www.visidata.org/) (install globally: `pip install visidata`)
-  - [pandas](https://pandas.pydata.org/) and/or [polars](https://www.pola.rs/) in your Python environment
-
-## Edit History Time Travel with time-machine.nvim
-
-- **Plugin:** [time-machine.nvim](https://github.com/y3owk1n/time-machine.nvim) is included for advanced undo/redo, timeline, and edit history management.
-- **Keymaps:**
-  - `<leader>tt`: Toggle the time machine panel
-  - `<leader>tx`: Purge current buffer's undo history
-  - `<leader>tX`: Purge all undo histories
-  - `<leader>tl`: Show the time machine log
-- **which-key:** All keymaps are discoverable via which-key under the `[t] Time Machine` group.
-- **Requirements:**
-  - Neovim 0.11+
-  - A diff tool in your PATH: either `difft` (recommended for syntax-aware diffs) or `diff` (standard)
-  - If neither is found, you will see a clear error message in Neovim
-- **Recommended Neovim settings:**
-
-  ```lua
-  vim.opt.undofile = true
-  vim.opt.undodir = vim.fn.expand("~/.undodir")
-  ```
-
-## Terminal Management with neaterminal.nvim
-
-- **Plugin:** [neaterminal.nvim](https://github.com/bassamsdata/neaterminal.nvim) is included for advanced terminal and TUI app management in Neovim.
-- **Features:**
-  - Floating and split terminals
-  - Terminal toggling and management
-  - Support for TUI apps (lazygit, yazi, btop, etc.)
-  - Resizing, maximizing, and process monitoring
-  - Custom app integration (e.g., btop, yazi)
-  - Error messages if required apps are not in PATH (e.g., btop)
-  - Does **not** override default terminal spawning; only used when explicitly invoked
-  - Works on all platforms and terminals, including wezterm
-- **Keymaps:**
-  - `<leader>tf`: Open floating terminal
-  - `<leader>ts`: Open split terminal
-  - `<leader>lg`: Run lazygit in float
-  - `<leader>tm`: Maximize current terminal
-  - `<leader>bt`: Open btop (float, with error if not installed)
-  - `<leader>ya`: Open yazi (float, with error if not installed)
-- **which-key:** All keymaps are discoverable under `[t] Terminal` group.
-- **Requirements:**
-  - Neovim 0.11+
-  - TUI apps (lazygit, yazi, btop, etc.) should be installed and in PATH for their respective keymaps to work.
-
-## Python Type Checking with ty
-
-We use [ty](https://github.com/astral-sh/ty), an extremely fast Python type checker and language server.
-
-### Installation
-
-- ty is installed automatically by our setup scripts (`setup-dotfiles.sh` or `setup-dotfiles.ps1`).
-- User-level config is managed at `~/.config/ty/ty.toml` (Linux/macOS) or `%APPDATA%\ty\ty.toml` (Windows), sourced from `config/ty/ty.toml` in this repo.
-
-### Usage
-
-- To check your code, run:
-
-  ```sh
-  ty check
-  ```
-
-- To start the language server (for editor integration):
-
-  ```sh
-  ty server
-  ```
-
-### Configuration
-
-- User-level config: `config/ty/ty.toml` (copied to the appropriate location by setup scripts)
-- Project-level config: Add a `[tool.ty]` section to your `pyproject.toml` if needed
-
-See the [ty documentation](https://github.com/astral-sh/ty) for more details.
-
-## Yazi File Manager
-
-We use [Yazi](https://github.com/sxyazi/yazi), a blazing fast terminal file manager written in Rust, with a state-of-the-art configuration and plugin setup for productivity and Neovim integration.
-
-### Configuration
-
-- The Yazi config is managed at `config/yazi/yazi.toml` in this repo.
-- Symlink or copy it to `~/.config/yazi/yazi.toml` after setup.
-
-### SOTA Features
-
-- Hidden files shown, natural sorting, icons, previews, image previews, wide preview pane.
-- Catppuccin Mocha theme for a beautiful UI.
-- Git integration enabled.
-- Smart case search.
-- Large preview size, image previews via ueberzug.
-
-### Plugins
-
-The following plugins are enabled for a modern workflow:
-
-- `eza-preview.yazi`, `glow.yazi`, `rich-preview.yazi`, `hexyl.yazi`, `lsar.yazi`, `mediainfo.yazi`
-- `bunny.yazi`, `easyjump.yazi`, `projects.yazi`
-- `compress.yazi`, `diff.yazi`, `system-clipboard.yazi`
-- `dual-pane.yazi`, `starship.yazi`
-- `lazygit.yazi`, `DreamMaoMao/git.yazi`
-- `fm-nvim`, `mikavilpas/yazi.nvim`
-
-### Plugin Installation
-
-Yazi plugins are managed with the `ya` assistant (bundled with Yazi):
-
-```sh
-# Install plugins (run in your yazi config directory)
-ya pack -a eza-preview.yazi glow.yazi rich-preview.yazi hexyl.yazi lsar.yazi mediainfo.yazi \
-  bunny.yazi easyjump.yazi projects.yazi compress.yazi diff.yazi system-clipboard.yazi \
-  dual-pane.yazi starship.yazi lazygit.yazi DreamMaoMao/git.yazi fm-nvim mikavilpas/yazi.nvim
-```
-
-### Neovim Integration
-
-- The plugins `fm-nvim` and `mikavilpas/yazi.nvim` allow you to use Yazi as a file picker/manager inside Neovim.
-- Add `mikavilpas/yazi.nvim` to your Neovim plugin list for seamless integration.
+- [macOS Guide & Tips](README-macOS.md)
+- [Arch Linux/Hyprland Guide](README-ARCH.md)
+- [Chezmoi Advanced Usage](CHEZMOI.md)
 
 ---
+
+## 🛠️ What's Included?
+
+- **Modern CLI tools** (fd, ripgrep, bat, fzf, broot, etc.)
+- **Shells:** zsh, bash, PowerShell (with customizations and aliases)
+- **Editors:** Neovim (modular config), VSCode
+- **Dev Tools:** Docker, Python, Rust, Git, Kubernetes tools, etc.
+- **Window Management:** Rectangle, Amethyst (macOS), PowerToys (Windows), Hyprland (Arch)
+- **Fonts:** Nerd Fonts (MesloLGS, Fira Code, etc.)
+- **Automated system tweaks** (macOS, Arch)
+- **Unified test suite** for all platforms
+
+See the OS-specific guides for full lists and details.
+
+---
+
+## 📝 Usage
+
+- **Edit dotfiles:**
+
+  ```sh
+  chezmoi edit <file>
+  ```
+
+- **Add new config:**
+
+  ```sh
+  chezmoi add ~/.config/myapp/config.toml
+  ```
+
+- **Update dotfiles:**
+
+  ```sh
+  chezmoi update
+  ```
+
+- **Push/pull changes:**
+
+  ```sh
+  chezmoi cd   # enter source dir
+  git add . && git commit -m "..." && git push
+  # or use chezmoi git <args>
+  ```
+
+---
+
+## ❓ FAQ
+
+**Q: What OSes are supported?**
+A: macOS, Arch Linux, and Windows (with PowerShell). Most configs are cross-platform.
+
+**Q: How do I add my own configs?**
+A: Use `chezmoi add <file>` and edit as needed. See [CHEZMOI.md](CHEZMOI.md) for advanced templating and secrets.
+
+**Q: How do I update everything?**
+A: Pull latest changes and run `chezmoi apply` and the setup script for your OS.
+
+**Q: Something broke! How do I troubleshoot?**
+A: See the troubleshooting section in your OS-specific guide. Most issues are solved by re-running the setup script or checking permissions.
+
+**Q: How do I test my setup?**
+A: Run the test scripts in the `test/` directory for your platform. All tests are also run in CI.
+
+**Q: Are any hacking/security tools installed?**
+A: No. All such tools have been removed for work compliance. Only developer and productivity tools are included.
+
+---
+
+## 📂 Project Structure
+
+```
+dotfiles/
+  README.md
+  README-macOS.md
+  README-ARCH.md
+  CHEZMOI.md
+  bin/
+  config/
+  bootstrap/
+  ...
+```
+
+---
+
+## 🤝 Contributing
+
+- Keep scripts modular and cross-platform.
+- Add tests for new features.
+- Document any new tools or configs.
+
+---
+
+For advanced usage, templating, and secrets, see [CHEZMOI.md](CHEZMOI.md).
