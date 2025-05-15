@@ -1,7 +1,0 @@
-# Makefile.unix - Unix-specific Makefile fragment
-# Add Unix-only targets here
-
-.PHONY: unix-hello
-
-unix-hello:
-	@echo "Hello from Unix-specific Makefile fragment!" 

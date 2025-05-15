@@ -6,6 +6,16 @@ This guide covers Arch/Hyprland-specific setup, tips, and troubleshooting for th
 
 ---
 
+## Quick Start (Arch)
+
+```sh
+./bootstrap/install-linux.sh
+```
+
+This script will install all required packages, AUR helper, AUR packages, apply your dotfiles, and set up conda.
+
+---
+
 ## Features (Arch/Hyprland)
 
 - Hyprland window manager with macOS-inspired look
@@ -23,20 +33,6 @@ This guide covers Arch/Hyprland-specific setup, tips, and troubleshooting for th
 - Internet connection
 - [yay](https://github.com/Jguer/yay) AUR helper (auto-installed)
 - [chezmoi](https://www.chezmoi.io/): `pacman -S chezmoi`
-
----
-
-## Quick Start (Arch)
-
-```sh
-git clone --recurse-submodules https://github.com/fishingpvalues/dotfiles.git
-cd dotfiles
-make install-hyprland
-make postinstall
-```
-
-- Installs all required packages, AUR apps, and dotfiles
-- Symlinks wallpapers to `~/Pictures/Wallpapers`
 
 ---
 
@@ -65,13 +61,13 @@ make postinstall
 ## Troubleshooting & FAQ
 
 **Q: yay or chezmoi not found?**
-A: Run `sudo pacman -S yay chezmoi` first.
+A: The script will install them if needed.
 
 **Q: Some apps don't update theme?**
 A: Check their config path and reload command in `set_theme.sh`.
 
 **Q: How do I re-run the setup?**
-A: Just run `make install-hyprland` again. It's idempotent.
+A: Just run `./bootstrap/install-linux.sh` again. It's idempotent.
 
 **Q: Are any hacking/security tools installed?**
 A: No. All such tools have been removed for work compliance.

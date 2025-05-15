@@ -4,59 +4,33 @@ Welcome! This repository contains a fully cross-platform dotfiles and developer 
 
 ## 🚀 Quick Start (All Platforms)
 
-1. **Install chezmoi** (see [chezmoi.io/install](https://www.chezmoi.io/install/) for more options):
-
-   - **macOS (with Homebrew):**
-
-     ```sh
-     brew install chezmoi
-     ```
-
-   - **Arch Linux:**
-
-     ```sh
-     pacman -S chezmoi
-     ```
-
-   - **Windows (with Scoop):**
-
-     ```powershell
-     scoop install chezmoi
-     ```
-
-   - **Any OS (universal script):**
-
-     ```sh
-     sh -c "$(curl -fsLS get.chezmoi.io)" -- -b $HOME/.local/bin
-     # or for Windows PowerShell
-     (irm -useb get.chezmoi.io/ps1) | powershell -c -
-     ```
-
-2. **Clone and apply your dotfiles:**
+1. **Clone this repo**
 
    ```sh
-   chezmoi init https://github.com/fishingpvalues/dotfiles.git
-   chezmoi apply
+   git clone --recurse-submodules https://github.com/fishingpvalues/dotfiles.git
+   cd dotfiles
    ```
 
-3. **Run the setup script for your OS:**
-   - **macOS/Linux:**
+2. **Run the install script for your OS:**
+   - **Linux:**
 
      ```sh
-     ./bootstrap/setup-dotfiles.sh
-     # For a fresh setup, add --reinit
-     ./bootstrap/setup-dotfiles.sh --reinit
+     ./bootstrap/install-linux.sh
      ```
 
-   - **Windows:**
+   - **macOS:**
+
+     ```sh
+     ./bootstrap/install-macos.sh
+     ```
+
+   - **Windows (PowerShell):**
 
      ```powershell
-     ./bootstrap/setup-dotfiles.ps1
-     # For a fresh setup, add -Reinit
-     ./bootstrap/setup-dotfiles.ps1 -Reinit
+     .\bootstrap\install-windows.ps1
      ```
 
-4. **Done!** All tools, fonts, and configs will be installed automatically. See OS-specific guides for extra features and troubleshooting.
+3. **Done!** All tools, fonts, and configs will be installed automatically. See OS-specific guides for extra features and troubleshooting.
 
 ---
 
@@ -122,10 +96,10 @@ A: macOS, Arch Linux, and Windows (with PowerShell). Most configs are cross-plat
 A: Use `chezmoi add <file>` and edit as needed. See [CHEZMOI.md](CHEZMOI.md) for advanced templating and secrets.
 
 **Q: How do I update everything?**
-A: Pull latest changes and run `chezmoi apply` and the setup script for your OS.
+A: Pull latest changes and run the install script for your OS again.
 
 **Q: Something broke! How do I troubleshoot?**
-A: See the troubleshooting section in your OS-specific guide. Most issues are solved by re-running the setup script or checking permissions.
+A: See the troubleshooting section in your OS-specific guide. Most issues are solved by re-running the install script or checking permissions.
 
 **Q: How do I test my setup?**
 A: Run the test scripts in the `test/` directory for your platform. All tests are also run in CI.
