@@ -156,26 +156,7 @@ install-packages:
 		# Configure conda to store environments in .conda/envs \
 		CONDA_ENV_DIR="$${HOME}/.conda/envs"; \
 		mkdir -p "$${CONDA_ENV_DIR}"; \
-		( \
-		cat > "$${HOME}/.condarc" << EOF; \
-envs_dirs:
-	- $${CONDA_ENV_DIR}
-	- $${HOME}/miniforge3/envs
-EOF \
-		)
-		# Ensure conda initialization is in shell profiles \
-		for SHELL_RC in "$${HOME}/.bashrc" "$${HOME}/.zshrc"; do \
-			if [ -f "$$SHELL_RC" ]; then \
-				if ! grep -q "conda initialize" "$$SHELL_RC"; then \
-					echo "Adding conda initialization to $$SHELL_RC"; \
-					SHELL_NAME=$$(basename "$$SHELL_RC" | sed 's/\.[^.]*$$//'); \
-					$${HOME}/miniforge3/bin/conda init $$SHELL_NAME; \
-				fi; \
-			fi; \
-		done; \
-		echo "Configured conda to store environments in $${CONDA_ENV_DIR}"; \
-		# Setup Python dev tools \
-		pip install --user --upgrade uv ruff pyright pdoc commitizen pre-commit just; \
+		# [Conda configuration removed. See scripts/setup-conda.sh for details.]
 	else \
 		echo "Not running on Arch Linux, skipping package installation"; \
 	fi
