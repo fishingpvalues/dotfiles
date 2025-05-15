@@ -386,3 +386,57 @@ if (which fastfetch | is-empty) == false {
     neofetch --ascii_distro ($nu.os-info.name)
   }
 }
+
+# Modern CLI tool aliases with graceful fallback
+if (which eza | is-empty) == false {
+  alias ls = eza --icons --git --color=auto --group-directories-first
+} else if (which exa | is-empty) == false {
+  alias ls = exa --icons --git --color=auto --group-directories-first
+} else if (which lsd | is-empty) == false {
+  alias ls = lsd --icon=auto
+} else {
+  alias ls = ls --color=auto
+}
+if (which sd | is-empty) == false {
+  alias sed = sd
+} else {
+  alias sed = sed
+}
+if (which xh | is-empty) == false {
+  alias http = xh
+} else if (which http | is-empty) == false {
+  alias http = http
+} else {
+  alias http = curl
+}
+if (which gitui | is-empty) == false {
+  alias gui = gitui
+}
+if (which rga | is-empty) == false {
+  alias rga = rga
+}
+if (which batman | is-empty) == false {
+  alias batman = batman
+}
+if (which batgrep | is-empty) == false {
+  alias batgrep = batgrep
+}
+if (which batdiff | is-empty) == false {
+  alias batdiff = batdiff
+}
+if (which onefetch | is-empty) == false {
+  alias onefetch = onefetch
+}
+# vivid LS_COLORS (https://github.com/sharkdp/vivid)
+if (which vivid | is-empty) == false {
+  $env.LS_COLORS = (vivid generate catppuccin-mocha)
+}
+# Tool docs:
+# eza: https://github.com/eza-community/eza
+# vivid: https://github.com/sharkdp/vivid
+# sd: https://github.com/chmln/sd
+# xh: https://github.com/ducaale/xh
+# gitui: https://github.com/extrawurst/gitui
+# rga: https://github.com/phiresky/ripgrep-all
+# bat-extras: https://github.com/eth-p/bat-extras
+# onefetch: https://github.com/o2sh/onefetch

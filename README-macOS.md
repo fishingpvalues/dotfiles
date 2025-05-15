@@ -1,86 +1,114 @@
-# macOS Dotfiles & System Automation
+# macOS Setup Guide for dotfiles
 
-> For general installation and usage, see [README.md](README.md).
+## Quick Start (Recommended)
 
-This guide covers macOS-specific setup, tips, and troubleshooting for this dotfiles repo. All configuration is managed with [chezmoi](https://www.chezmoi.io/) and automated scripts.
-
----
-
-## Features (macOS)
-
-- Automated system tweaks: UI/UX, keyboard, Finder, Dock, Safari, Mail, Terminal, Chrome, Spotlight, and more
-- App install & configuration: Homebrew, CLI tools, terminal emulators, developer tools, fonts
-- Cross-platform dotfiles: Shared config for zsh, bash, git, neovim, kitty, wezterm, starship, tmux, fzf, and more
-- Safe & reproducible: All scripts are idempotent and can be re-run safely
-
----
-
-## Prerequisites
-
-- macOS (recent version recommended)
-- [Xcode Command Line Tools](https://developer.apple.com/xcode/resources/): `xcode-select --install`
-- [Homebrew](https://brew.sh/): `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-- [chezmoi](https://www.chezmoi.io/): `brew install chezmoi`
-
----
-
-## Quick Start (macOS)
+Open Terminal and run:
 
 ```sh
-chezmoi init https://github.com/fishingpvalues/dotfiles.git
-chezmoi apply
-./bootstrap/setup-dotfiles.sh
-# For a fresh setup, add --reinit
-./bootstrap/setup-dotfiles.sh --reinit
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/fishingpvalues/dotfiles/main/setup-dotfiles-macos.sh)"
 ```
 
----
+> Replace `fishingpvalues/dotfiles` with your actual GitHub repo path.
 
-## What Gets Configured?
-
-- System tweaks (UI/UX, keyboard, Finder, Dock, etc.)
-- App installs (WezTerm, kitty, zsh, bash, exa, bat, fzf, ripgrep, fd, starship, lazygit, neofetch, btop, tmux, wget, curl, git, ssh, Neovim, VSCode, Nerd Fonts, Rectangle, Amethyst, and more)
-- All tools are open source or from official sources. No hacking/security tools are installed (for work compliance).
+This will download and run the setup script in one step, even if you haven't cloned the repo yet.
 
 ---
 
-## Customization & Tips
-
-- **Edit dotfiles:** `chezmoi edit <file>`
-- **Add new config:** `chezmoi add ~/.config/myapp/config.toml`
-- **Update dotfiles:** `chezmoi update`
-- **Push/pull changes:** Use `chezmoi cd` to enter the source dir, then use git as usual
-- **macOS tweaks:** Edit `bootstrap/.macos/.macos` or scripts in `bootstrap/.macos/apps/` for system/app settings
-- **App lists:** Edit `bootstrap/dot_Brewfile` to add/remove Homebrew apps
+This guide will help you set up this dotfiles repository on a fresh macOS system for a seamless, error-free developer experience.
 
 ---
 
-## Troubleshooting & FAQ
+## 1. Prerequisites
 
-**Q: Some settings require sudo or Security & Privacy approval?**
-A: Yes, especially for system tweaks. Grant permissions as prompted.
+- macOS Sonoma, Ventura, or Monterey
+- Xcode Command Line Tools
+- [Homebrew](https://brew.sh/)
 
-**Q: Xcode Command Line Tools or Homebrew missing?**
-A: Install them as shown above before running the setup script.
+## 2. Install Xcode Command Line Tools
 
-**Q: Some tweaks don't work on the latest macOS?**
-A: Some settings may need updates for the latest OS. Check for errors and update scripts as needed.
+```sh
+xcode-select --install || true
+```
 
-**Q: How do I re-run the setup?**
-A: Just run `./bootstrap/setup-dotfiles.sh` again. It's idempotent.
+## 3. Install Homebrew
 
-**Q: Are any hacking/security tools installed?**
-A: No. All such tools have been removed for work compliance.
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
 
-**Q: Where do I find more info or advanced usage?**
-A: See [README.md](README.md) and [CHEZMOI.md](CHEZMOI.md).
+## 4. Clone the Dotfiles Repo
+
+```sh
+git clone <your-repo-url> ~/dotfiles
+cd ~/dotfiles
+```
+
+## 5. Run the Bootstrap Script
+
+```sh
+chmod +x setup-dotfiles-macos.sh
+./setup-dotfiles-macos.sh
+```
+
+## 6. What the Script Does
+
+- Installs Homebrew and all packages in `dot_Brewfile`
+- Installs fonts (FiraCode, JetBrains Mono, Cascadia Code, CaskaydiaCove Nerd Font, Noto Color Emoji)
+- Installs Python and Node, and Neovim providers
+- Installs chezmoi and applies all dotfiles
+
+## 7. Manual Steps (if needed)
+
+- If you use tmux, install `reattach-to-user-namespace` and add this to your `~/.tmux.conf`:
+
+  ```
+  set-option -g default-command "reattach-to-user-namespace -l zsh"
+  ```
+
+- If you use a clipboard manager, install [Maccy](https://maccy.app/) or [Clipy](https://clipy-app.com/).
+
+## 8. Neovim Healthcheck
+
+After install, run:
+
+```sh
+nvim --headless "+checkhealth" +qa
+```
+
+Fix any reported issues (usually missing Python/Node providers or fonts).
+
+## 9. Troubleshooting
+
+- **Homebrew not in PATH:** Add this to your `~/.zshrc`:
+
+  ```sh
+  export PATH="/opt/homebrew/bin:$PATH"
+  export PATH="/usr/local/bin:$PATH"
+  ```
+
+- **Fonts not showing:** Ensure all fonts in the fallback list are installed via Homebrew Cask.
+- **Clipboard not working in tmux:** Ensure `reattach-to-user-namespace` is installed and configured.
+- **Chezmoi errors:** Run `chezmoi doctor` and `chezmoi apply --dry-run` to diagnose.
+- **WezTerm config errors:** Open WezTerm and check for Lua errors in the terminal.
+
+## 10. Checklist
+
+- [ ] Homebrew installed and in PATH
+- [ ] All fonts installed via Homebrew Cask
+- [ ] Clipboard works in Neovim, tmux, and WezTerm
+- [ ] All configs symlinked via chezmoi
+- [ ] Python/Node providers for Neovim installed
+- [ ] All scripts are executable
+- [ ] This README followed and bootstrap script run
 
 ---
 
-## Automated Testing
+## 11. Bootstrap Script Example
 
-- All setup scripts and configs are tested in CI and can be tested locally with the scripts in the `test/` directory.
+See `setup-dotfiles-macos.sh` in this repo for a one-command setup.
 
 ---
 
-Enjoy your automated, reproducible, and secure macOS setup!
+## 12. Support
+
+If you encounter issues, open an issue on the repo or contact the maintainer.

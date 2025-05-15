@@ -132,3 +132,12 @@ brew "bandwhich"
 brew "hyperfine"
 brew "miniserve"
 brew "choose"
+
+# New additions
+brew "vivid"
+brew "sd"
+brew "xh"
+brew "gitui"
+brew "ripgrep-all"
+brew "bat-extras"
+brew "onefetch"

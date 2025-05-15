@@ -1,0 +1,5 @@
+# eza config (https://github.com/eza-community/eza)
+icons = true
+git = true
+color = "auto"
+group_directories_first = true 

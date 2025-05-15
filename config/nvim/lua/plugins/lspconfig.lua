@@ -49,12 +49,11 @@ return {
         'sqlls',          -- SQL
         'dockerls',       -- Docker
         'ansiblels',      -- Ansible
-        'jdtls',          -- Java
         'clangd',         -- C/C++
-        'graphql',        -- GraphQL
-        'vuels',          -- Vue.js
-        'volar',          -- Vue.js alternative
-        'svelte',         -- Svelte
+        'tailwindcss',    -- Tailwind CSS
+        'yaml-language-server', -- YAML
+        ''
+
         -- Add more servers as needed
       },
     })

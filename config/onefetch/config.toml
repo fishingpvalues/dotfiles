@@ -1,0 +1,4 @@
+# onefetch config (https://github.com/o2sh/onefetch)
+[onefetch]
+fields = ["project", "version", "language", "size", "dependencies", "created", "last_change"]
+theme = "catppuccin-mocha" 

@@ -86,27 +86,58 @@ if (Get-Command fastfetch -ErrorAction SilentlyContinue) {
 }
 
 # Modern CLI tool aliases with graceful fallback
-if (Get-Command fd -ErrorAction SilentlyContinue) { Set-Alias find fd } else { Set-Alias find find }
-if (Get-Command rg -ErrorAction SilentlyContinue) { Set-Alias grep rg } else { Set-Alias grep grep }
-if (Get-Command bat -ErrorAction SilentlyContinue) { Set-Alias cat bat } else { Set-Alias cat cat }
-if (Get-Command dust -ErrorAction SilentlyContinue) { Set-Alias du dust } else { Set-Alias du du }
-if (Get-Command delta -ErrorAction SilentlyContinue) { Set-Alias diff delta } else { Set-Alias diff diff }
-if (Get-Command as-tree -ErrorAction SilentlyContinue) { Set-Alias tree as-tree } else { Set-Alias tree tree }
-if (Get-Command bottom -ErrorAction SilentlyContinue) { Set-Alias top bottom } else { Set-Alias top top }
-if (Get-Command broot -ErrorAction SilentlyContinue) { Set-Alias broot broot }
-if (Get-Command dua -ErrorAction SilentlyContinue) { Set-Alias dua dua }
-if (Get-Command 'dua-cli' -ErrorAction SilentlyContinue) { Set-Alias dua-cli dua-cli }
-if (Get-Command ncdu -ErrorAction SilentlyContinue) { Set-Alias ncdu ncdu }
-if (Get-Command just -ErrorAction SilentlyContinue) { Set-Alias just just }
-if (Get-Command atuin -ErrorAction SilentlyContinue) { Set-Alias atuin atuin }
-if (Get-Command bandwhich -ErrorAction SilentlyContinue) { Set-Alias bandwhich bandwhich }
-if (Get-Command hyperfine -ErrorAction SilentlyContinue) { Set-Alias hyperfine hyperfine }
-if (Get-Command miniserve -ErrorAction SilentlyContinue) { Set-Alias miniserve miniserve }
-if (Get-Command dog -ErrorAction SilentlyContinue) { Set-Alias dog dog }
-if (Get-Command choose -ErrorAction SilentlyContinue) { Set-Alias choose choose }
-if (Get-Command zoxide -ErrorAction SilentlyContinue) { Set-Alias z zoxide; Set-Alias zi zoxide }
-if (Get-Command yazi -ErrorAction SilentlyContinue) { Set-Alias y yazi }
-if (Get-Command lazygit -ErrorAction SilentlyContinue) { Set-Alias lg lazygit }
+if (Get-Command eza -ErrorAction SilentlyContinue) {
+    Set-Alias ls eza
+} elseif (Get-Command exa -ErrorAction SilentlyContinue) {
+    Set-Alias ls exa
+} elseif (Get-Command lsd -ErrorAction SilentlyContinue) {
+    Set-Alias ls lsd
+} else {
+    Set-Alias ls ls
+}
+if (Get-Command sd -ErrorAction SilentlyContinue) {
+    Set-Alias sed sd
+} else {
+    Set-Alias sed sed
+}
+if (Get-Command xh -ErrorAction SilentlyContinue) {
+    Set-Alias http xh
+} elseif (Get-Command http -ErrorAction SilentlyContinue) {
+    Set-Alias http http
+} else {
+    Set-Alias http curl
+}
+if (Get-Command gitui -ErrorAction SilentlyContinue) {
+    Set-Alias gui gitui
+}
+if (Get-Command rga -ErrorAction SilentlyContinue) {
+    Set-Alias rga rga
+}
+if (Get-Command batman -ErrorAction SilentlyContinue) {
+    Set-Alias batman batman
+}
+if (Get-Command batgrep -ErrorAction SilentlyContinue) {
+    Set-Alias batgrep batgrep
+}
+if (Get-Command batdiff -ErrorAction SilentlyContinue) {
+    Set-Alias batdiff batdiff
+}
+if (Get-Command onefetch -ErrorAction SilentlyContinue) {
+    Set-Alias onefetch onefetch
+}
+# vivid LS_COLORS (https://github.com/sharkdp/vivid)
+if (Get-Command vivid -ErrorAction SilentlyContinue) {
+    $env:LS_COLORS = & vivid generate catppuccin-mocha
+}
+# Tool docs:
+# eza: https://github.com/eza-community/eza
+# vivid: https://github.com/sharkdp/vivid
+# sd: https://github.com/chmln/sd
+# xh: https://github.com/ducaale/xh
+# gitui: https://github.com/extrawurst/gitui
+# rga: https://github.com/phiresky/ripgrep-all
+# bat-extras: https://github.com/eth-p/bat-extras
+# onefetch: https://github.com/o2sh/onefetch
 
 # Other useful aliases
 Set-Alias vim nvim -ErrorAction SilentlyContinue
