@@ -157,7 +157,7 @@ install-packages:
 		CONDA_ENV_DIR="$${HOME}/.conda/envs"; \
 		mkdir -p "$${CONDA_ENV_DIR}"; \
 		# [Conda configuration removed. See scripts/setup-conda.sh for details.]
-	fi
+	fi; \
 
 install-aur: install-yay
 	@echo "Installing AUR packages..."
