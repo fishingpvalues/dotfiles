@@ -17,23 +17,23 @@ ARCH_CHECK := $(shell pacman -V > /dev/null 2>&1 && echo "true" || echo "false")
 help:
 	@echo "Dotfiles Installation"
 	@echo "--------------------"
-	@echo "make install             - Install everything (detect OS and install accordingly)"
-	@echo "make install-arch        - Install configs and packages on Arch Linux"
-	@echo "make install-configs     - Only install config files (no packages)"
-	@echo "make install-packages    - Only install required packages on Arch"
-	@echo "make install-omz         - Install Oh My Zsh and plugins"
-	@echo "make install-fonts       - Install Fira Code Nerd Font"
-	@echo "make install-aur         - Install AUR packages"
-	@echo "make install-yay         - Install yay AUR helper"
+	@echo "make install                   - Install everything (detect OS and install accordingly)"
+	@echo "make install-arch              - Install configs and packages on Arch Linux"
+	@echo "make install-configs           - Only install config files (no packages)"
+	@echo "make install-packages          - Only install required packages on Arch"
+	@echo "make install-omz               - Install Oh My Zsh and plugins"
+	@echo "make install-fonts             - Install Fira Code Nerd Font"
+	@echo "make install-aur               - Install AUR packages"
+	@echo "make install-yay               - Install yay AUR helper"
 	@echo "make install-vscode-extensions - Install VS Code extensions"
-	@echo "make install-chezmoi     - Install and configure chezmoi dotfiles manager"
-	@echo "make update              - Update dotfiles"
-	@echo "make fonts               - Configure fonts"
-	@echo "make clean               - Remove symlinks created by this Makefile"
-	@echo "make install-hyprland    - Install Hyprland and all related tools"
-	@echo "make install-dotfiles    - Apply all dotfiles"
-	@echo "make postinstall         - Run post-install scripts"
-	@echo "make test                - Run tests for the current platform"
+	@echo "make install-chezmoi           - Install and configure chezmoi dotfiles manager"
+	@echo "make update                    - Update dotfiles"
+	@echo "make fonts                     - Configure fonts"
+	@echo "make clean                     - Remove symlinks created by this Makefile"
+	@echo "make install-hyprland          - Install Hyprland and all related tools"
+	@echo "make install-dotfiles          - Apply all dotfiles"
+	@echo "make postinstall               - Run post-install scripts"
+	@echo "make test                      - Run tests for the current platform"
 
 install: install-fonts
 	@echo "Installing dotfiles..." | tee -a $(ERROR_LOG)
@@ -127,8 +127,8 @@ install-packages:
 			texlive-most \
 			obsidian \
 			p7zip \
-			# hashcat 
-			# nmap 
+			# hashcat \
+			# nmap \
 			hashcat \
 			cmake \
 			make \
@@ -363,6 +363,7 @@ ifeq ($(IS_WINDOWS),Windows_NT)
 else
 	@echo "Running all Unix/macOS/Linux dotfiles tests via test/run-all.sh..." | tee -a $(ERROR_LOG)
 	@if [ -f ./test/run-all.sh ]; then \
+		chmod +x ./test/run-all.sh; \
 		./test/run-all.sh 2>>$(ERROR_LOG) || echo "[ERROR] Unix tests failed, see $(ERROR_LOG)" | tee -a $(ERROR_LOG); \
 	else \
 		echo "[WARN] test/run-all.sh not found. Skipping Unix tests." | tee -a $(ERROR_LOG); \
