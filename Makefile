@@ -157,8 +157,6 @@ install-packages:
 		CONDA_ENV_DIR="$${HOME}/.conda/envs"; \
 		mkdir -p "$${CONDA_ENV_DIR}"; \
 		# [Conda configuration removed. See scripts/setup-conda.sh for details.]
-	else \
-		echo "Not running on Arch Linux, skipping package installation"; \
 	fi
 
 install-aur: install-yay
