@@ -1,0 +1,43 @@
+{
+  "title": "Map Right Control to Tilde (~)",
+  "rules": [
+    {
+      "description": "Right Control → Tilde (~)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "right_control"
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["shift"]
+            }
+          ]
+        }
+      ]
+    }
+{
+  "title": "Map Right Control to Tilde (~)",
+  "rules": [
+    {
+      "description": "Right Control → Tilde (~)",
+      "manipulators": [
+        {
+          "type": "basic",
+          "from": {
+            "key_code": "right_control"
+          },
+          "to": [
+            {
+              "key_code": "grave_accent_and_tilde",
+              "modifiers": ["shift"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

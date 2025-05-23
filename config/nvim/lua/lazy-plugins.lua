@@ -553,12 +553,12 @@ require('lazy').setup({
 
   {
     "Saghen/blink.cmp",
+    version = "*",
     event = "InsertEnter",
     dependencies = {
       "L3MON4D3/LuaSnip", -- for snippet support
       "rafamadriz/friendly-snippets", -- optional, for more snippets
     },
-    build = "cargo build --release",
     config = function()
       require("blink.cmp").setup({
         -- Add custom config here if needed

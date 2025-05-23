@@ -18,7 +18,7 @@ config.font = wezterm.font_with_fallback {
   'JetBrains Mono',
   'Cascadia Code',
 }
-config.font_size = 12.0
+config.font_size = 16.0
 config.line_height = 1.1
 
 -- Window appearance with blur effect
@@ -179,15 +179,15 @@ if os_name:find("windows") then
   -- Windows-specific settings
   config.default_prog = { 'pwsh.exe', '-NoLogo' }
   config.launch_menu = {
-    { label = "PowerShell", args = { "pwsh.exe", "-NoLogo" } },
+    { label = "PowerShell",     args = { "pwsh.exe", "-NoLogo" } },
     { label = "Command Prompt", args = { "cmd.exe" } },
-    { label = "Git Bash", args = { "bash.exe", "-i", "-l" } },
+    { label = "Git Bash",       args = { "bash.exe", "-i", "-l" } },
   }
 elseif os_name:find("linux") then
   -- Linux-specific settings
   config.default_prog = { '/usr/bin/zsh' }
   config.launch_menu = {
-    { label = "Zsh", args = { "zsh", "-l" } },
+    { label = "Zsh",  args = { "zsh", "-l" } },
     { label = "Bash", args = { "bash", "-l" } },
     { label = "Fish", args = { "fish", "-l" } },
   }
@@ -195,7 +195,7 @@ elseif os_name:find("darwin") then
   -- macOS-specific settings
   config.default_prog = { '/bin/zsh' }
   config.launch_menu = {
-    { label = "Zsh", args = { "zsh", "-l" } },
+    { label = "Zsh",  args = { "zsh", "-l" } },
     { label = "Bash", args = { "bash", "-l" } },
     { label = "Fish", args = { "fish", "-l" } },
   }
@@ -234,7 +234,7 @@ tabline.setup({
     tabline_c = { 'cwd', 'process' },
     tab_active = {
       'index',
-      { 'cwd', padding = { left = 0, right = 1 } },
+      { 'cwd',    padding = { left = 0, right = 1 } },
       { 'zoomed', padding = 0 },
     },
     tab_inactive = { 'index', { 'process', padding = { left = 0, right = 1 } } },
@@ -254,10 +254,10 @@ config.tab_bar_at_bottom = true
 local act = wezterm.action
 config.keys = config.keys or {}
 for _, key in ipairs({
-  {key="LeftArrow",  mods="CTRL|SHIFT", action=act.ActivatePaneDirection("Left")},
-  {key="DownArrow",  mods="CTRL|SHIFT", action=act.ActivatePaneDirection("Down")},
-  {key="UpArrow",    mods="CTRL|SHIFT", action=act.ActivatePaneDirection("Up")},
-  {key="RightArrow", mods="CTRL|SHIFT", action=act.ActivatePaneDirection("Right")},
+  { key = "LeftArrow",  mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Left") },
+  { key = "DownArrow",  mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Down") },
+  { key = "UpArrow",    mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Up") },
+  { key = "RightArrow", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Right") },
 }) do
   table.insert(config.keys, key)
 end
