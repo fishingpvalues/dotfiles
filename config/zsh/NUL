@@ -1,2 +1,1 @@
-usage: ipconfig <command> <args>
-where <command> is one of waitall, getifaddr, ifcount, getoption, getiflist, getsummary, getpacket, getv6packet, getra, getdhcpduid, getdhcpiaid, set, setverbose
+
