@@ -31,13 +31,24 @@ fi
 export PATH="/usr/local/bin:$PATH"
 export HOME="${HOME:-/Users/runner}"
 
-# Install chezmoi if missing
-if ! command -v chezmoi >/dev/null 2>&1; then
-  info "Installing chezmoi..."
-  brew install chezmoi || error "chezmoi installation failed. See https://www.chezmoi.io for help."
-else
-  info "chezmoi is already installed."
+# Remove any system chezmoi first
+if command -v chezmoi >/dev/null 2>&1; then
+  sys_path=$(command -v chezmoi)
+  if [[ "$sys_path" == /usr/local/bin/* ]]; then
+    info "Removing system chezmoi ($sys_path)..."
+    brew uninstall chezmoi 2>/dev/null || true
+  fi
 fi
+export PATH="$HOME/.local/bin:$PATH"
+# Install chezmoi if missing or outdated
+if ! command -v chezmoi >/dev/null 2>&1 || [[ $(chezmoi --version | awk '{print $3}' | cut -d. -f1) -lt 3 ]]; then
+  info "Installing latest chezmoi v3..."
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" --force --version v3 || error "chezmoi installation failed. See https://www.chezmoi.io for help."
+else
+  version=$(chezmoi --version | awk '{print $3}')
+  info "chezmoi v$version is already installed."
+fi
+export PATH="$HOME/.local/bin:$PATH"
 check_chezmoi_version
 
 # Install atool if missing

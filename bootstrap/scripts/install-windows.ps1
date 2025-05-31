@@ -29,15 +29,25 @@ if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
     }
 }
 
-# Install chezmoi if not present
-if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue)) {
-    Info "Installing chezmoi..."
-    scoop install chezmoi
+# Remove any system chezmoi first
+if (Get-Command chezmoi -ErrorAction SilentlyContinue) {
+    $sys_path = (Get-Command chezmoi).Source
+    if ($sys_path -like '*scoop*') {
+        Info "Removing system chezmoi ($sys_path)..."
+        scoop uninstall chezmoi
+    }
+}
+$env:PATH = "$HOME/.local/bin;" + $env:PATH
+# Install chezmoi if not present or outdated
+if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue) -or ((chezmoi --version | Select-String -Pattern '\d+\.\d+\.\d+' | ForEach-Object { $_.Matches[0].Value }).Split('.')[0] -lt 3)) {
+    Info "Installing latest chezmoi v3..."
+    irm https://get.chezmoi.io | iex; chezmoi upgrade --version v3
     if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue)) {
         ErrorExit "chezmoi installation failed. See https://www.chezmoi.io for help."
     }
 } else {
-    Info "chezmoi is already installed."
+    $version = chezmoi --version | Select-String -Pattern '\d+\.\d+\.\d+' | ForEach-Object { $_.Matches[0].Value }
+    Info "chezmoi v$version is already installed."
 }
 Check-ChezmoiVersion
 

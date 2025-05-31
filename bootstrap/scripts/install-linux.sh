@@ -111,11 +111,22 @@ install_python_linters() {
 }
 
 install_chezmoi() {
-  if ! command -v chezmoi &> /dev/null; then
-    info "🏗️  Installing chezmoi..."
-    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" || error "chezmoi installation failed. See https://www.chezmoi.io for help."
+  # Remove any system or snap chezmoi first
+  if command -v chezmoi &>/dev/null; then
+    sys_path=$(command -v chezmoi)
+    if [[ "$sys_path" == /snap/* || "$sys_path" == /usr/* ]]; then
+      info "Removing system/snap chezmoi ($sys_path)..."
+      sudo snap remove chezmoi 2>/dev/null || true
+      sudo apt remove -y chezmoi 2>/dev/null || true
+    fi
+  fi
+  export PATH="$HOME/.local/bin:$PATH"
+  if ! command -v chezmoi &> /dev/null || [[ $(chezmoi --version | awk '{print $3}' | cut -d. -f1) -lt 3 ]]; then
+    info "🏗️  Installing latest chezmoi v3..."
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" --force --version v3 || error "chezmoi installation failed. See https://www.chezmoi.io for help."
   else
-    info "✅ chezmoi is already installed."
+    version=$(chezmoi --version | awk '{print $3}')
+    info "✅ chezmoi v$version is already installed."
   fi
   export PATH="$HOME/.local/bin:$PATH"
   check_chezmoi_version
