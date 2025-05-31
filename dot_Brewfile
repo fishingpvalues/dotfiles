@@ -1,0 +1,149 @@
+# Brewfile
+
+# Taps
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/cask-fonts"
+tap "homebrew/core"
+tap "slimtoolkit/slim"
+
+# Terminal Utilities
+brew "aria2"
+brew "bat"
+brew "btop"
+brew "exa"
+brew "fd"
+brew "ffmpeg"
+brew "fzf"
+brew "htop"
+brew "jq"
+brew "lazygit"
+brew "lazydocker"
+brew "lnav"
+brew "macchina"
+brew "mas"
+brew "ncdu"
+brew "ranger"
+brew "ripgrep"
+brew "tldr"
+brew "tree"
+brew "trivy"
+brew "wget"
+brew "yazi"
+brew "yt-dlp"
+brew "zoxide"
+
+# Development Tools
+brew "docker"
+brew "git"
+brew "gnupg"
+brew "helm"
+brew "k9s"
+brew "kubectl"
+brew "miniforge"
+brew "neovim"
+brew "nushell"
+brew "python"
+brew "slimtoolkit/slim/slim"
+brew "terraform"
+brew "vim"
+
+# Security and Hacking Tools
+# brew "aircrack-ng"
+# brew "hashcat"
+# brew "john"
+# brew "nmap"
+# brew "wireshark"
+
+# AI and ML Tools
+brew "ollama"
+
+# Fonts
+cask "font-fira-code-nerd-font"
+cask "font-meslo-lg-nerd-font"
+
+# Terminal Emulators
+cask "warp"
+cask "wezterm"
+
+# Development Tools
+cask "dbeaver-community"
+cask "visual-studio-code"
+
+# Productivity and Utilities
+cask "alfred"
+cask "alt-tab"
+cask "amethyst"
+cask "appcleaner"
+cask "bettertouchtool"
+cask "caffeine"
+cask "discord"
+cask "drawio"
+cask "f-lux"
+cask "firefox"
+cask "hammerspoon"
+cask "hiddenbar"
+cask "iina"
+cask "jan"
+cask "karabiner-elements"
+cask "keepassxc"
+cask "maccy"
+cask "mactex-no-gui"
+cask "microsoft-teams"
+cask "monitor-control"
+cask "obsidian"
+cask "orbstack"
+cask "pandan"
+cask "pure-paste"
+cask "qlmarkdown"
+cask "qlstephen"
+cask "quicklook-json"
+cask "raycast"
+cask "rectangle"
+cask "shotr"
+cask "spotify"
+cask "stats"
+cask "the-unarchiver"
+cask "utm"
+cask "vlc"
+
+# Mac App Store
+mas "OneSwitch", id: 1477630474
+
+# Cross-platform CLI utilities
+brew "dog"
+brew "duf"
+brew "dust"
+brew "glow"
+brew "httpie"
+brew "lsd"
+brew "procs"
+
+# Modern Rust-powered CLI tools (sorted)
+brew "as-tree"
+brew "atuin"
+brew "bandwhich"
+brew "bat-extras"
+brew "bottom"
+brew "broot"
+brew "choose"
+brew "delta"
+brew "difftastic"
+brew "dua-cli"
+brew "gitui"
+brew "hyperfine"
+brew "just"
+brew "miniserve"
+brew "onefetch"
+brew "ripgrep-all"
+brew "sd"
+brew "vivid"
+brew "xh"
+
+# SOTA CLI tools (2025+; ensure these are present for full experience)
+brew "bb" # BashBuddy, natural language shell (if available)
+brew "code2" # AI-powered CLI workflows (if available)
+brew "ghostty" # GPU-accelerated terminal (if available)
+brew "jj" # Jujutsu VCS (if available)
+brew "mise" # Universal version manager (if available)
+brew "trash-cli" # Safe rm alternative (if available)

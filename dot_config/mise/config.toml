@@ -1,0 +1,4 @@
+# mise config stub for cross-platform use
+[settings]
+auto_activate = true
+shims_dir = "~/.local/share/mise/shims" 

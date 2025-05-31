@@ -1,0 +1,303 @@
+# ~/.bashrc - Merged Bash configuration (chezmoi-compatible)
+
+# --- Interactive Shell Check ---
+# Robust check for interactive shell
+case $- in
+  *i*) ;;
+    *) return;;
+esac
+
+# --- History Settings ---
+export HISTCONTROL=ignoreboth:erasedups
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+shopt -s histappend
+shopt -s checkwinsize
+shopt -s globstar
+shopt -s autocd
+
+# --- Environment Variables ---
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# Man Page with nvim
+export MANPAGER="nvim +Man!"
+
+# --- PATH ---
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# --- Prompt Setup: Starship, Oh My Posh, or Fallback ---
+export POSH_THEME="$HOME/.config/oh-my-posh/github-dark.omp.json"
+if command -v starship &> /dev/null; then
+  eval "$(starship init bash)"
+elif command -v oh-my-posh &> /dev/null; then
+  eval "$(oh-my-posh init bash --config $POSH_THEME)"
+else
+  # Fallback prompt
+  PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+fi
+
+# --- Aliases ---
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+# Listing
+if command -v eza >/dev/null 2>&1; then
+  alias ls='eza --icons --git --color=auto --group-directories-first'
+elif command -v exa >/dev/null 2>&1; then
+  alias ls='exa --icons --git --color=auto --group-directories-first'
+elif command -v lsd >/dev/null 2>&1; then
+  alias ls='lsd --icon=auto'
+else
+  alias ls='ls --color=auto'
+fi
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias mkdir='mkdir -p'
+# Grep, diff, ip
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias diff='diff --color=auto'
+alias ip='ip -color=auto'
+# Editors
+alias vim='nvim'
+alias vi='nvim'
+alias py='python3'
+alias py2='python2'
+alias pip='pip3'
+# Misc
+alias h='history'
+alias j='jobs -l'
+alias path='echo -e ${PATH//:/\\n}'
+alias psgrep='ps aux | grep -v grep | grep '
+alias open='xdg-open'
+alias k='kubectl'
+# Pacman/Arch
+alias pacman='sudo pacman'
+alias update='sudo pacman -Syu'
+alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
+# Git
+alias g='git'
+alias gst='git status'
+alias gl='git log'
+alias gp='git push'
+alias gd='git diff'
+alias gc='git commit'
+alias gco='git checkout'
+alias ga='git add'
+alias gb='git branch'
+# Modern CLI tools
+if command -v sd >/dev/null 2>&1; then
+  alias sed='sd'
+else
+  alias sed='sed'
+fi
+if command -v xh >/dev/null 2>&1; then
+  alias http='xh'
+elif command -v httpie >/dev/null 2>&1; then
+  alias http='http'
+else
+  alias http='curl'
+fi
+if command -v gitui >/dev/null 2>&1; then
+  alias gui='gitui'
+fi
+if command -v rga >/dev/null 2>&1; then
+  alias rga='rga'
+fi
+if command -v batman >/dev/null 2>&1; then
+  alias batman='batman'
+fi
+if command -v batgrep >/dev/null 2>&1; then
+  alias batgrep='batgrep'
+fi
+if command -v batdiff >/dev/null 2>&1; then
+  alias batdiff='batdiff'
+fi
+if command -v onefetch >/dev/null 2>&1; then
+  alias onefetch='onefetch'
+fi
+
+# --- GCC Colors ---
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# --- Bash Completion ---
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# --- NVM (Node Version Manager) ---
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# --- Pyenv ---
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+# --- Zoxide (Smart Directory Jumping) ---
+if command -v zoxide &> /dev/null; then
+    eval "$(zoxide init bash)"
+    alias z='zoxide query'
+    alias zi='zoxide query -i'
+fi
+
+# --- FZF (Fuzzy Finder) ---
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# --- Load Additional Configs ---
+[[ -f ~/.bash_aliases ]] && . ~/.bash_aliases
+[[ -f ~/.bash_functions ]] && . ~/.bash_functions
+[[ -f ~/.bash_local ]] && . ~/.bash_local
+if [ -f ~/.bashrc.local ]; then
+  source ~/.bashrc.local
+fi
+if [ -f ~/.bashrc.work ]; then
+  source ~/.bashrc.work
+fi
+
+# --- Custom Functions ---
+extract() {
+  if [ -f "$1" ] ; then
+    case "$1" in
+      *.tar.bz2)   tar xjf "$1"     ;;
+      *.tar.gz)    tar xzf "$1"     ;;
+      *.bz2)       bunzip2 "$1"     ;;
+      *.rar)       unrar x "$1"     ;;
+      *.gz)        gunzip "$1"      ;;
+      *.tar)       tar xf "$1"      ;;
+      *.tbz2)      tar xjf "$1"     ;;
+      *.tgz)       tar xzf "$1"     ;;
+      *.zip)       unzip "$1"       ;;
+      *.Z)         uncompress "$1"  ;;
+      *.7z)        7z x "$1"        ;;
+      *)           echo "'$1' cannot be extracted via extract()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+ff() { find . -type f -name "*$1*"; }
+
+# --- Show System Info ---
+if command -v fastfetch >/dev/null 2>&1; then
+  if [ -n "$CONDA_DEFAULT_ENV" ]; then
+    fastfetch --logo "$(uname -s)" --custom "Conda Env: $CONDA_DEFAULT_ENV"
+  else
+    fastfetch --logo "$(uname -s)"
+  fi
+elif command -v neofetch >/dev/null 2>&1; then
+  if [ -n "$CONDA_DEFAULT_ENV" ]; then
+    neofetch --ascii_distro "$(uname -s)" --print_info Conda
+  else
+    neofetch --ascii_distro "$(uname -s)"
+  fi
+fi
+
+# --- Vivid LS_COLORS ---
+if command -v vivid >/dev/null 2>&1; then
+  export LS_COLORS="$(vivid generate catppuccin-mocha)"
+fi
+
+# --- Curated Data Science & Terminal Aliases (AI-augmented) ---
+# Navigation & Filesystem
+alias cls='clear; ls'
+alias take='mkdir -p "$1" && cd "$1"'
+# Intelligente Suche & Navigation
+if ! command -v rg &>/dev/null; then
+  alias ag='echo "[bash] Please install ripgrep (rg) to use ag alias."'
+else
+  alias ag='rg --hidden --smart-case'
+fi
+if ! command -v zi &>/dev/null; then
+  alias jj='echo "[bash] Please install zoxide to use jj alias."'
+else
+  alias jj='zi'
+fi
+# Git Workflows
+alias gaa='git add .'
+alias gca='git commit --amend'
+alias gpl='git pull'
+alias gclean='git branch --merged | grep -v "*" | xargs -n 1 git branch -d'
+# Dev & Tools
+if ! command -v nvim &>/dev/null; then
+  alias svi='echo "[bash] Please install nvim to use svi alias."'
+  alias nv='echo "[bash] Please install nvim and fzf to use nv alias."'
+else
+  if ! command -v fzf &>/dev/null; then
+    alias nv='echo "[bash] Please install fzf to use nv alias."'
+  else
+    alias nv='nvim $(fzf)'
+  fi
+  alias svi='sudo nvim'
+fi
+if ! command -v bat &>/dev/null; then
+  alias less='echo "[bash] Please install bat to use less alias."'
+else
+  alias less='bat'
+fi
+if ! command -v lsof &>/dev/null; then
+  alias ports='echo "[bash] Please install lsof to use ports alias."'
+else
+  alias ports='lsof -i -P -n | grep LISTEN'
+fi
+alias ping='ping -c 5'
+if ! command -v jq &>/dev/null; then
+  alias json='echo "[bash] Please install jq to use json alias."'
+else
+  alias json='jq .'
+fi
+# Pakete & Prozesse
+alias psx='ps aux | grep'
+alias du1='du -h --max-depth=1'
+alias mem='free -h'
+# Sicherheit & Netzwerk
+if ! command -v ufw &>/dev/null; then
+  alias fw='echo "[bash] Please install ufw to use fw alias."'
+else
+  alias fw='sudo ufw status'
+fi
+alias myip='curl ifconfig.me'
+if ! command -v nvim &>/dev/null; then
+  alias sshconfig='echo "[bash] Please install nvim to use sshconfig alias."'
+else
+  alias sshconfig='nvim ~/.ssh/config'
+fi
+# Python & Data Science
+if ! command -v ipython &>/dev/null; then
+  alias ipy='echo "[bash] Please install ipython to use ipy alias."'
+else
+  alias ipy='ipython'
+fi
+if ! command -v jupyter &>/dev/null; then
+  alias jn='echo "[bash] Please install jupyter to use jn alias."'
+else
+  alias jn='jupyter notebook'
+fi
+alias venv='python3 -m venv venv && source venv/bin/activate'
+alias act='source venv/bin/activate'
+alias pipup='pip list --outdated'
+alias pipi='pip install'
+# Eigene Tools / Misc
+if ! command -v udisksctl &>/dev/null; then
+  alias mountusb='echo "[bash] Please install udisks2 to use mountusb alias."'
+else
+  alias mountusb='udisksctl mount -b /dev/sdX1'
+fi
+# Bonus: mkcd function (already present, but ensure alias)
+mkcd() { mkdir -p "$1" && cd "$1"; }
+alias mkcd='mkcd'
+# --- End Curated Data Science & Terminal Aliases (AI-augmented) ---
+
+# --- End of ~/.bashrc ---

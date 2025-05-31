@@ -1,0 +1,3 @@
+# lsd config stub for cross-platform use
+theme: "custom"
+icons: true 

@@ -1,0 +1,250 @@
+# Documentation and meta files
+README.md
+LICENSE*
+CHEZMOI.md
+Makefile
+.github/
+.git/
+.gitignore
+.editorconfig
+
+# Scripts and setup
+*.sh
+*.ps1
+bin/
+
+# Media files
+media/
+wallpapers/
+
+# Backup and temporary files
+*.bak
+*.old
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Development environment files
+.env*
+.envrc
+.direnv/
+.tool-versions
+.asdf/
+.python-version
+.ruby-version
+.node-version
+.nvmrc
+.terraform/
+.vagrant/
+
+# Platform-specific files
+
+# Windows-specific files - ignore on Unix
+{{- if ne .chezmoi.os "windows" }}
+config/windows-terminal/
+config/powershell/
+scripts/windows/
+AppData/
+*.exe
+*.dll
+*.bat
+*.cmd
+*.msi
+*.msix
+*.ps1
+*.psm1
+*.reg
+{{- end }}
+
+# Unix-specific files - ignore on Windows
+{{- if eq .chezmoi.os "windows" }}
+config/bash/
+config/zsh/
+config/fish/
+config/kitty/
+config/alacritty/
+config/tmux/
+config/i3/
+config/sway/
+config/hypr/
+config/waybar/
+scripts/unix/
+.bashrc
+.zshrc
+.zshenv
+.zprofile
+.profile
+.xinitrc
+.Xresources
+.Xdefaults
+.xsession
+.xprofile
+{{- end }}
+
+# macOS-specific files - ignore on non-macOS
+{{- if ne .chezmoi.os "darwin" }}
+.DS_Store
+Library/
+.Trash/
+.CFUserTextEncoding
+.chunkwmrc
+.skhdrc
+.yabairc
+{{- end }}
+
+# Linux-specific files - ignore on non-Linux
+{{- if ne .chezmoi.os "linux" }}
+.config/i3/
+.config/sway/
+.config/hypr/
+.config/waybar/
+.config/polybar/
+.config/rofi/
+.config/dunst/
+.Xdefaults
+.xprofile
+.xinitrc
+.xsession
+.pam_environment
+{{- end }}
+
+# Editor-specific files that shouldn't be part of dotfiles
+.vscode/
+.idea/
+.vs/
+*.sublime-*
+*.code-workspace
+.vim/.netrwhist
+*.swp
+*.swo
+Session.vim
+.undodir/
+.netrwhist
+
+# Runtime and cache files
+*.log
+*.cache
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage/
+.eslintcache
+.stylelintcache
+.prettiercache
+
+# Build outputs
+dist/
+build/
+target/
+out/
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.class
+*.jar
+*.war
+
+# Package manager directories
+{{- if ne .chezmoi.os "windows" }}
+.npm/
+.yarn/
+.pnpm-store/
+.cargo/
+.rustup/
+.stack/
+.cabal/
+.ghc/
+.gradle/
+.m2/
+.ivy2/
+.sbt/
+.composer/
+.bundle/
+.gem/
+{{- end }}
+
+# Container and VM files
+.docker/
+.vagrant/
+*.box
+*.vdi
+*.vmdk
+*.ova
+
+# Security and credentials (always ignore)
+.gnupg/
+.ssh/id_*
+.ssh/known_hosts
+.aws/credentials
+.kube/config
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+.netrc
+
+# Local configuration overrides
+*.local
+**/local.*
+**/*.local.*
+.env.local
+.env.*.local
+
+# Keep wallpapers out of direct management
+media/wallpapers/
+
+# Ignore old/backup configurations
+*.old/
+*_backup/
+*.bak/
+*.orig
+*.rej
+
+# Language-specific files
+{{- if not .use_node }}
+.npmrc
+.yarnrc
+.nvmrc
+{{- end }}
+
+{{- if not .use_python }}
+.python-version
+.venv/
+venv/
+{{- end }}
+
+{{- if not .use_rust }}
+.cargo/
+.rustup/
+{{- end }}
+
+{{- if not .use_go }}
+.go/
+go/
+{{- end }}
+
+# Tool-specific files based on user preferences
+{{- if not .use_docker }}
+.docker/
+docker/
+{{- end }}
+
+{{- if not .use_kubernetes }}
+.kube/
+{{- end }}
+
+# Bootstrap scripts
+bootstrap/scripts/windows/
+bootstrap/scripts/unix/

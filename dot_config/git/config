@@ -1,0 +1,12 @@
+[core]
+    excludesFile = ~/.config/git/gitignore
+    attributesFile = ~/.config/git/gitattributes 
+[user]
+	name = Daniel Fischer
+	email = d.fischer@mittwald.de
+[credential]
+	helper = osxkeychain
+	helper = 
+	helper = /usr/local/share/gcm-core/git-credential-manager
+[credential "https://dev.azure.com"]
+	useHttpPath = true

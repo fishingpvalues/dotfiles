@@ -1,0 +1,437 @@
+name: Dotfiles CI (act)
+
+on:
+  push:
+    paths:
+      - '**.sh'
+      - '**.ps1'
+      - '**.zsh*'
+      - '**.toml'
+      - '**.yaml'
+      - '**.yml'
+      - '**.md'
+      - 'config/**'
+      - 'bootstrap/**'
+      - 'test/**'
+      - '.github/workflows/act-dotfiles.yml'
+  pull_request:
+    paths:
+      - '**.sh'
+      - '**.ps1'
+      - '**.zsh*'
+      - '**.toml'
+      - '**.yaml'
+      - '**.yml'
+      - '**.md'
+      - 'config/**'
+      - 'bootstrap/**'
+      - 'test/**'
+      - '.github/workflows/act-dotfiles.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * 1' # Weekly health check (Monday 3am UTC)
+
+jobs:
+  test-dotfiles:
+    name: Test Dotfiles on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest, archlinux-latest, fedora-latest]
+    env:
+      LOGFILE: ./act-dotfiles-$(date +%Y%m%d-%H%M%S).log
+    steps:
+      - name: Set log file name
+        id: set_logfile
+        run: |
+          export LOGFILE=./act-dotfiles-$(date +%Y%m%d-%H%M%S).log
+          echo "LOGFILE=$LOGFILE" >> $GITHUB_ENV
+
+      - name: Print act local runner info
+        shell: bash
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          if [ -n "$ACT" ]; then
+            echo "[INFO] Running under act local runner. Only Linux jobs will run; Windows/macOS jobs will be skipped." | tee -a "$LOGFILE"
+          fi
+
+      - name: Skip non-Linux jobs under act
+        if: ${{ runner.os != 'Linux' && env.ACT == 'true' }}
+        shell: bash
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          echo "[INFO] Skipping ${{ matrix.os }} job under act. Only Linux jobs are supported locally." | tee -a "$LOGFILE"
+          exit 0
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install pipx (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          python3 -m pip install --user pipx
+          python3 -m pipx ensurepath
+
+      - name: Install pipx (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          python -m pip install --user pipx
+          python -m pipx ensurepath
+
+      - name: Install dependencies for act (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -e
+          mkdir -p "$(dirname "$LOGFILE")"
+          sudo apt-get update
+          sudo apt-get install -y curl git sudo python3 python3-pip
+          # Install chezmoi if missing
+          if ! command -v chezmoi >/dev/null 2>&1; then
+            sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin
+          fi
+          # Print versions for debug
+          echo "chezmoi version: $(chezmoi --version)" | tee -a "$LOGFILE"
+          echo "git version: $(git --version)" | tee -a "$LOGFILE"
+          echo "python3 version: $(python3 --version)" | tee -a "$LOGFILE"
+          echo "pip version: $(pip3 --version)" | tee -a "$LOGFILE"
+          echo "curl version: $(curl --version | head -n1)" | tee -a "$LOGFILE"
+          echo "sudo version: $(sudo --version | head -n1)" | tee -a "$LOGFILE"
+
+      - name: Ensure chezmoi is in PATH (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          export PATH="/usr/local/bin:$PATH"
+          mkdir -p "$(dirname "$LOGFILE")"
+          if ! command -v chezmoi >/dev/null 2>&1; then
+            echo '[ERROR] chezmoi not found in PATH after install.' | tee -a "$LOGFILE"
+            exit 1
+          fi
+
+      - name: Ensure install-linux.sh exists and is executable (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          if [ ! -f ./bootstrap/scripts/install-linux.sh ]; then
+            echo '[ERROR] install-linux.sh is missing!'; exit 1;
+          fi
+          chmod +x ./bootstrap/scripts/install-linux.sh
+          if ! grep -q '^#!/' ./bootstrap/scripts/install-linux.sh; then
+            echo '[ERROR] install-linux.sh is not a valid script (missing shebang)!'; exit 1;
+          fi
+
+      - name: Run bootstrap and tests (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p /root/.local/share/chezmoi
+          mkdir -p "$(dirname "$LOGFILE")"
+          # Run install script with a 30-minute timeout
+          timeout 30m ./bootstrap/scripts/install-linux.sh | tee -a "$LOGFILE"
+          tail -n 10000 "$LOGFILE" > "$LOGFILE.tmp" && mv "$LOGFILE.tmp" "$LOGFILE"
+          if [ -f ./test/run-all.sh ]; then
+            chmod +x ./test/run-all.sh
+            # Run tests with a 20-minute timeout
+            timeout 20m ./test/run-all.sh | tee -a "$LOGFILE"
+            tail -n 10000 "$LOGFILE" > "$LOGFILE.tmp" && mv "$LOGFILE.tmp" "$LOGFILE"
+          fi
+
+      - name: Check SOTA tool versions (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          if [ "$ACT" = "true" ]; then echo "[INFO] Skipping SOTA tool check under act" | tee -a "$LOGFILE"; exit 0; fi
+          mkdir -p "$(dirname "$LOGFILE")"
+          for tool in ghostty mise jj code2 bb lsd trash; do
+            if ! command -v "$tool" >/dev/null 2>&1; then
+              echo "[ERROR] $tool not found in PATH" | tee -a "$LOGFILE"
+              exit 1
+            fi
+            echo "$tool version: $($tool --version 2>&1 | head -n1)" | tee -a "$LOGFILE"
+          done
+
+      - name: Check config file presence and syntax (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          for f in config/ghostty/config config/mise/config.toml config/jj/config.toml config/code2/config.toml config/bashbuddy/config.toml config/lsd/config.yaml; do
+            if [ ! -f "$f" ]; then echo "[ERROR] Missing config: $f" | tee -a "$LOGFILE"; exit 1; fi
+          done
+          for f in config/**/*.toml; do
+            if command -v tomlq >/dev/null 2>&1; then
+              tomlq . "$f" >/dev/null || { echo "[ERROR] Invalid TOML: $f" | tee -a "$LOGFILE"; exit 1; }
+            fi
+          done
+          for f in config/**/*.yaml config/**/*.yml; do
+            if command -v yq >/dev/null 2>&1; then
+              yq e . "$f" >/dev/null || { echo "[ERROR] Invalid YAML: $f" | tee -a "$LOGFILE"; exit 1; }
+            fi
+          done
+
+      - name: Check bash script syntax (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          find . -type f -name '*.sh' -exec bash -n {} \; || { echo '[ERROR] Bash syntax error' | tee -a "$LOGFILE"; exit 1; }
+
+      - name: Check Python script syntax (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          find . -type f -name '*.py' -exec python3 -m py_compile {} \; || { echo '[ERROR] Python syntax error' | tee -a "$LOGFILE"; exit 1; }
+
+      - name: Check PowerShell script syntax (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          if command -v pwsh >/dev/null 2>&1; then
+            find . -type f -name '*.ps1' -exec pwsh -NoProfile -Command "& { param($path) try { [System.Management.Automation.Language.Parser]::ParseFile($path, [ref]$null, [ref]$null) } catch { exit 1 } }" {} \; || { echo '[ERROR] PowerShell syntax error' | tee -a "$LOGFILE"; exit 1; }
+          fi
+
+      - name: Install dependencies for act (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          set -e
+          mkdir -p "$(dirname "$LOGFILE")"
+          brew update || true
+          brew install chezmoi git python3 curl || true
+          pip3 install --upgrade pip || true
+          # Print versions for debug
+          echo "chezmoi version: $(chezmoi --version)" | tee -a "$LOGFILE"
+          echo "git version: $(git --version)" | tee -a "$LOGFILE"
+          echo "python3 version: $(python3 --version)" | tee -a "$LOGFILE"
+          echo "pip3 version: $(pip3 --version)" | tee -a "$LOGFILE"
+          echo "curl version: $(curl --version | head -n1)" | tee -a "$LOGFILE"
+
+      - name: Ensure chezmoi is in PATH (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          export PATH="/usr/local/bin:$PATH"
+          mkdir -p "$(dirname "$LOGFILE")"
+          if ! command -v chezmoi >/dev/null 2>&1; then
+            echo '[ERROR] chezmoi not found in PATH after install.' | tee -a "$LOGFILE"
+            exit 1
+          fi
+
+      - name: Run bootstrap and tests (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          chmod +x ./bootstrap/scripts/install-macos.sh
+          timeout 30m ./bootstrap/scripts/install-macos.sh | tee -a "$LOGFILE"
+          tail -n 10000 "$LOGFILE" > "$LOGFILE.tmp" && mv "$LOGFILE.tmp" "$LOGFILE"
+          if [ -f ./test/run-all.sh ]; then
+            chmod +x ./test/run-all.sh
+            timeout 20m ./test/run-all.sh | tee -a "$LOGFILE"
+            tail -n 10000 "$LOGFILE" > "$LOGFILE.tmp" && mv "$LOGFILE.tmp" "$LOGFILE"
+          fi
+
+      - name: Check SOTA tool versions (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          if [ "$ACT" = "true" ]; then echo "[INFO] Skipping SOTA tool check under act" | tee -a "$LOGFILE"; exit 0; fi
+          mkdir -p "$(dirname "$LOGFILE")"
+          for tool in ghostty mise jj code2 bb lsd trash; do
+            if ! command -v "$tool" >/dev/null 2>&1; then
+              echo "[ERROR] $tool not found in PATH" | tee -a "$LOGFILE"
+              exit 1
+            fi
+            echo "$tool version: $($tool --version 2>&1 | head -n1)" | tee -a "$LOGFILE"
+          done
+
+      - name: Check config file presence and syntax (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          for f in config/ghostty/config config/mise/config.toml config/jj/config.toml config/code2/config.toml config/bashbuddy/config.toml config/lsd/config.yaml; do
+            if [ ! -f "$f" ]; then echo "[ERROR] Missing config: $f" | tee -a "$LOGFILE"; exit 1; fi
+          done
+          for f in config/**/*.toml; do
+            if command -v tomlq >/dev/null 2>&1; then
+              tomlq . "$f" >/dev/null || { echo "[ERROR] Invalid TOML: $f" | tee -a "$LOGFILE"; exit 1; }
+            fi
+          done
+          for f in config/**/*.yaml config/**/*.yml; do
+            if command -v yq >/dev/null 2>&1; then
+              yq e . "$f" >/dev/null || { echo "[ERROR] Invalid YAML: $f" | tee -a "$LOGFILE"; exit 1; }
+            fi
+          done
+
+      - name: Check bash script syntax (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          find . -type f -name '*.sh' -exec bash -n {} \; || { echo '[ERROR] Bash syntax error' | tee -a "$LOGFILE"; exit 1; }
+
+      - name: Check Python script syntax (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          find . -type f -name '*.py' -exec python3 -m py_compile {} \; || { echo '[ERROR] Python syntax error' | tee -a "$LOGFILE"; exit 1; }
+
+      - name: Check PowerShell script syntax (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "$(dirname "$LOGFILE")"
+          if command -v pwsh >/dev/null 2>&1; then
+            find . -type f -name '*.ps1' -exec pwsh -NoProfile -Command "& { param($path) try { [System.Management.Automation.Language.Parser]::ParseFile($path, [ref]$null, [ref]$null) } catch { exit 1 } }" {} \; || { echo '[ERROR] PowerShell syntax error' | tee -a "$LOGFILE"; exit 1; }
+          fi
+
+      - name: Install dependencies for act (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+            Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+            irm get.scoop.sh | iex
+          }
+          scoop install chezmoi git python curl
+          python -m pip install --upgrade pip
+          # Print versions for debug
+          chezmoi --version | tee -a "$LOGFILE"
+          git --version | tee -a "$LOGFILE"
+          python --version | tee -a "$LOGFILE"
+          pip --version | tee -a "$LOGFILE"
+          curl --version | tee -a "$LOGFILE"
+
+      - name: Ensure chezmoi is in PATH (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $env:PATH = "C:\Users\runneradmin\scoop\shims;C:\ProgramData\chocolatey\bin;" + $env:PATH
+          if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue)) {
+            Write-Error '[ERROR] chezmoi not found in PATH after install.' | tee -a "$LOGFILE"
+            exit 1
+          }
+
+      - name: Run bootstrap and tests (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+          # Use Start-Process with timeout for PowerShell
+          $p = Start-Process pwsh -ArgumentList '-NoProfile', '-Command', './bootstrap/scripts/install-windows.ps1 | Tee-Object -FilePath $env:LOGFILE -Append' -PassThru
+          if ($p.WaitForExit(1800)) { $true } else { $p.Kill(); Write-Host 'Timeout reached for install-windows.ps1' }
+          Get-Content $env:LOGFILE -Tail 10000 | Set-Content $env:LOGFILE
+          if (Test-Path ./test/run-all.ps1) {
+            $p2 = Start-Process pwsh -ArgumentList '-NoProfile', '-Command', './test/run-all.ps1 | Tee-Object -FilePath $env:LOGFILE -Append' -PassThru
+            if ($p2.WaitForExit(1200)) { $true } else { $p2.Kill(); Write-Host 'Timeout reached for run-all.ps1' }
+            Get-Content $env:LOGFILE -Tail 10000 | Set-Content $env:LOGFILE
+          }
+
+      - name: Check SOTA tool versions (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if ($env:ACT -eq 'true') { Write-Host '[INFO] Skipping SOTA tool check under act' | tee -a "$LOGFILE"; exit 0 }
+          foreach ($tool in 'ghostty','mise','jj','code2','bb','lsd','trash') {
+            if (-not (Get-Command $tool -ErrorAction SilentlyContinue)) {
+              Write-Error "[ERROR] $tool not found in PATH" | tee -a "$LOGFILE"
+              exit 1
+            }
+            Write-Host "$tool version: $(& $tool --version | Select-Object -First 1)" | tee -a "$LOGFILE"
+          }
+
+      - name: Check config file presence and syntax (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $configs = @('config/ghostty/config','config/mise/config.toml','config/jj/config.toml','config/code2/config.toml','config/bashbuddy/config.toml','config/lsd/config.yaml')
+          foreach ($f in $configs) { if (-not (Test-Path $f)) { Write-Error "[ERROR] Missing config: $f" | tee -a "$LOGFILE"; exit 1 } }
+          # TOML/YAML validation can be added with Python or PowerShell modules if needed
+
+      - name: Check PowerShell script syntax (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object {
+            try {
+              [System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$null, [ref]$null) | Out-Null
+            } catch {
+              Write-Error "[ERROR] PowerShell syntax error in $($_.FullName)" | tee -a "$LOGFILE"
+              exit 1
+            }
+          }
+
+      - name: Check Python script syntax (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Filter *.py | ForEach-Object {
+            python -m py_compile $_.FullName
+            if ($LASTEXITCODE -ne 0) { Write-Error "[ERROR] Python syntax error in $($_.FullName)" | tee -a "$LOGFILE"; exit 1 }
+          }
+
+      - name: Lint shell scripts (universal)
+        run: |
+          if command -v shellcheck >/dev/null 2>&1; then
+            find . -type f -name '*.sh' -exec shellcheck {} +
+          fi
+
+      - name: Lint Python scripts (universal)
+        run: |
+          if command -v pylint >/dev/null 2>&1; then
+            find . -type f -name '*.py' -exec pylint --errors-only {} +
+          fi
+
+      - name: Lint PowerShell scripts (universal)
+        if: env.ACT != 'true'
+        shell: pwsh
+        run: |
+          if (Get-Command Invoke-ScriptAnalyzer -ErrorAction SilentlyContinue) {
+            Get-ChildItem -Recurse -Filter *.ps1 | ForEach-Object { Invoke-ScriptAnalyzer -Path $_.FullName -Recurse }
+          }
+
+      - name: Docker matrix test (all Dockerfiles)
+        if: runner.os == 'Linux'
+        run: |
+          for df in test/Dockerfile.*; do
+            tag=$(basename "$df" | tr '[:upper:]' '[:lower:]' | tr -c 'a-z0-9_.-' '-' | sed 's/-*$//')
+            docker build -f "$df" -t "dotfiles-test-$tag" .
+            docker run --rm "dotfiles-test-$tag"
+          done
+
+      - name: Cleanup log file
+        if: always()
+        run: echo "Skipping log file cleanup to preserve logs."
+
+      - name: List files in current directory (debug)
+        if: always()
+        run: |
+          echo "Listing files in current directory:"
+          ls -lh . || dir
+
+      - name: Run MCP/AI Health Check
+        run: |
+          if [ -f bin/healthcheck-mcp.sh ]; then
+            bash bin/healthcheck-mcp.sh || true
+          fi
+      - name: Run Smart Config Drift Detection
+        run: |
+          if [ -f bin/smart-config ]; then
+            bash bin/smart-config || true
+          fi
+      - name: Secret Scanning
+        uses: github/secret-scanning-action@v1
+        with:
+          path: .
+      - name: Static Analysis (SAST)
+        run: |
+          if command -v bandit >/dev/null 2>&1; then
+            find . -type f -name '*.py' -exec bandit -r {} +
+          fi
+          if command -v shellcheck >/dev/null 2>&1; then
+            find . -type f -name '*.sh' -exec shellcheck {} +
+          fi
+      - name: Validate YAML/TOML (cross-platform)
+        run: |
+          python3 -c "import sys,glob,yaml,toml; [yaml.safe_load(open(f)) for f in glob.glob('config/**/*.yml',recursive=True)+glob.glob('config/**/*.yaml',recursive=True)]; [toml.load(open(f)) for f in glob.glob('config/**/*.toml',recursive=True)]" || echo 'YAML/TOML validation failed.' 

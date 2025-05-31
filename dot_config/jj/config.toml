@@ -1,0 +1,4 @@
+# Jujutsu config stub for cross-platform use
+[user]
+name = "Your Name"
+email = "your.email@example.com" 

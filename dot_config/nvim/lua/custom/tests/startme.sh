@@ -1,0 +1,1 @@
+#!/usr/bin/env bash\n# Run all Neovim config tests in this folder using plenary.nvim\n\nset -e\n\ncd "$(dirname "$0")"\n\nif [ -f "../../minimal_init.lua" ]; then\n  nvim --headless -c "PlenaryBustedDirectory . {minimal_init = '../../minimal_init.lua'}"\nelse\n  nvim --headless -c "PlenaryBustedDirectory ."\nfi 

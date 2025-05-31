@@ -1,0 +1,10 @@
+FROM fedora:latest
+
+RUN dnf install -y git curl sudo zsh neovim python3 python3-pip
+WORKDIR /dotfiles
+COPY . /dotfiles
+RUN rm -rf bootstrap
+RUN git submodule update --init --recursive
+RUN chmod +x ./setup-dotfiles.sh
+RUN CI=1 ./setup-dotfiles.sh --reinit
+CMD ["bash", "/dotfiles/test/test.sh"] 

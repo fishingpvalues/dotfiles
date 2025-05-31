@@ -1,0 +1,41 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+.*.swp
+.*.swo
+
+# Log files
+*.log
+
+# Cache directories
+.cache/
+__pycache__/
+
+# Environment variables or sensitive info
+.env
+.env.local
+*.pem
+*.key
+
+# Application specific
+.vscode/settings.json
+node_modules/
+
+# Package manager directories
+npm-debug.log
+yarn-error.log
+
+# Windows shortcuts
+*.lnk
+
+# New logs directory
+logs/
+
+# GitHub workflows
+.github/workflows/act-dotfiles.log.cursor/mcp.json

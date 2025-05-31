@@ -1,0 +1,6 @@
+<!-- Desert theme for bat -->
+<dict>
+  <key>background</key><string>#4D3F3A</string>
+  <key>foreground</key><string>#F5EBDC</string>
+  <key>accent</key><string>#D08770</string>
+</dict> 

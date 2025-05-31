@@ -1,0 +1,13 @@
+// gitui key bindings (https://github.com/extrawurst/gitui)
+// Example: remap quit to 'q', help to '?', etc.
+(
+  quit: "q",
+  help: "?",
+  status: "s",
+  commit: "c",
+  log: "l",
+  files: "f",
+  stash: "S",
+  stage: "a",
+  unstage: "u"
+) 

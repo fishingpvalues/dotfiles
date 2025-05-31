@@ -1,0 +1,202 @@
+# Starship Prompt Configuration
+# GitHub Dark themed with optimized performance
+
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# General configuration
+add_newline = true
+command_timeout = 750
+continuation_prompt = "▶▶ "
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$git_metrics\
+$fill\
+$cmd_duration\
+$python\
+$nodejs\
+$rust\
+$golang\
+$java\
+$c\
+$status\
+$line_break\
+$character"""
+
+# Create a blank line between shell prompts
+[line_break]
+disabled = false
+
+# Make prompt a single line instead of two lines
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[✗](bold red)"
+
+# GitHub style palette
+[palettes.github_dark]
+blue = "#58a6ff"
+bright-blue = "#79c0ff"
+green = "#3fb950"
+bright-green = "#56d364"
+red = "#ff7b72"
+bright-red = "#ffa198"
+purple = "#bc8cff"
+bright-purple = "#d2a8ff"
+yellow = "#d29922"
+bright-yellow = "#e3b341"
+cyan = "#39c5cf"
+bright-cyan = "#56d4dd"
+gray = "#8b949e"
+bright-gray = "#6e7681"
+white = "#c9d1d9"
+bright-white = "#f0f6fc"
+black = "#0d1117"
+bright-black = "#161b22"
+
+# Disable the default modules that we are handling specially
+[aws]
+disabled = true
+symbol = "  "
+style = "bold blue"
+
+[azure]
+disabled = true
+format = "on [$symbol$subscription]($style) "
+symbol = "ﴃ "
+style = "blue bold"
+
+[gcloud]
+disabled = true
+
+[kubernetes]
+disabled = true
+format = "on [$symbol$context( ($namespace))]($style) "
+style = "cyan bold"
+
+[directory]
+style = "bold bright-blue"
+read_only = " 󰌾"
+read_only_style = "red"
+truncation_length = 3
+truncation_symbol = "…/"
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+
+[directory.substitutions]
+"Documents" = " "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+# Shows current git branch
+[git_branch]
+symbol = " "
+format = "[$symbol$branch(:$remote_branch)]($style) "
+style = "bright-purple"
+truncation_length = 20
+truncation_symbol = "…"
+ignore_branches = ["master", "main"]
+
+# Shows git status
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "bright-green"
+conflicted = "!"
+up_to_date = ""
+untracked = "?"
+ahead = "⇡${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+behind = "⇣${count}"
+stashed = "󰿨"
+modified = "*"
+staged = "✓"
+renamed = "»"
+deleted = "✘"
+
+# Shows the state of the git repo, if any
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-purple"
+
+# Shows git diff metrics (added/deleted lines)
+[git_metrics]
+added_style = "bold bright-green"
+deleted_style = "bold bright-red"
+format = '([+$added]($added_style))([-$deleted]($deleted_style) )'
+disabled = false
+only_nonzero_diffs = true
+
+# Shows current username
+[username]
+style_user = "bold bright-blue"
+style_root = "bold bright-red"
+format = "[$user]($style) at "
+disabled = false
+show_always = false
+
+# Shows hostname in SSH and containers
+[hostname]
+ssh_only = true
+format = "[$hostname]($style) in "
+trim_at = "."
+style = "bold bright-green"
+disabled = false
+
+# Shows command duration
+[cmd_duration]
+min_time = 1000
+format = "[$duration]($style) "
+style = "bright-yellow"
+show_milliseconds = false
+
+# Shows current language versions
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+symbol = "🐍 "
+style = "bright-yellow"
+pyenv_version_name = true
+pyenv_prefix = "pyenv "
+
+[nodejs]
+format = "[${symbol}(${version} )]($style)"
+symbol = " "
+style = "bright-green"
+
+[rust]
+format = "[${symbol}(${version} )]($style)"
+symbol = "🦀 "
+style = "bright-red"
+
+[golang]
+format = "[${symbol}(${version} )]($style)"
+symbol = " "
+style = "bright-blue"
+
+[java]
+format = "[${symbol}(${version} )]($style)"
+symbol = " "
+style = "bright-red"
+
+[c]
+format = "[${symbol}(${version} )]($style)"
+symbol = " "
+style = "bright-blue"
+version_format = "${raw}"
+
+# Fill characters - right to left prompt
+[fill]
+symbol = " "
+style = "bright-gray"
+
+# Status
+[status]
+style = "bright-red"
+symbol = "✘ "
+format = '[\[$symbol$status\]]($style) '
+map_symbol = true
+disabled = false

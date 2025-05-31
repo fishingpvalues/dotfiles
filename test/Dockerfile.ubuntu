@@ -1,0 +1,12 @@
+FROM ubuntu:latest
+
+RUN apt-get update && apt-get install -y git curl sudo locales zsh neovim
+RUN locale-gen en_US.UTF-8
+ENV LANG=en_US.UTF-8
+WORKDIR /dotfiles
+COPY . /dotfiles
+RUN rm -rf bootstrap
+RUN git submodule update --init --recursive
+RUN chmod +x ./setup-dotfiles.sh
+RUN CI=1 ./setup-dotfiles.sh --reinit
+CMD ["bash", "/dotfiles/test/test.sh"] 

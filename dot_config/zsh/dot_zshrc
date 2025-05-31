@@ -1,0 +1,632 @@
+# Show system info with fastfetch (SOTA) or fallback to neofetch
+if command -v fastfetch >/dev/null 2>&1; then
+  fastfetch --logo ascii
+elif command -v neofetch >/dev/null 2>&1; then
+  neofetch
+fi 
+
+# Homebrew path setup (must be first for plugin compatibility)
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$('/opt/homebrew/bin/brew' shellenv)"
+fi
+
+# Ensure /usr/local/bin is in PATH for user-installed binaries like cursor
+export PATH="/usr/local/bin:$PATH"
+
+# .zshrc - ZSH configuration file
+
+# Enable Powerlevel10k instant prompt for faster startup. Should stay at the top of .zshrc
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-$(whoami).zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-$(whoami).zsh"
+fi
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/dfischer/miniforge3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/dfischer/miniforge3/etc/profile.d/conda.sh" ]; then
+        . "/Users/dfischer/miniforge3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/dfischer/miniforge3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+# Path to your oh-my-zsh installation
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set the Zsh theme to Powerlevel10k
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# History settings
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt SHARE_HISTORY          # share history between sessions
+setopt EXTENDED_HISTORY       # add timestamps to history
+setopt HIST_EXPIRE_DUPS_FIRST # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt HIST_IGNORE_DUPS       # ignore duplicated commands
+setopt HIST_IGNORE_ALL_DUPS   # don't record duplicates in history
+setopt HIST_FIND_NO_DUPS      # don't display duplicates during searches
+setopt HIST_IGNORE_SPACE      # ignore commands that start with space
+setopt HIST_SAVE_NO_DUPS      # don't write duplicate entries in the history file
+setopt HIST_REDUCE_BLANKS     # remove superfluous blanks from history items
+setopt INC_APPEND_HISTORY     # save commands are added to the history immediately
+
+# Speed-optimized plugins (carefully selected for balance)
+plugins=(
+  git                 # Git integration (low overhead, high value)
+  zsh-autosuggestions # Command suggestions based on history
+  fast-syntax-highlighting # Faster syntax highlighting than zsh-syntax-highlighting
+  fzf                 # Fuzzy finder (loaded only when used)
+  history-substring-search # History search (lightweight)
+  direnv              # Directory-specific environment variables
+  vi-mode             # Vim keybindings
+  zsh-interactive-cd  # Better directory navigation with tab completion
+  autojump            # Jump to directories with j command (faster than z)
+)
+
+# Load Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# Basic auto/tab completion - precompiled for faster loading
+autoload -Uz compinit
+# If .zcompdump exists and is less than 24h old, use it; otherwise, recompile
+if [ -f "${ZDOTDIR:-$HOME}/.zcompdump" ] && [ $(find "${ZDOTDIR:-$HOME}/.zcompdump" -mtime -1 | wc -l) -gt 0 ]; then
+  compinit
+else
+  compinit -C
+fi
+
+# Environment variables
+export EDITOR='nvim'
+export VISUAL='nvim'
+export PAGER='less'
+export MANPAGER="nvim +Man!"
+
+# Aliases
+# --------------
+# General aliases
+alias ll="eza -alh --icons --git --group-directories-first --color=auto"
+alias lt="eza --tree --level=2 --icons --color=auto"
+alias ld="eza -alD --icons --group-directories-first --color=auto"
+alias la='ls -A'
+alias l='ls -CF'
+alias ip='ip -color=auto'
+alias vim='nvim'
+alias vi='nvim'
+# Cursor editor alias
+if command -v cursor >/dev/null 2>&1; then
+  alias cursor='cursor'
+fi
+alias c="bat"
+alias b="bat -pp"
+alias bl="bat --list-themes"
+alias be="BAT_THEME=OneHalfDark bat"
+# === Yazi File Manager ===
+
+# OS-specific aliases
+if [[ "$(uname)" == "Darwin" ]]; then
+  # macOS specific aliases
+  alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+  alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
+
+  # If brew exists, add its sbin to PATH
+  if command -v brew &> /dev/null; then
+    export PATH="$(brew --prefix)/sbin:$PATH"
+  fi
+elif [[ "$(uname)" == "Linux" ]]; then
+  # Linux specific aliases
+  if command -v pacman &> /dev/null; then
+    # Arch Linux
+    alias pacman='sudo pacman'
+    alias update='sudo pacman -Syu'
+    alias cleanup='sudo pacman -Rns $(pacman -Qtdq)'
+  elif command -v apt-get &> /dev/null; then
+    # Debian/Ubuntu
+    alias update='sudo apt update && sudo apt upgrade'
+    alias install='sudo apt install'
+    alias remove='sudo apt remove'
+    alias cleanup='sudo apt autoremove'
+  fi
+fi
+
+alias ya="yazi"
+yaf() {
+  cd "$(yazi --cwd-file=/tmp/yazi-cwd)"
+  source ~/.zshrc
+}
+alias yai="yazi -- --interactive"
+alias yac="yazi ~/.config"
+alias yad="yazi ~/Downloads"
+alias fh="history | fzf"
+vf() { nvim "$(fzf)"; }
+# Do NOT alias 'find' to 'fd' globally. Many scripts, completions, and plugins expect GNU/BSD 'find' and will break if 'find' is replaced with 'fd'.
+# Use 'fd' directly or use the 'ff' alias below for convenience.
+# alias find='fd'  # <-- This is intentionally disabled to avoid breaking completions/plugins
+alias ff="fd . | fzf"  # Safe shortcut for file finding
+alias fdir="fd --type d"
+alias du="dust"
+alias df="duf"
+alias top="btop"
+alias grep="rg"
+alias rgf="rg --files | fzf"
+alias rgs="rg --smart-case"
+
+# Besser:
+alias | grep -q '^cd=' && unalias cd
+alias zz="zoxide query -l | fzf"
+zc() {
+  cd "$(zoxide query -l | fzf)"
+}
+alias help="tldr"
+alias hh="tldr --list | fzf"
+# oder macOS:
+alias copy="pbcopy"
+alias paste="pbpaste"
+# Aliases and functions
+# Function to fetch cheat.sh for a given command
+cheat() {
+  curl "cheat.sh/$*"
+}
+ch() { cht.sh "$(fzf)"; }
+# Git aliases
+# --------------
+alias g='git'
+alias gs='git status'
+alias gl='git pull'
+alias gp='git push'
+alias gd='git diff'
+alias gc='git commit'
+alias gco='git checkout'
+alias ga='git add'
+alias gb='git branch'
+alias glog='git log'
+# kubectl
+# --------------
+alias k="kubectl"
+alias kwu="watch -n 10 bash ~/scripts/k8s/listUndesiredState.sh"
+alias kctx="k ctx"
+alias kns="k ns"
+alias kda="kubectl describe app"
+alias kdj="kubectl describe job"
+alias kdaj="kubectl describe appjob"
+alias kdp="kubectl describe pod"
+alias kea="kubectl edit appjob"
+kei() {
+  kubectl exec -it "$1" -- bash -l
+}
+kpfe() {
+  k get pods | grep "$1"
+}
+alias kl="kubectl logs"
+alias klf="~/.aliasscripts/smartklf.sh"
+alias uuid4="uuidgen | tr '[:upper:]' '[:lower:]' | pbcopy"
+# Docker aliases
+# --------------
+alias d="docker"
+alias dps="docker ps -a"
+alias dcu="docker compose up"
+alias dcd="docker compose down"
+alias dcb="docker compose build"
+alias dcl="docker container logs"
+please() { sudo $(fc -ln -1); }
+fuck() { sudo $(fc -ln -1); }
+alias reload="exec $SHELL -l"
+alias editbash="nvim ~/.zshrc"
+alias editaliases="nvim ~/.zsh_aliases"
+alias serve="python3 -m http.server 8080"
+
+# Use bat as cat if available
+if command -v bat >/dev/null 2>&1; then
+  alias cat="bat --paging=never"
+else
+  alias cat='cat'
+fi
+
+# Enhanced navigation with fzf
+if command -v fzf &> /dev/null; then
+  export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border --inline-info"
+  export FZF_DEFAULT_COMMAND="fd --type f --hidden --exclude .git"
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND="fd --type d --hidden --exclude .git"
+
+  # Load fzf keybindings and completion (lazy loading)
+  fzf_load() {
+    if [ -f ~/.fzf.zsh ]; then
+      source ~/.fzf.zsh
+    elif [ -f /usr/share/fzf/key-bindings.zsh ]; then
+      source /usr/share/fzf/key-bindings.zsh
+      source /usr/share/fzf/completion.zsh
+    elif [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]; then
+      source /usr/share/doc/fzf/examples/key-bindings.zsh
+      source /usr/share/doc/fzf/examples/completion.zsh
+    fi
+  }
+
+  # Lazy-load FZF only when needed
+  fzf-file-widget() { fzf_load; zle fzf-file-widget }
+  zle -N fzf-file-widget
+  bindkey '^T' fzf-file-widget
+
+  fzf-cd-widget() { fzf_load; zle fzf-cd-widget }
+  zle -N fzf-cd-widget
+  bindkey '^G' fzf-cd-widget
+
+  fzf-history-widget() { fzf_load; zle fzf-history-widget }
+  zle -N fzf-history-widget
+  bindkey '^R' fzf-history-widget
+fi
+# Cursor editor alias
+if command -v cursor >/dev/null 2>&1; then
+  alias cursor='cursor'
+fi
+
+# Load direnv if installed (with caching for performance)
+if command -v direnv &> /dev/null; then
+  export DIRENV_WARN_TIMEOUT=100s
+  eval "$(direnv hook zsh)"
+fi
+
+# Add local bin to path
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Extract function
+extract() {
+  if [ -f "$1" ] ; then
+    case "$1" in
+      *.tar.bz2)   tar xjf "$1"     ;;
+      *.tar.gz)    tar xzf "$1"     ;;
+      *.bz2)       bunzip2 "$1"     ;;
+      *.rar)       unrar x "$1"     ;;
+      *.gz)        gunzip "$1"      ;;
+      *.tar)       tar xf "$1"      ;;
+      *.tbz2)      tar xjf "$1"     ;;
+      *.tgz)       tar xzf "$1"     ;;
+      *.zip)       unzip "$1"       ;;
+      *.Z)         uncompress "$1"  ;;
+      *.7z)        7z x "$1"        ;;
+      *)           echo "'$1' cannot be extracted via extract()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+# Enhanced find file function
+function findfile() { find . -type f -name "*$1*"; }
+
+# Enable vi-mode for Zsh with reduced latency
+bindkey -v
+export KEYTIMEOUT=1
+
+# Add key bindings for history search
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+
+# System information function (call manually or from a local config to avoid console output during zsh init)
+show_sysinfo() {
+  if [[ -t 1 ]]; then
+    if command -v neofetch >/dev/null 2>&1; then
+      neofetch --ascii_distro Apple
+    elif command -v fastfetch >/dev/null 2>&1; then
+      fastfetch --logo Apple
+    elif command -v macchina >/dev/null 2>&1; then
+      macchina
+    else
+      echo "No system info tool (neofetch, fastfetch, macchina) found."
+    fi
+  fi
+}
+
+# To show system info, run `show_sysinfo` manually or source from ~/.zshrc.local or similar.
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Directory navigation
+setopt AUTO_CD               # cd by typing directory name if it's not a command
+setopt AUTO_PUSHD            # make cd push the old directory onto the directory stack
+setopt PUSHD_IGNORE_DUPS     # ignore duplicate pushd entries
+setopt PUSHD_SILENT          # don't print the directory stack after pushd or popd
+
+# Changing/making/removing directory
+setopt AUTO_NAME_DIRS
+
+# ZSH Customization
+DISABLE_AUTO_TITLE="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=8"
+
+# Autoloads
+autoload -U colors && colors      # load zsh's color system
+
+# Completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive completion
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"    # colored completion
+zstyle ':completion:*' rehash true                         # automatically find new executables
+zstyle ':completion:*' menu select                         # menu-style completion
+zstyle ':completion:*' verbose yes                         # verbose completion
+zstyle ':completion:*:*:*:*:*' menu select
+
+# Path modifications
+# Add your custom paths here
+path+=(
+  $HOME/.local/bin
+)
+# Remove duplicates from PATH
+typeset -U path
+
+# Default editor - prefer nvim
+if command -v nvim >/dev/null 2>&1; then
+  export EDITOR='nvim'
+  export VISUAL='nvim'
+  alias vim='nvim'
+  alias vi='nvim'
+elif command -v vim >/dev/null 2>&1; then
+  export EDITOR='vim'
+  export VISUAL='vim'
+fi
+
+# Aliases
+alias mkdir='mkdir -p'
+alias md='mkdir'
+alias rd='rmdir'
+alias h='history'
+alias py='python3'
+alias py2='python2'
+alias dotfiles='cd $HOME/.local/share/chezmoi'
+alias dotedit='chezmoi edit'
+alias dotapply='chezmoi apply'
+alias k='kubectl'
+alias tf='terraform'
+
+# Modern CLI tool aliases with graceful fallback
+# (find alias block removed to avoid breaking completions/plugins and to fix linter error)
+if command -v rg >/dev/null 2>&1; then
+  alias grep='rg'
+else
+  alias sed='sed'
+fi
+if command -v xh >/dev/null 2>&1; then
+  alias http='xh'
+elif command -v httpie >/dev/null 2>&1; then
+  alias http='http'
+else
+  alias http='curl'
+fi
+if command -v gitui >/dev/null 2>&1; then
+  alias gui='gitui'
+fi
+if command -v rga >/dev/null 2>&1; then
+  alias rga='rga'
+fi
+if command -v batman >/dev/null 2>&1; then
+  alias batman='batman'
+fi
+if command -v batgrep >/dev/null 2>&1; then
+  alias batgrep='batgrep'
+fi
+if command -v batdiff >/dev/null 2>&1; then
+  alias batdiff='batdiff'
+fi
+if command -v onefetch >/dev/null 2>&1; then
+  alias onefetch='onefetch'
+fi
+# vivid LS_COLORS (https://github.com/sharkdp/vivid)
+if command -v vivid >/dev/null 2>&1; then
+  export LS_COLORS="$(vivid generate catppuccin-mocha)"
+fi
+# Tool docs:
+# eza: https://github.com/eza-community/eza
+# vivid: https://github.com/sharkdp/vivid
+# sd: https://github.com/chmln/sd
+# xh: https://github.com/ducaale/xh
+# gitui: https://github.com/extrawurst/gitui
+# rga: https://github.com/phiresky/ripgrep-all
+# bat-extras: https://github.com/eth-p/bat-extras
+# onefetch: https://github.com/o2sh/onefetch
+
+# Plugins
+# The following block loads plugins from custom_plugins and oh-my-zsh plugins
+# You will need to install plugins first with your preferred plugin manager
+
+# Zsh plugin manager (if using zimfw, zinit, antibody, etc.)
+# Uncomment the appropriate block for your plugin manager
+
+# For zinit
+if [ -f "$HOME/.zinit/bin/zinit.zsh" ]; then
+  source "$HOME/.zinit/bin/zinit.zsh"
+  zinit light zsh-users/zsh-autosuggestions
+  zinit light zsh-users/zsh-syntax-highlighting
+  zinit light zdharma/fast-syntax-highlighting
+  zinit light zsh-users/zsh-completions
+  zinit light zdharma/history-search-multi-word
+fi
+
+# Node Version Manager (nvm) setup
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# use kube config globally
+export KUBECONFIG=$HOME/.kube/config
+
+# Python version manager (pyenv) setup
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+# Starship prompt
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+else
+  # If starship is not available, use a simple prompt
+  PROMPT='%F{green}%n@%m%f:%F{blue}%~%f$ '
+fi
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+[ -f ~/.kubectl_aliases ] && source \
+   <(cat ~/.kubectl_aliases | sed -r 's/(kubectl.*) --watch/watch \1/g')
+
+function kubectl() { echo "+ kubectl $@" >&2; command kubectl "$@"; }
+# Load local, work, and machine-specific configurations if they exist
+[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+[ -f ~/.zshrc.work ] && source ~/.zshrc.work
+[ -f ~/.zshrc.$(hostname) ] && source ~/.zshrc.$(hostname)
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/dfischer/.docker/completions $fpath)
+autoload -Uz compinit
+# If .zcompdump exists and is less than 24h old, use it; otherwise, recompile
+if [ -f "${ZDOTDIR:-$HOME}/.zcompdump" ] && [ $(find "${ZDOTDIR:-$HOME}/.zcompdump" -mtime -1 | wc -l) -gt 0 ]; then
+  compinit
+else
+  compinit -C
+fi
+# End of Docker CLI completions
+export PATH="/opt/homebrew/opt/openjdk@21/bin:$PATH"
+export CPPFLAGS="-I/opt/homebrew/opt/openjdk@21/include"
+
+# --- 2025 SOTA CLI Tools Integration ---
+# Aliases and completions for new tools
+
+# Ghostty: set as default terminal if installed
+if command -v ghostty >/dev/null 2>&1; then
+  export TERMINAL="ghostty"
+fi
+
+# mise: universal version manager
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+  # oh-my-zsh plugin: mise (if available)
+fi
+
+# Jujutsu (jj): next-gen VCS
+if command -v jj >/dev/null 2>&1; then
+  alias git='jj' # Optional: comment out if you want to keep git
+  # oh-my-zsh plugin: jj (if available)
+  eval "$(jj util completion zsh)"
+fi
+
+# code2: AI-powered CLI
+if command -v code2 >/dev/null 2>&1; then
+  # oh-my-zsh plugin: code2 (if available)
+  eval "$(code2 completion zsh)"
+fi
+
+# BashBuddy: natural language shell helper
+if command -v bb >/dev/null 2>&1; then
+  alias bashbuddy='bb'
+  # oh-my-zsh plugin: bashbuddy (if available)
+fi
+
+# lsd: modern ls replacement
+if command -v lsd >/dev/null 2>&1; then
+  alias ls='lsd'
+fi
+
+# trash-cli: safe rm alternative
+if command -v trash >/dev/null 2>&1; then
+  alias rm='trash'
+fi
+
+# Powerlevel10k integration: add segments for mise, jj, etc. if using p10k
+# (see p10k.zsh for custom segments)
+
+# --- End SOTA CLI Tools Integration ---
+
+# --- Curated Data Science & Terminal Aliases (AI-augmented) ---
+# Navigation & Filesystem
+alias cls='clear; ls'
+alias take='mkdir -p "$1" && cd "$1"'
+# Intelligente Suche & Navigation
+if ! command -v rg &>/dev/null; then
+  alias ag='echo "[zsh] Please install ripgrep (rg) to use ag alias."'
+else
+  alias ag='rg --hidden --smart-case'
+fi
+if ! command -v zi &>/dev/null; then
+  alias jj='echo "[zsh] Please install zoxide to use jj alias."'
+else
+  alias jj='zi'
+fi
+# Git Workflows
+alias gaa='git add .'
+alias gca='git commit --amend'
+alias gpl='git pull'
+alias gclean='git branch --merged | grep -v "*" | xargs -n 1 git branch -d'
+# Dev & Tools
+if ! command -v nvim &>/dev/null; then
+  alias svi='echo "[zsh] Please install nvim to use svi alias."'
+  alias nv='echo "[zsh] Please install nvim and fzf to use nv alias."'
+else
+  if ! command -v fzf &>/dev/null; then
+    alias nv='echo "[zsh] Please install fzf to use nv alias."'
+  else
+    alias nv='nvim $(fzf)'
+  fi
+  alias svi='sudo nvim'
+fi
+if ! command -v bat &>/dev/null; then
+  alias less='echo "[zsh] Please install bat to use less alias."'
+else
+  alias less='bat'
+fi
+if ! command -v lsof &>/dev/null; then
+  alias ports='echo "[zsh] Please install lsof to use ports alias."'
+else
+  alias ports='lsof -i -P -n | grep LISTEN'
+fi
+alias ping='ping -c 5'
+if ! command -v jq &>/dev/null; then
+  alias json='echo "[zsh] Please install jq to use json alias."'
+else
+  alias json='jq .'
+fi
+# Pakete & Prozesse
+alias psx='ps aux | grep'
+alias du1='du -h --max-depth=1'
+alias mem='free -h'
+# Sicherheit & Netzwerk
+if ! command -v ufw &>/dev/null; then
+  alias fw='echo "[zsh] Please install ufw to use fw alias."'
+else
+  alias fw='sudo ufw status'
+fi
+alias myip='curl ifconfig.me'
+if ! command -v nvim &>/dev/null; then
+  alias sshconfig='echo "[zsh] Please install nvim to use sshconfig alias."'
+else
+  alias sshconfig='nvim ~/.ssh/config'
+fi
+# Python & Data Science
+if ! command -v ipython &>/dev/null; then
+  alias ipy='echo "[zsh] Please install ipython to use ipy alias."'
+else
+  alias ipy='ipython'
+fi
+if ! command -v jupyter &>/dev/null; then
+  alias jn='echo "[zsh] Please install jupyter to use jn alias."'
+else
+  alias jn='jupyter notebook'
+fi
+alias venv='python3 -m venv venv && source venv/bin/activate'
+alias act='source venv/bin/activate'
+alias pipup='pip list --outdated'
+alias pipi='pip install'
+# Eigene Tools / Misc
+if ! command -v udisksctl &>/dev/null; then
+  alias mountusb='echo "[zsh] Please install udisks2 to use mountusb alias."'
+else
+  alias mountusb='udisksctl mount -b /dev/sdX1'
+fi
+# Bonus: mkcd function (already present, but ensure alias)
+mkcd() { mkdir -p "$1" && cd "$1"; }
+alias mkcd='mkcd'
+# --- End Curated Data Science & Terminal Aliases (AI-augmented) ---

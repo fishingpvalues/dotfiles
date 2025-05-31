@@ -1,0 +1,9 @@
+FROM alpine:latest
+
+RUN apk add --no-cache git curl sudo zsh neovim bash
+WORKDIR /dotfiles
+COPY . /dotfiles
+RUN git submodule update --init --recursive
+RUN chmod +x ./setup-dotfiles.sh
+RUN CI=1 ./setup-dotfiles.sh --reinit
+CMD ["bash", "/dotfiles/test/test.sh"] 

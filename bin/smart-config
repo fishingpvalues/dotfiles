@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Smart Config: MCP/AI-powered config drift detection and SOTA recommendations
+set -euo pipefail
+
+# Check for Python (for AI/MCP checks)
+if ! command -v python3 &>/dev/null; then
+  echo "[ERROR] Python 3 is required for smart config." >&2
+  exit 1
+fi
+
+python3 "$(dirname "$0")/smart-config.py" "$@" 

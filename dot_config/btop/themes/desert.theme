@@ -1,0 +1,4 @@
+# Desert theme for btop
+main_bg = "#4D3F3A"
+main_fg = "#F5EBDC"
+accent = "#D08770" 

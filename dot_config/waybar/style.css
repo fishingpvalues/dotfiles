@@ -1,0 +1,125 @@
+@import "current-theme.css";
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: 'JetBrainsMono Nerd Font', 'Symbols Nerd Font', sans-serif;
+    font-size: 14px;
+    min-height: 0;
+}
+
+window#waybar {
+    transition-property: background-color;
+    transition-duration: .5s;
+    border-radius: 10px;
+    margin: 5px 10px;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+#workspaces button {
+    padding: 0 5px;
+    background-color: transparent;
+    color: @foreground;
+}
+
+#workspaces button:hover {
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: inherit;
+    text-shadow: inherit;
+    border-radius: 5px;
+}
+
+#workspaces button.focused {
+    color: @accent;
+}
+
+#workspaces button.urgent {
+    color: @urgent;
+}
+
+#mode {
+    padding: 0 10px;
+    color: @urgent;
+    font-weight: bold;
+}
+
+#clock {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+#battery {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+#cpu {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+#memory {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+#network {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+#pulseaudio {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+#tray {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+#custom-media {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+#window {
+    padding: 0 10px;
+    margin: 2px 3px;
+    color: @foreground;
+    background-color: @module-bg;
+    border-radius: 5px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @urgent;
+}
+
+#battery.critical:not(.charging) {
+    color: @foreground;
+    background-color: @urgent;
+} 

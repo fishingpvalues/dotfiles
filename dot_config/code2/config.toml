@@ -1,0 +1,4 @@
+# code2 config stub for cross-platform use
+[llm]
+provider = "openrouter"
+api_key = "YOUR_API_KEY_HERE" 

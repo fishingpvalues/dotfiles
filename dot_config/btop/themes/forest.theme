@@ -1,0 +1,4 @@
+# Forest theme for btop
+main_bg = "#2A3D2F"
+main_fg = "#D8E9D6"
+accent = "#84B08A" 

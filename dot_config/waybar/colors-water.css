@@ -1,0 +1,5 @@
+@define-color background rgba(46, 58, 78, 0.85);
+@define-color foreground #E0F2F7;
+@define-color accent #88C0D0;
+@define-color urgent #EBCB8B;
+@define-color module-bg rgba(0, 0, 0, 0.2); 

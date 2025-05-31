@@ -1,0 +1,6 @@
+<!-- Forest theme for bat -->
+<dict>
+  <key>background</key><string>#2A3D2F</string>
+  <key>foreground</key><string>#D8E9D6</string>
+  <key>accent</key><string>#84B08A</string>
+</dict> 

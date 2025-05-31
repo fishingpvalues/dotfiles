@@ -1,0 +1,83 @@
+[user]
+    # These values will be replaced by Chezmoi template variables
+    name = Your Name
+    email = your.email@example.com
+
+[init]
+    defaultBranch = main
+
+[core]
+    editor = nvim
+    autocrlf = input
+    pager = delta
+    excludesfile = ~/.gitignore_global
+    preloadindex = true
+    untrackedCache = true
+    packedGitLimit = 512m
+    packedGitWindowSize = 512m
+
+[pull]
+    rebase = true
+
+[push]
+    autoSetupRemote = true
+    default = current
+
+[merge]
+    conflictstyle = diff3
+    tool = nvimdiff
+
+[diff]
+    colorMoved = default
+    tool = nvimdiff
+    wsErrorHighlight = all
+    algorithm = histogram
+
+[color]
+    ui = auto
+
+[delta]
+    navigate = true
+    light = false
+    side-by-side = true
+    line-numbers = true
+    theme = GitHub
+    syntax-theme = Dracula
+
+[interactive]
+    diffFilter = delta --color-only
+
+[alias]
+    st = status
+    ci = commit
+    co = checkout
+    br = branch
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    visual = !gitk
+
+[credential]
+    helper = cache --timeout=3600
+
+[includeIf "gitdir:~/work/"]
+    path = ~/.gitconfig-work
+
+[filter "lfs"]
+    clean = git-lfs clean -- %f
+    smudge = git-lfs smudge -- %f
+    process = git-lfs filter-process
+    required = true
+
+[commit]
+    gpgsign = true
+
+[pack]
+    threads = 0
+    deltaCacheSize = 2047m
+    packSizeLimit = 2047m
+    windowMemory = 2047m
+
+[fetch]
+    prune = true
+    tags = true

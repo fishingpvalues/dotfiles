@@ -1,0 +1,6 @@
+<!-- Water theme for bat -->
+<dict>
+  <key>background</key><string>#2E3A4E</string>
+  <key>foreground</key><string>#E0F2F7</string>
+  <key>accent</key><string>#88C0D0</string>
+</dict> 

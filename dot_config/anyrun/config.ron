@@ -1,0 +1,16 @@
+(
+    style: "style/macos.css",
+    x: Fraction(0.5),
+    y: Fraction(0.1),
+    width: Absolute(600),
+    height: Absolute(0),
+    ignore_exclusive_zones: true,
+    layer: Overlay,
+    hide_plugin_info: true,
+    hide_icons: true,
+    close_on_click: true,
+    show_results_immediately: true,
+    show_initial_entries: true,
+    max_entries: Some(20),
+    plugins: [],
+) 

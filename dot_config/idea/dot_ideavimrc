@@ -1,0 +1,166 @@
+" IdeaVim configuration for JetBrains IDEs
+" Optimized for productivity with GitHub-themed features
+
+" Basic settings
+set showmode           " Display the current mode
+set incsearch          " Show search results as you type
+set hlsearch           " Highlight search results
+set ignorecase         " Ignore case when searching
+set smartcase          " Don't ignore case if search contains uppercase
+set number             " Show line numbers
+set relativenumber     " Show relative line numbers
+set scrolloff=5        " Keep cursor 5 lines away from screen border
+set history=1000       " Keep more history of commands
+set clipboard=unnamed  " Use system clipboard
+set visualbell         " Use visual bell instead of beeping
+set noerrorbells       " Don't make error sounds
+set timeout            " Time out on key codes
+set timeoutlen=500     " Timeout after 500ms
+set surround           " Enable surround plugin
+set multiple-cursors   " Enable multiple cursors
+set commentary         " Enable commentary plugin
+set ideamarks          " Enable IdeaVim marks
+set ideajoin           " Smart join lines
+set idearefactormode=keep  " Keep mode after refactoring
+set ideastatusicon=gray    " Icon in the status bar
+
+" Leader key
+let mapleader = " "
+
+" Navigation
+nnoremap <leader>e :NERDTree<CR>
+nnoremap <leader>f :action SearchEverywhere<CR>
+nnoremap <leader>g :action FindInPath<CR>
+nnoremap <leader>r :action RecentFiles<CR>
+nnoremap <leader>b :action RecentChangedFiles<CR>
+nnoremap <leader>s :action FileStructurePopup<CR>
+nnoremap <leader>p :action ParameterInfo<CR>
+
+" Actions
+nnoremap <leader>a :action GotoAction<CR>
+nnoremap <leader>d :action GotoDeclaration<CR>
+nnoremap <leader>i :action GotoImplementation<CR>
+nnoremap <leader>u :action FindUsages<CR>
+nnoremap <leader>t :action GotoTest<CR>
+nnoremap <leader>h :action TypeHierarchy<CR>
+
+" Code actions
+nnoremap <leader>c :action CommentByLineComment<CR>
+vnoremap <leader>c :action CommentByLineComment<CR>
+nnoremap <leader>o :action OptimizeImports<CR>
+nnoremap <leader>q :action QuickJavaDoc<CR>
+nnoremap <leader>n :action Generate<CR>
+nnoremap <leader>m :action OverrideMethods<CR>
+nnoremap <leader>l :action ReformatCode<CR>
+nnoremap <leader>R :action RenameElement<CR>
+
+" Window management
+nnoremap <leader>wv :action SplitVertically<CR>
+nnoremap <leader>ws :action SplitHorizontally<CR>
+nnoremap <leader>wc :action Unsplit<CR>
+nnoremap <leader>wm :action MoveEditorToOppositeTabGroup<CR>
+nnoremap <leader>ww :action NextSplitter<CR>
+nnoremap <leader>h :action PrevSplitter<CR>
+nnoremap <leader>l :action NextSplitter<CR>
+
+" Tab management
+nnoremap <leader>to :action OpenFile<CR>
+nnoremap <leader>tc :action CloseContent<CR>
+nnoremap <leader>ta :action CloseAllEditors<CR>
+nnoremap <leader>tn :action NextTab<CR>
+nnoremap <leader>tp :action PreviousTab<CR>
+
+" Run and Debug
+nnoremap <leader>rr :action Run<CR>
+nnoremap <leader>rc :action RunClass<CR>
+nnoremap <leader>rd :action Debug<CR>
+nnoremap <leader>rb :action ToggleLineBreakpoint<CR>
+nnoremap <leader>rv :action ViewBreakpoints<CR>
+
+" Version control
+nnoremap <leader>vv :action Vcs.QuickListPopupAction<CR>
+nnoremap <leader>vc :action CheckinProject<CR>
+nnoremap <leader>vd :action Compare.SameVersion<CR>
+nnoremap <leader>vl :action Vcs.Show.Log<CR>
+
+" Refactoring
+nnoremap <leader>rn :action RenameElement<CR>
+nnoremap <leader>rm :action ExtractMethod<CR>
+nnoremap <leader>rv :action IntroduceVariable<CR>
+nnoremap <leader>rf :action IntroduceField<CR>
+nnoremap <leader>rp :action IntroduceParameter<CR>
+nnoremap <leader>rw :action IntroduceConstant<CR>
+
+" Live templates
+nnoremap <leader>lt :action InsertLiveTemplate<CR>
+
+" Switch between matching brackets
+nnoremap <tab> %
+vnoremap <tab> %
+
+" Search for selected text
+vnoremap // y/<C-R>"<CR>
+
+" Keep visual selection when indenting
+vnoremap < <gv
+vnoremap > >gv
+
+" Disable arrow keys
+inoremap <Up>    <NOP>
+inoremap <Down>  <NOP>
+inoremap <Left>  <NOP>
+inoremap <Right> <NOP>
+noremap <Up>    <NOP>
+noremap <Down>  <NOP>
+noremap <Left>  <NOP>
+noremap <Right> <NOP>
+
+" Move lines up/down
+nnoremap <A-j> :m .+1<CR>==
+nnoremap <A-k> :m .-2<CR>==
+vnoremap <A-j> :m '>+1<CR>gv=gv
+vnoremap <A-k> :m '<-2<CR>gv=gv
+
+" Quick movements
+nnoremap L $
+nnoremap H ^
+vnoremap L $
+vnoremap H ^
+
+" Easy save and quit
+nnoremap <leader>w :w<CR>
+nnoremap <leader>x :x<CR>
+nnoremap <leader>q :q<CR>
+nnoremap <leader>Q :q!<CR>
+
+" Terminal
+nnoremap <leader>T :action ActivateTerminalToolWindow<CR>
+
+" Reload .ideavimrc
+nnoremap <leader>sv :source ~/.ideavimrc<CR>
+
+" Custom text objects
+set textobj-entire " Enable entire file text object
+" Use 'ae' for entire file
+" Use 'ie' for entire file without leading/trailing empty lines
+
+" Custom plugins
+set highlightedyank " Highlight yanked text
+set textobj-indent  " Text object for indentation level
+set argtextobj      " Text object for function arguments
+set exchange        " Exchange text
+
+" Custom mappings for easymotion-like jumps
+map <leader>j <Action>(AceAction)
+
+" GitHub-style fuzzy search
+map <leader>/ <Action>(Find)
+map <leader>? <Action>(FindInPath)
+
+" Set up handling of GitHub-style key bindings for common operations
+map <C-p> <Action>(SearchEverywhere)
+map <C-o> <Action>(RecentFiles)
+map <C-n> <Action>(NewFile)
+
+" UI preferences - set light vs dark accoding to IDE theme
+set ideastrictmode
