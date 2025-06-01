@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+: "${CHEZMOI_VERSION:=v2.37.0}"
+export CHEZMOI_VERSION
 set -euo pipefail
 
 GREEN='\033[0;32m'
