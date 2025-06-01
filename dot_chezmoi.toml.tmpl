@@ -3,9 +3,9 @@
 
 # User information
 [data]
-    name = {{ if (env "CI") }}{{ env "NAME" | default "CI User" | quote }}{{ else }}{{ promptString "name" "Your Full Name" | quote }}{{ end }}
-    email = {{ if (env "CI") }}{{ env "EMAIL" | default "ci@example.com" | quote }}{{ else }}{{ promptString "email" "your.email@example.com" | quote }}{{ end }}
-    github_username = {{ if (env "CI") }}{{ env "GITHUB_USERNAME" | default "ciuser" | quote }}{{ else }}{{ promptString "github_username" "fishingpvalues" | quote }}{{ end }}
+    name = {{ env "NAME" | default "Your Name" | quote }}
+    email = {{ env "EMAIL" | default "your.email@example.com" | quote }}
+    github_username = {{ env "GITHUB_USERNAME" | default "fishingpvalues" | quote }}
 
     # Operating system detection
     {{- $osID := .chezmoi.os }}
@@ -75,26 +75,26 @@
     install_extras = {{ if (env "CI") }}false{{ else }}{{ promptBool "Install extra development tools?" }}{{ end }}
 
     # Terminal preferences
-    use_nerd_font = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_nerd_font" "Use Nerd Font (for icons in terminal)" }}{{ end }}
-    nerd_font = {{ if (env "CI") }}"JetBrainsMono"{{ else }}{{ promptString "nerd_font" "JetBrainsMono" (list "JetBrainsMono" "FiraCode" "Hack" "CascadiaCode" "SourceCodePro") | quote }}{{ end }}
+    use_nerd_font = {{ env "USE_NERD_FONT" | default "true" }}
+    nerd_font = {{ env "NERD_FONT" | default "JetBrainsMono" | quote }}
     {{- if eq .chezmoi.os "windows" }}
-    default_terminal = {{ if (env "CI") }}"windows-terminal"{{ else }}{{ promptString "default_terminal" "windows-terminal" (list "windows-terminal" "alacritty" "wezterm") | quote }}{{ end }}
+    default_terminal = {{ env "DEFAULT_TERMINAL" | default "windows-terminal" | quote }}
     {{- else }}
-    default_terminal = {{ if (env "CI") }}"kitty"{{ else }}{{ promptString "default_terminal" "kitty" (list "kitty" "alacritty" "wezterm") | quote }}{{ end }}
+    default_terminal = {{ env "DEFAULT_TERMINAL" | default "kitty" | quote }}
     {{- end }}
 
     # Shell preferences
     {{- if eq .chezmoi.os "windows" }}
-    default_shell = {{ if (env "CI") }}"pwsh"{{ else }}{{ promptString "default_shell" "pwsh" (list "pwsh" "powershell" "bash" "zsh") | quote }}{{ end }}
+    default_shell = {{ env "DEFAULT_SHELL" | default "pwsh" | quote }}
     {{- else }}
     # Colors and themes
-    color_scheme = {{ if (env "CI") }}"github-dark"{{ else }}{{ promptString "color_scheme" "github-dark" | quote }}{{ end }}
+    color_scheme = {{ env "COLOR_SCHEME" | default "github-dark" | quote }}
 
     # Editor preferences
     {{- if eq .chezmoi.os "windows" }}
-    editor = {{ if (env "CI") }}"code"{{ else }}{{ promptString "editor" "code" (list "code" "nvim" "notepad++") | quote }}{{ end }}
+    editor = {{ env "EDITOR" | default "code" | quote }}
     {{- else }}
-    editor = {{ if (env "CI") }}"nvim"{{ else }}{{ promptString "editor" "nvim" (list "nvim" "code" "vim") | quote }}{{ end }}
+    editor = {{ env "EDITOR" | default "nvim" | quote }}
     {{- end }}
 
 # Root-level variables for CI and template compatibility
