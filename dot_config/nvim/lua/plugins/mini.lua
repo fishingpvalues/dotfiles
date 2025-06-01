@@ -68,5 +68,9 @@ return {
 
     -- Better buffer handling
     require('mini.bufremove').setup({})
+
+    -- Terminal background sync to remove frame (fixes terminal size illusion)
+    require('mini.misc').setup()
+    require('mini.misc').setup_termbg_sync()
   end,
 }
