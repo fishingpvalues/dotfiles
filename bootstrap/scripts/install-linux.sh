@@ -119,7 +119,6 @@ install_python_linters() {
   done
 }
 
-: "${CHEZMOI_VERSION:=v2.37.0}"
 install_chezmoi() {
   # Remove any system or snap chezmoi first
   if command -v chezmoi &>/dev/null; then
