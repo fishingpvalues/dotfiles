@@ -44,7 +44,6 @@ desktop.ini
 # Platform-specific files
 
 # Windows-specific files - ignore on Unix
-{{- if ne .chezmoi.os "windows" }}
 config/windows-terminal/
 config/powershell/
 scripts/windows/
@@ -58,10 +57,8 @@ AppData/
 *.ps1
 *.psm1
 *.reg
-{{- end }}
 
 # Unix-specific files - ignore on Windows
-{{- if eq .chezmoi.os "windows" }}
 config/bash/
 config/zsh/
 config/fish/
@@ -83,10 +80,8 @@ scripts/unix/
 .Xdefaults
 .xsession
 .xprofile
-{{- end }}
 
 # macOS-specific files - ignore on non-macOS
-{{- if ne .chezmoi.os "darwin" }}
 .DS_Store
 Library/
 .Trash/
@@ -94,10 +89,8 @@ Library/
 .chunkwmrc
 .skhdrc
 .yabairc
-{{- end }}
 
 # Linux-specific files - ignore on non-Linux
-{{- if ne .chezmoi.os "linux" }}
 .config/i3/
 .config/sway/
 .config/hypr/
@@ -110,7 +103,6 @@ Library/
 .xinitrc
 .xsession
 .pam_environment
-{{- end }}
 
 # Editor-specific files that shouldn't be part of dotfiles
 .vscode/
@@ -156,7 +148,6 @@ out/
 *.war
 
 # Package manager directories
-{{- if ne .chezmoi.os "windows" }}
 .npm/
 .yarn/
 .pnpm-store/
@@ -172,7 +163,6 @@ out/
 .composer/
 .bundle/
 .gem/
-{{- end }}
 
 # Container and VM files
 .docker/
@@ -213,37 +203,25 @@ media/wallpapers/
 *.rej
 
 # Language-specific files
-{{- if not .use_node }}
 .npmrc
 .yarnrc
 .nvmrc
-{{- end }}
 
-{{- if not .use_python }}
 .python-version
 .venv/
 venv/
-{{- end }}
 
-{{- if not .use_rust }}
 .cargo/
 .rustup/
-{{- end }}
 
-{{- if not .use_go }}
 .go/
 go/
-{{- end }}
 
 # Tool-specific files based on user preferences
-{{- if not .use_docker }}
 .docker/
 docker/
-{{- end }}
 
-{{- if not .use_kubernetes }}
 .kube/
-{{- end }}
 
 # Bootstrap scripts
 bootstrap/scripts/windows/

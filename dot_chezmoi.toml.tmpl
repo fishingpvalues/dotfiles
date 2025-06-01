@@ -14,46 +14,17 @@
     {{- end }}
 
     # OS-specific settings
-    {{- if eq .chezmoi.os "darwin" }}
-    is_macos = true
-    is_linux = false
-    is_windows = false
-    vscode_path = "Library/Application Support/Code/User"
-    package_manager = "brew"
-    {{- else if eq .chezmoi.os "linux" }}
-    is_macos = false
-    is_linux = true
-    is_windows = false
-    vscode_path = ".config/Code/User"
-    {{-   if eq .chezmoi.osRelease.id "arch" }}
-    package_manager = "pacman"
-    {{-   else if eq .chezmoi.osRelease.id "debian" }}
-    package_manager = "apt"
-    {{-   else if eq .chezmoi.osRelease.id "fedora" }}
-    package_manager = "dnf"
-    {{-   end }}
-    {{- else if eq .chezmoi.os "windows" }}
-    is_macos = false
-    is_linux = false
-    is_windows = true
-    vscode_path = "AppData/Roaming/Code/User"
-    package_manager = "scoop"
-    {{- end }}
+    is_macos = {{ eq .chezmoi.os "darwin" }}
+    is_linux = {{ eq .chezmoi.os "linux" }}
+    is_windows = {{ eq .chezmoi.os "windows" }}
+    vscode_path = {{ if eq .chezmoi.os "darwin" }}"Library/Application Support/Code/User"{{ else if eq .chezmoi.os "linux" }}".config/Code/User"{{ else }}"AppData/Roaming/Code/User"{{ end }}
+    package_manager = {{ if eq .chezmoi.os "darwin" }}"brew"{{ else if eq .chezmoi.os "linux" }}{{ if eq .chezmoi.osRelease.id "arch" }}"pacman"{{ else if eq .chezmoi.osRelease.id "debian" }}"apt"{{ else if eq .chezmoi.osRelease.id "fedora" }}"dnf"{{ else }}"unknown"{{ end }}{{ else if eq .chezmoi.os "windows" }}"scoop"{{ else }}"unknown"{{ end }}
 
     # Linux distribution detection
-    {{- if and (eq .chezmoi.os "linux") (hasKey .chezmoi.osRelease "id") }}
-    {{-   if eq .chezmoi.osRelease.id "arch" }}
-    is_arch = true
-    use_aur = {{ if (env "CI") }}false{{ else }}{{ promptBool "use_aur" "Use AUR (Arch User Repository)" }}{{ end }}
-    aur_helper = {{ if (env "CI") }}"yay"{{ else }}{{ promptString "aur_helper" "yay" (list "yay" "paru" "aurman") | quote }}{{ end }}
-    {{-   else if eq .chezmoi.osRelease.id "debian" }}
-    is_debian = true
-    {{-   else if eq .chezmoi.osRelease.id "ubuntu" }}
-    is_ubuntu = true
-    {{-   else if eq .chezmoi.osRelease.id "fedora" }}
-    is_fedora = true
-    {{-   end }}
-    {{- end }}
+    is_arch = {{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "arch") }}true{{ else }}false{{ end }}
+    is_debian = {{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "debian") }}true{{ else }}false{{ end }}
+    is_ubuntu = {{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "ubuntu") }}true{{ else }}false{{ end }}
+    is_fedora = {{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "fedora") }}true{{ else }}false{{ end }}
 
     # Home directory with proper path handling
     {{- if eq .chezmoi.os "windows" }}
@@ -63,39 +34,26 @@
     {{- end }}
 
     # Development environment
-    use_docker = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_docker" "Use Docker for development" }}{{ end }}
-    use_kubernetes = {{ if (env "CI") }}false{{ else }}{{ promptBool "use_kubernetes" "Use Kubernetes" }}{{ end }}
-    use_virtualenv = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_virtualenv" "Use Python virtual environments" }}{{ end }}
-    use_node = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_node" "Use Node.js" }}{{ end }}
-    use_rust = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_rust" "Use Rust" }}{{ end }}
-    use_go = {{ if (env "CI") }}true{{ else }}{{ promptBool "use_go" "Use Go" }}{{ end }}
+    use_docker = {{ env "USE_DOCKER" | default "false" }}
+    use_kubernetes = {{ env "USE_KUBERNETES" | default "false" }}
+    use_virtualenv = {{ env "USE_VIRTUALENV" | default "true" }}
+    use_node = {{ env "USE_NODE" | default "true" }}
+    use_rust = {{ env "USE_RUST" | default "true" }}
+    use_go = {{ env "USE_GO" | default "false" }}
 
     # Work vs Personal machine
-    is_work_machine = {{ if (env "CI") }}false{{ else }}{{ promptBool "Is this a work machine?" }}{{ end }}
-    install_extras = {{ if (env "CI") }}false{{ else }}{{ promptBool "Install extra development tools?" }}{{ end }}
+    is_work_machine = {{ env "IS_WORK_MACHINE" | default "false" }}
+    install_extras = {{ env "INSTALL_EXTRAS" | default "false" }}
 
     # Terminal preferences
     use_nerd_font = {{ env "USE_NERD_FONT" | default "true" }}
     nerd_font = {{ env "NERD_FONT" | default "JetBrainsMono" | quote }}
-    {{- if eq .chezmoi.os "windows" }}
-    default_terminal = {{ env "DEFAULT_TERMINAL" | default "windows-terminal" | quote }}
-    {{- else }}
-    default_terminal = {{ env "DEFAULT_TERMINAL" | default "kitty" | quote }}
-    {{- end }}
+    default_terminal = {{ env "DEFAULT_TERMINAL" | default (eq .chezmoi.os "windows" | ternary "windows-terminal" "kitty") | quote }}
 
     # Shell preferences
-    {{- if eq .chezmoi.os "windows" }}
-    default_shell = {{ env "DEFAULT_SHELL" | default "pwsh" | quote }}
-    {{- else }}
-    # Colors and themes
+    default_shell = {{ env "DEFAULT_SHELL" | default (eq .chezmoi.os "windows" | ternary "pwsh" "zsh") | quote }}
     color_scheme = {{ env "COLOR_SCHEME" | default "github-dark" | quote }}
-
-    # Editor preferences
-    {{- if eq .chezmoi.os "windows" }}
-    editor = {{ env "EDITOR" | default "code" | quote }}
-    {{- else }}
-    editor = {{ env "EDITOR" | default "nvim" | quote }}
-    {{- end }}
+    editor = {{ env "EDITOR" | default (eq .chezmoi.os "windows" | ternary "code" "nvim") | quote }}
 
 # Root-level variables for CI and template compatibility
 # (Removed template expressions for editor and color_scheme; use static values in TOML config sections)
@@ -106,11 +64,11 @@
 # Git settings
 [merge]
     command = "nvim"
-    args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Source {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+    args = ["-d", "{{ \"{{\" }} .Destination {{ \"}}\" }}", "{{ \"{{\" }} .Source {{ \"}}\" }}", "{{ \"{{\" }} .Target {{ \"}}\" }}"]
 
 [diff]
     command = "nvim"
-    args = ["-d", "{{ "{{" }} .Destination {{ "}}" }}", "{{ "{{" }} .Target {{ "}}" }}"]
+    args = ["-d", "{{ \"{{\" }} .Destination {{ \"}}\" }}", "{{ \"{{\" }} .Target {{ \"}}\" }}"]
 
 # Version control settings
 [sourceVCS]
