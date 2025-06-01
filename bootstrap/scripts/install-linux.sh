@@ -124,7 +124,7 @@ install_chezmoi() {
   export PATH="$HOME/.local/bin:$PATH"
   if ! command -v chezmoi &> /dev/null || [[ $(chezmoi --version | awk '{print $3}' | cut -d. -f1) -ne 2 ]]; then
     info "🏗️  Installing chezmoi $CHEZMOI_VERSION..."
-    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" --force --version $CHEZMOI_VERSION || error "chezmoi installation failed. See https://www.chezmoi.io for help."
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" -t $CHEZMOI_VERSION || error "chezmoi installation failed. See https://www.chezmoi.io for help."
   else
     version=$(chezmoi --version | awk '{print $3}')
     info "✅ chezmoi v$version is already installed."

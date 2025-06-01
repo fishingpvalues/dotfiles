@@ -22,7 +22,7 @@ fi
 # Install chezmoi if missing
 CHEZMOI_VERSION="v2.37.0"
 if ! command -v chezmoi >/dev/null 2>&1; then
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin --force --version $CHEZMOI_VERSION || error "chezmoi installation failed. See https://www.chezmoi.io for help."
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b /usr/local/bin -t $CHEZMOI_VERSION || error "chezmoi installation failed. See https://www.chezmoi.io for help."
 fi
 
 # Init chezmoi if needed
