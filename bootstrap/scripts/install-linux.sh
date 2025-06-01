@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 : "${CHEZMOI_VERSION:=v2.37.0}"
 export CHEZMOI_VERSION
+: "${HOME:=$HOME}"
+export HOME
 set -euo pipefail
 
 GREEN='\033[0;32m'
@@ -100,12 +102,17 @@ install_rust_tools() {
   cargo install nu --locked || warn "Failed to install nushell."
 }
 
+pipx_install_force() {
+  local tool="$1"
+  pipx install --force "$tool" || warn "Failed to install $tool with pipx."
+}
+
 install_python_linters() {
   info "🧹 Installing SOTA Python linters/formatters..."
   tools=(ruff black isort pyright mypy flake8 pylint autoflake bandit safety yapf docformatter pydocstyle interrogate pyupgrade pre-commit)
   for tool in "${tools[@]}"; do
     if command -v pipx &>/dev/null; then
-      pipx install "$tool" || warn "Failed to install $tool with pipx."
+      pipx_install_force "$tool"
     else
       pip3 install --user "$tool" || warn "Failed to install $tool with pip3."
     fi
