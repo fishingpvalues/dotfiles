@@ -130,12 +130,18 @@ install_chezmoi() {
     fi
   fi
   export PATH="$HOME/.local/bin:$PATH"
-  if ! command -v chezmoi &> /dev/null || [[ $(chezmoi --version | awk '{print $3}' | cut -d. -f1) -ne 2 ]]; then
+  if ! command -v chezmoi &> /dev/null; then
     info "🏗️  Installing chezmoi ${CHEZMOI_VERSION}..."
     sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" -t "${CHEZMOI_VERSION}" || error_chezmoi "chezmoi installation failed."
   else
-    version=$(chezmoi --version | awk '{print $3}')
-    info "✅ chezmoi v$version is already installed."
+    version_major=$(chezmoi --version | awk '{print $3}' | cut -d. -f1)
+    if [[ "$version_major" -ne 2 ]]; then
+      info "🏗️  Installing chezmoi ${CHEZMOI_VERSION}..."
+      sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" -t "${CHEZMOI_VERSION}" || error_chezmoi "chezmoi installation failed."
+    else
+      version=$(chezmoi --version | awk '{print $3}')
+      info "✅ chezmoi v$version is already installed."
+    fi
   fi
   export PATH="$HOME/.local/bin:$PATH"
   check_chezmoi_version
