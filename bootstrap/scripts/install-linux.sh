@@ -110,7 +110,7 @@ install_python_linters() {
   done
 }
 
-CHEZMOI_VERSION="v2.37.0"
+: "${CHEZMOI_VERSION:=v2.37.0}"
 install_chezmoi() {
   # Remove any system or snap chezmoi first
   if command -v chezmoi &>/dev/null; then
@@ -123,8 +123,8 @@ install_chezmoi() {
   fi
   export PATH="$HOME/.local/bin:$PATH"
   if ! command -v chezmoi &> /dev/null || [[ $(chezmoi --version | awk '{print $3}' | cut -d. -f1) -ne 2 ]]; then
-    info "🏗️  Installing chezmoi $CHEZMOI_VERSION..."
-    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" -t $CHEZMOI_VERSION || error "chezmoi installation failed. See https://www.chezmoi.io for help."
+    info "🏗️  Installing chezmoi ${CHEZMOI_VERSION}..."
+    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" -t "${CHEZMOI_VERSION}" || error_chezmoi "chezmoi installation failed."
   else
     version=$(chezmoi --version | awk '{print $3}')
     info "✅ chezmoi v$version is already installed."
@@ -136,6 +136,10 @@ install_chezmoi() {
 install_ohmyposh() {
   info "✨ Installing Oh My Posh..."
   curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/.local/bin || warn "Oh My Posh installation failed."
+}
+
+error_chezmoi() {
+  error "chezmoi error: $1\nHint: Check your .chezmoi.toml for syntax errors, run 'chezmoi diff' and 'chezmoi doctor' for troubleshooting. See https://www.chezmoi.io/user-guide/ for help."
 }
 
 main() {
@@ -164,10 +168,10 @@ main() {
   # Initialize and apply chezmoi config
   if [ ! -d "$ROOT_DIR/.local/share/chezmoi" ]; then
     info "🔄 Initializing chezmoi with fishingpvalues/dotfiles.git..."
-    chezmoi init fishingpvalues/dotfiles.git || error "chezmoi init failed.\nHint: Check your network connection and repository URL. Try running 'chezmoi doctor' for diagnostics."
+    chezmoi init fishingpvalues/dotfiles.git || error_chezmoi "chezmoi init failed.\nHint: Check your network connection and repository URL. Try running 'chezmoi doctor' for diagnostics."
   fi
   info "📝 Applying chezmoi configuration..."
-  chezmoi apply || error "chezmoi apply failed.\nHint: Check your .chezmoi.toml for syntax errors, run 'chezmoi diff' and 'chezmoi doctor' for troubleshooting. See https://www.chezmoi.io/user-guide/ for help."
+  chezmoi apply || error_chezmoi "chezmoi apply failed."
 
   success_msg="${GREEN}🚀 Bootstrap complete!${NC}\nIf you encounter issues, try:\n  chezmoi doctor\n  chezmoi diff\n  chezmoi apply -v\nSee https://www.chezmoi.io/user-guide/ for more help."
   echo -e "$success_msg"

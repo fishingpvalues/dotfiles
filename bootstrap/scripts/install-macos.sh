@@ -41,10 +41,10 @@ if command -v chezmoi >/dev/null 2>&1; then
 fi
 export PATH="$HOME/.local/bin:$PATH"
 # Install chezmoi if missing or outdated
-CHEZMOI_VERSION="v2.37.0"
+: "${CHEZMOI_VERSION:=v2.37.0}"
 if ! command -v chezmoi >/dev/null 2>&1 || [[ $(chezmoi --version | awk '{print $3}' | cut -d. -f1) -ne 2 ]]; then
-  info "Installing chezmoi $CHEZMOI_VERSION..."
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" -t $CHEZMOI_VERSION || error "chezmoi installation failed. See https://www.chezmoi.io for help."
+  info "Installing chezmoi ${CHEZMOI_VERSION}..."
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" -t "${CHEZMOI_VERSION}" || error_chezmoi "chezmoi installation failed."
 else
   version=$(chezmoi --version | awk '{print $3}')
   info "chezmoi v$version is already installed."
@@ -64,11 +64,11 @@ fi
 # Init chezmoi if needed
 if [ ! -d "$HOME/.local/share/chezmoi" ]; then
   info "Initializing chezmoi with local source..."
-  chezmoi init --source=. || error "chezmoi init failed.\nHint: Check your .chezmoi.toml and repository structure. Try running 'chezmoi doctor' for diagnostics."
+  chezmoi init --source=. || error_chezmoi "chezmoi init failed.\nHint: Check your .chezmoi.toml and repository structure. Try running 'chezmoi doctor' for diagnostics."
 fi
 
 info "Applying chezmoi configuration..."
-chezmoi apply || error "chezmoi apply failed.\nHint: Check your .chezmoi.toml for syntax errors, run 'chezmoi diff' and 'chezmoi doctor' for troubleshooting. See https://www.chezmoi.io/user-guide/ for help."
+chezmoi apply || error_chezmoi "chezmoi apply failed."
 
 # Install all packages from Brewfile
 info "Installing packages from Brewfile..."
@@ -160,4 +160,8 @@ for tool in "${tools[@]}"; do
 fi
 
 success_msg="${GREEN}🚀 macOS bootstrap complete!${NC}\nIf you encounter issues, try:\n  chezmoi doctor\n  chezmoi diff\n  chezmoi apply -v\nSee https://www.chezmoi.io/user-guide/ for more help."
-echo -e "$success_msg" 
+echo -e "$success_msg"
+
+error_chezmoi() {
+  error "chezmoi error: $1\nHint: Check your .chezmoi.toml for syntax errors, run 'chezmoi diff' and 'chezmoi doctor' for troubleshooting. See https://www.chezmoi.io/user-guide/ for help."
+} 
