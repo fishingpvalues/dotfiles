@@ -18,9 +18,11 @@ if (Get-Command chezmoi -ErrorAction SilentlyContinue) {
     Warn "chezmoi not found in PATH."
 }
 
+$CHEZMOI_VERSION = 'v2.37.0'
+
 # Install chezmoi if not present
 if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue)) {
-    scoop install chezmoi
+    scoop install chezmoi@$CHEZMOI_VERSION
     if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue)) {
         ErrorExit "chezmoi installation failed. See https://www.chezmoi.io for help."
     }

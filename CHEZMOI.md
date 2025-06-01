@@ -2,6 +2,8 @@
 
 > For general installation and usage, see [README.md](README.md).
 
+> **Note:** This project is designed for chezmoi v2.x (latest tested: v2.37.0). For compatibility, always install chezmoi v2.x. See install instructions below.
+
 This guide explains how to use [chezmoi](https://www.chezmoi.io/) to manage your dotfiles across multiple machines and operating systems. It covers advanced usage, templating, and secret management.
 
 ## Table of Contents

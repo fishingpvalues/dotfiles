@@ -41,9 +41,10 @@ if command -v chezmoi >/dev/null 2>&1; then
 fi
 export PATH="$HOME/.local/bin:$PATH"
 # Install chezmoi if missing or outdated
-if ! command -v chezmoi >/dev/null 2>&1 || [[ $(chezmoi --version | awk '{print $3}' | cut -d. -f1) -lt 3 ]]; then
-  info "Installing latest chezmoi v3..."
-  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" --force --version v3 || error "chezmoi installation failed. See https://www.chezmoi.io for help."
+CHEZMOI_VERSION="v2.37.0"
+if ! command -v chezmoi >/dev/null 2>&1 || [[ $(chezmoi --version | awk '{print $3}' | cut -d. -f1) -ne 2 ]]; then
+  info "Installing chezmoi $CHEZMOI_VERSION..."
+  sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin" --force --version $CHEZMOI_VERSION || error "chezmoi installation failed. See https://www.chezmoi.io for help."
 else
   version=$(chezmoi --version | awk '{print $3}')
   info "chezmoi v$version is already installed."

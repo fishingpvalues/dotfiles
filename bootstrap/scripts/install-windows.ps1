@@ -38,10 +38,12 @@ if (Get-Command chezmoi -ErrorAction SilentlyContinue) {
     }
 }
 $env:PATH = "$HOME/.local/bin;" + $env:PATH
+
+$CHEZMOI_VERSION = 'v2.37.0'
 # Install chezmoi if not present or outdated
-if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue) -or ((chezmoi --version | Select-String -Pattern '\d+\.\d+\.\d+' | ForEach-Object { $_.Matches[0].Value }).Split('.')[0] -lt 3)) {
-    Info "Installing latest chezmoi v3..."
-    irm https://get.chezmoi.io | iex; chezmoi upgrade --version v3
+if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue) -or ((chezmoi --version | Select-String -Pattern '\d+\.\d+\.\d+' | ForEach-Object { $_.Matches[0].Value }).Split('.')[0] -ne 2)) {
+    Info "Installing chezmoi $CHEZMOI_VERSION..."
+    irm https://get.chezmoi.io | iex; chezmoi upgrade --version $CHEZMOI_VERSION
     if (-not (Get-Command chezmoi -ErrorAction SilentlyContinue)) {
         ErrorExit "chezmoi installation failed. See https://www.chezmoi.io for help."
     }
