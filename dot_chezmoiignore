@@ -1,21 +1,5 @@
-# Documentation and meta files
-README.md
-LICENSE*
-CHEZMOI.md
-Makefile
-.github/
-.git/
-.gitignore
-.editorconfig
-
-# Scripts and setup
-*.sh
-*.ps1
-bin/
-
-# Media files
-media/
-wallpapers/
+# Only ignore secrets, cache, build, and system files for chezmoi
+# All configs, scripts, and docs are now managed by chezmoi
 
 # Backup and temporary files
 *.bak
@@ -40,69 +24,6 @@ desktop.ini
 .nvmrc
 .terraform/
 .vagrant/
-
-# Platform-specific files
-
-# Windows-specific files - ignore on Unix
-config/windows-terminal/
-config/powershell/
-scripts/windows/
-AppData/
-*.exe
-*.dll
-*.bat
-*.cmd
-*.msi
-*.msix
-*.ps1
-*.psm1
-*.reg
-
-# Unix-specific files - ignore on Windows
-config/bash/
-config/zsh/
-config/fish/
-config/kitty/
-config/alacritty/
-config/tmux/
-config/i3/
-config/sway/
-config/hypr/
-config/waybar/
-scripts/unix/
-.bashrc
-.zshrc
-.zshenv
-.zprofile
-.profile
-.xinitrc
-.Xresources
-.Xdefaults
-.xsession
-.xprofile
-
-# macOS-specific files - ignore on non-macOS
-.DS_Store
-Library/
-.Trash/
-.CFUserTextEncoding
-.chunkwmrc
-.skhdrc
-.yabairc
-
-# Linux-specific files - ignore on non-Linux
-.config/i3/
-.config/sway/
-.config/hypr/
-.config/waybar/
-.config/polybar/
-.config/rofi/
-.config/dunst/
-.Xdefaults
-.xprofile
-.xinitrc
-.xsession
-.pam_environment
 
 # Editor-specific files that shouldn't be part of dotfiles
 .vscode/
@@ -222,7 +143,3 @@ go/
 docker/
 
 .kube/
-
-# Bootstrap scripts
-bootstrap/scripts/windows/
-bootstrap/scripts/unix/

@@ -1,9 +1,11 @@
-# Cross-Platform Dotfiles
+# Cross-Platform Dotfiles (Chezmoi-First, SOTA 2025)
 
 [![CI](https://github.com/fishingpvalues/dotfiles/actions/workflows/act-dotfiles.yml/badge.svg)](https://github.com/fishingpvalues/dotfiles/actions)
 ![SOTA 2025 Ready](https://img.shields.io/badge/SOTA-2025-green)
 
-Welcome! This repository contains a fully cross-platform dotfiles and developer environment setup for macOS, Linux (Arch), and Windows. All configuration is managed with [chezmoi](https://www.chezmoi.io/) and automated scripts.
+Welcome! This repository is a fully cross-platform, **chezmoi-native** dotfiles and developer environment setup for macOS, Linux (Arch, Ubuntu, Armbian, Termux), and Windows. All configuration, scripts, and documentation are managed by [chezmoi](https://www.chezmoi.io/).
+
+---
 
 ## 🚀 Quick Start (All Platforms)
 
@@ -14,67 +16,58 @@ Welcome! This repository contains a fully cross-platform dotfiles and developer 
    cd dotfiles
    ```
 
-2. **Run the install script for your OS:**
-   - **Linux:**
+2. **Initialize chezmoi with this repo as the source**
+
+   ```sh
+   chezmoi init --source="$PWD" --apply
+   ```
+
+   - This sets the current directory as the chezmoi source state.
+   - All dotfiles, configs, and scripts will be applied to your home directory.
+
+3. **Edit, add, or update configs using chezmoi**
+
+   - **Edit a config:**
 
      ```sh
-     ./bootstrap/install-linux.sh
+     chezmoi edit ~/.zshrc
      ```
 
-   - **macOS:**
+   - **Add a new config:**
 
      ```sh
-     ./bootstrap/install-macos.sh
+     chezmoi add ~/.config/myapp/config.toml
      ```
 
-   - **Windows (PowerShell):**
+   - **Apply changes:**
 
-     ```powershell
-     .\bootstrap\install-windows.ps1
+     ```sh
+     chezmoi apply
      ```
 
-3. **Done!** All tools, fonts, and configs will be installed automatically. See OS-specific guides for extra features and troubleshooting.
+   - **Update from git:**
+
+     ```sh
+     chezmoi update
+     ```
 
 ---
 
-## 🖥️ OS-Specific Guides
+## 🛠️ Chezmoi-Managed Structure
 
-- [macOS Guide & Tips](README-macOS.md)
-- [Arch Linux/Hyprland Guide](README-ARCH.md)
-- [Chezmoi Advanced Usage](CHEZMOI.md)
+All configs, scripts, and documentation are now managed by chezmoi. The `.chezmoiignore` has been updated to only exclude secrets, cache, build, and system files. **No more manual copying or install scripts required.**
 
----
+**Key Directories:**
 
-## 🛠️ What's Included?
+- `dot_config/` → `~/.config/`
+- `bin/` → `~/bin/`
+- `README.md`, `CHEZMOI.md`, etc. are managed and can be edited via chezmoi.
 
-- **Modern CLI tools** (fd, ripgrep, bat, fzf, broot, etc.)
-- **Shells:** zsh, bash, PowerShell (with customizations and aliases)
-- **Editors:** Neovim (modular config), VSCode
-- **Dev Tools:** Docker, Python, Rust, Git, Kubernetes tools, etc.
-- **Window Management:** Rectangle, Amethyst (macOS), PowerToys (Windows), Hyprland (Arch)
-- **Fonts:** Nerd Fonts (MesloLGS, Fira Code, etc.)
-- **Automated system tweaks** (macOS, Arch)
-- **Unified test suite** for all platforms
+**File Naming:**
 
-See the OS-specific guides for full lists and details.
-
----
-
-## 🚀 2025 SOTA CLI Tools (Recommended)
-
-These are the latest, best-in-class, cross-platform CLI tools for developers, fully supported in this dotfiles repo:
-
-| Tool         | Purpose                        | Config Location                  |
-|--------------|-------------------------------|----------------------------------|
-| **Ghostty**  | GPU-accelerated terminal      | `~/.config/ghostty/config`       |
-| **mise**     | Universal version manager     | `~/.config/mise/config.toml`     |
-| **Jujutsu**  | Next-gen VCS, Git-compatible | `~/.config/jj/config.toml`       |
-| **code2**    | AI-powered CLI workflows      | `~/.config/code2/config.toml`    |
-| **BashBuddy**| Natural language shell helper | `~/.config/bashbuddy/config.toml`|
-| **lsd**      | Modern `ls` replacement       | `~/.config/lsd/config.yaml`      |
-| **trash-cli**| Safe `rm` alternative         | N/A                              |
-
-All tools are aliased and integrated for zsh/oh-my-zsh and Powerlevel10k. See `config/zsh/zshrc` for details.
+- Files like `.zshrc`, `.bashrc`, `starship.toml`, etc. are named for direct chezmoi compatibility.
+- Remove any `dot_` prefix from config files (e.g., use `.zshrc`, not `dot_zshrc`).
+- Use `.tmpl` suffix for templated configs if needed.
 
 ---
 
@@ -111,16 +104,16 @@ All tools are aliased and integrated for zsh/oh-my-zsh and Powerlevel10k. See `c
 ## ❓ FAQ
 
 **Q: What OSes are supported?**
-A: macOS, Arch Linux, and Windows (with PowerShell). Most configs are cross-platform.
+A: macOS, Arch Linux, Ubuntu, Armbian, Termux, and Windows. Most configs are cross-platform.
 
 **Q: How do I add my own configs?**
 A: Use `chezmoi add <file>` and edit as needed. See [CHEZMOI.md](CHEZMOI.md) for advanced templating and secrets.
 
 **Q: How do I update everything?**
-A: Pull latest changes and run the install script for your OS again.
+A: Pull latest changes and run `chezmoi apply` again.
 
 **Q: Something broke! How do I troubleshoot?**
-A: See the troubleshooting section in your OS-specific guide. Most issues are solved by re-running the install script or checking permissions.
+A: Run `chezmoi doctor` and check for errors. Most issues are solved by re-running `chezmoi apply` or checking permissions.
 
 **Q: How do I test my setup?**
 A: Run the test scripts in the `test/` directory for your platform. All tests are also run in CI.
@@ -135,11 +128,9 @@ A: No. All such tools have been removed for work compliance. Only developer and 
 ```
 dotfiles/
   README.md
-  README-macOS.md
-  README-ARCH.md
   CHEZMOI.md
   bin/
-  config/
+  dot_config/
   bootstrap/
   ...
 ```

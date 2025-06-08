@@ -1206,6 +1206,23 @@ require('lazy').setup({
   },
 
   require 'custom/plugins/hardtime',
+
+  -- Code Runner (VSCode-like code execution for many languages)
+  {
+    'CRAG666/code_runner.nvim',
+    event = 'VeryLazy',
+    config = function()
+      require('code_runner').setup({
+        mode = 'toggleterm',
+        focus = true,
+        startinsert = true,
+        filetype = {
+          python = 'python3 -u',
+          -- Add/override more filetype commands as needed
+        },
+      })
+    end,
+  },
 }, {
   ui = {
     -- Use Nerd Font icons if available 

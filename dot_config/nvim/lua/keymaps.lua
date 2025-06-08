@@ -183,6 +183,7 @@ vim.keymap.set('n', '<leader>T', '', { desc = '' }) -- Remove old mapping
 -- Register main which-key groups
 if pcall(require, 'which-key') then
   local wk = require('which-key')
+  local rocket = vim.g.have_nerd_font and '󰜎' or 'Run File'
   wk.register({
     ["<leader>"] = {
       t = {
@@ -306,6 +307,15 @@ if pcall(require, 'which-key') then
   })
 end
 
+-- Register <leader>rf in which-key for code_runner.nvim
+if pcall(require, 'which-key') then
+  local wk = require('which-key')
+  local rocket = vim.g.have_nerd_font and '󰜎' or 'Run File'
+  wk.register({
+    ["<leader>rf"] = { ':RunFile<CR>', rocket .. ' Run current file (code_runner)' },
+  })
+end
+
 -- Terminal window navigation (in terminal mode)
 function _G.set_terminal_keymaps()
   local opts = {buffer = 0}
@@ -365,5 +375,24 @@ do
   vim.keymap.set('n', '<leader><leader>k', smart_splits.swap_buf_up, { desc = 'Swap buffer up' })
   vim.keymap.set('n', '<leader><leader>l', smart_splits.swap_buf_right, { desc = 'Swap buffer right' })
 end
+
+-- Minimalist "hacker" workflow: open a terminal split and run your file manually
+-- Example: :split | terminal, then type your command (e.g., python %, bash %, ./file)
+vim.keymap.set('n', '<leader>t', ':split | terminal<CR>', { desc = 'Open terminal in split' })
+
+-- Debug: F5 for dap.continue
+local function debug_continue()
+  local ok, dap = pcall(require, 'dap')
+  if ok and dap.continue then
+    dap.continue()
+  else
+    vim.notify('nvim-dap not available', vim.log.levels.ERROR)
+  end
+end
+
+vim.keymap.set('n', '<F5>', debug_continue, { desc = 'Start/Continue Debugging (F5)' })
+
+-- Keymap for running current file with code_runner.nvim
+vim.keymap.set('n', '<leader>rf', ':RunFile<CR>', { noremap = true, silent = false, desc = 'Run current file (code_runner)' })
 
 -- vim: ts=2 sts=2 sw=2 et
