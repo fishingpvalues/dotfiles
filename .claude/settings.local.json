@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(for dir in .config/*/)",
+      "Bash(done)",
+      "WebSearch",
+      "Read(//e/**)",
+      "Bash(xargs ls -la)",
+      "Bash(cat:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

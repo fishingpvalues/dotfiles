@@ -1,0 +1,98 @@
+# Yazi keymap configuration (SOTA 2025)
+# https://yazi-rs.github.io
+# Location: ~/.config/yazi/keymap.toml
+
+[manager]
+prepend_keymap = [
+    # Vim-style navigation (defaults, listed for clarity)
+    { on = "h", run = "leave", desc = "Go back to parent directory" },
+    { on = "j", run = "arrow 1", desc = "Move cursor down" },
+    { on = "k", run = "arrow -1", desc = "Move cursor up" },
+    { on = "l", run = "enter", desc = "Enter directory" },
+
+    # Fast navigation
+    { on = "g", run = "arrow -999999999", desc = "Move cursor to top" },
+    { on = "G", run = "arrow 999999999", desc = "Move cursor to bottom" },
+
+    # Page navigation
+    { on = "<C-u>", run = "arrow -50%", desc = "Move cursor up half page" },
+    { on = "<C-d>", run = "arrow 50%", desc = "Move cursor down half page" },
+    { on = "<C-b>", run = "arrow -100%", desc = "Move cursor up one page" },
+    { on = "<C-f>", run = "arrow 100%", desc = "Move cursor down one page" },
+
+    # Selection
+    { on = "<Space>", run = "select --state=none", desc = "Toggle selection" },
+    { on = "v", run = "visual_mode", desc = "Enter visual mode" },
+    { on = "V", run = "visual_mode --unset", desc = "Enter visual mode (unset)" },
+
+    # Operations
+    { on = "o", run = "open", desc = "Open file" },
+    { on = "O", run = "open --interactive", desc = "Open file interactively" },
+    { on = "y", run = "yank", desc = "Copy (yank)" },
+    { on = "Y", run = "unyank", desc = "Cancel copy" },
+    { on = "p", run = "paste", desc = "Paste" },
+    { on = "P", run = "paste --force", desc = "Paste (overwrite)" },
+    { on = "d", run = "remove", desc = "Move to trash" },
+    { on = "D", run = "remove --permanently", desc = "Delete permanently" },
+    { on = "a", run = "create", desc = "Create file/directory" },
+    { on = "r", run = "rename --cursor=before_ext", desc = "Rename" },
+
+    # Search
+    { on = "/", run = "find --smart", desc = "Find" },
+    { on = "n", run = "find_arrow", desc = "Go to next found" },
+    { on = "N", run = "find_arrow --previous", desc = "Go to previous found" },
+
+    # Sorting
+    { on = ",m", run = "sort modified --dir-first", desc = "Sort by modified time" },
+    { on = ",M", run = "sort modified --reverse --dir-first", desc = "Sort by modified time (reverse)" },
+    { on = ",c", run = "sort created --dir-first", desc = "Sort by created time" },
+    { on = ",C", run = "sort created --reverse --dir-first", desc = "Sort by created time (reverse)" },
+    { on = ",e", run = "sort extension --dir-first", desc = "Sort by extension" },
+    { on = ",E", run = "sort extension --reverse --dir-first", desc = "Sort by extension (reverse)" },
+    { on = ",a", run = "sort alphabetical --dir-first", desc = "Sort alphabetically" },
+    { on = ",A", run = "sort alphabetical --reverse --dir-first", desc = "Sort alphabetically (reverse)" },
+    { on = ",n", run = "sort natural --dir-first", desc = "Sort naturally" },
+    { on = ",N", run = "sort natural --reverse --dir-first", desc = "Sort naturally (reverse)" },
+    { on = ",s", run = "sort size --dir-first", desc = "Sort by size" },
+    { on = ",S", run = "sort size --reverse --dir-first", desc = "Sort by size (reverse)" },
+
+    # Misc
+    { on = "~", run = "hidden toggle", desc = "Toggle hidden files" },
+    { on = "z", run = "jump zoxide", desc = "Jump with zoxide" },
+    { on = "q", run = "quit", desc = "Quit" },
+    { on = "Q", run = "quit --no-cwd-file", desc = "Quit without changing directory" },
+]
+
+[tasks]
+prepend_keymap = [
+    { on = "k", run = "arrow -1", desc = "Move cursor up" },
+    { on = "j", run = "arrow 1", desc = "Move cursor down" },
+    { on = "<Esc>", run = "close", desc = "Close task manager" },
+    { on = "q", run = "close", desc = "Close task manager" },
+]
+
+[select]
+prepend_keymap = [
+    { on = "k", run = "arrow -1", desc = "Move cursor up" },
+    { on = "j", run = "arrow 1", desc = "Move cursor down" },
+    { on = "<Esc>", run = "close", desc = "Cancel selection" },
+    { on = "<Enter>", run = "close --submit", desc = "Submit selection" },
+]
+
+[input]
+prepend_keymap = [
+    { on = "<Esc>", run = "close", desc = "Cancel input" },
+    { on = "<Enter>", run = "close --submit", desc = "Submit input" },
+    { on = "<C-c>", run = "close", desc = "Cancel input" },
+]
+
+[help]
+prepend_keymap = [
+    { on = "k", run = "arrow -1", desc = "Move cursor up" },
+    { on = "j", run = "arrow 1", desc = "Move cursor down" },
+    { on = "<Esc>", run = "close", desc = "Close help" },
+    { on = "q", run = "close", desc = "Close help" },
+]
+
+# SOTA Note: These keymaps enhance yazi with vim-style navigation
+# Most vim keybindings work out of the box

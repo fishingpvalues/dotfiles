@@ -1,0 +1,106 @@
+# Helix editor configuration (SOTA 2025)
+# https://helix-editor.com
+# Location: ~/.config/helix/config.toml
+
+theme = "github_dark"
+
+[editor]
+line-number = "relative"
+cursorline = true
+cursorcolumn = false
+auto-completion = true
+auto-format = true
+auto-save = false
+idle-timeout = 400
+completion-timeout = 250
+preview-completion-insert = true
+completion-trigger-len = 2
+auto-info = true
+true-color = true
+rulers = [80, 120]
+color-modes = true
+text-width = 80
+
+[editor.statusline]
+left = ["mode", "spinner", "file-name", "read-only-indicator", "file-modification-indicator"]
+center = ["version-control"]
+right = ["diagnostics", "selections", "register", "position", "file-encoding"]
+separator = "│"
+mode.normal = "NORMAL"
+mode.insert = "INSERT"
+mode.select = "SELECT"
+
+[editor.lsp]
+display-messages = true
+auto-signature-help = true
+display-inlay-hints = true
+display-signature-help-docs = true
+snippets = true
+goto-reference-include-declaration = true
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+[editor.file-picker]
+hidden = false
+follow-symlinks = true
+deduplicate-links = true
+parents = true
+ignore = true
+git-ignore = true
+git-global = true
+git-exclude = true
+max-depth = None
+
+[editor.auto-pairs]
+'(' = ')'
+'{' = '}'
+'[' = ']'
+'"' = '"'
+'`' = '`'
+'<' = '>'
+
+[editor.search]
+smart-case = true
+wrap-around = true
+
+[editor.whitespace.render]
+space = "none"
+tab = "all"
+newline = "none"
+
+[editor.whitespace.characters]
+space = "·"
+nbsp = "⍽"
+tab = "→"
+newline = "⏎"
+tabpad = "·"
+
+[editor.indent-guides]
+render = true
+character = "│"
+skip-levels = 0
+
+[editor.gutters]
+layout = ["diagnostics", "spacer", "line-numbers", "spacer", "diff"]
+
+[editor.soft-wrap]
+enable = false
+
+# Keys section for additional vim-like keybindings
+[keys.normal]
+# Additional vim-style bindings can be added here
+# Helix uses a different modal philosophy (selection -> action)
+# but these help with vim muscle memory
+
+[keys.insert]
+# Insert mode customizations
+
+[keys.select]
+# Select mode customizations
+
+# SOTA Note: Helix is a post-modern editor with vim-style keybindings
+# Key difference: selection -> action model vs vim's action -> motion
+# Press '?' for help, ':q' to quit, ':w' to save
