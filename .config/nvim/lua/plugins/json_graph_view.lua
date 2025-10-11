@@ -1,7 +1,10 @@
 -- nvim_json_graph_view: JSON graph explorer for Neovim
 -- https://github.com/Owen-Dechow/nvim_json_graph_view
+-- NOTE: This plugin may be deprecated. Disabled to prevent errors.
+-- Alternative: Use built-in JSON folding or jq for JSON manipulation
 return {
     "Owen-Dechow/nvim_json_graph_view",
+    enabled = false,  -- Disabled due to deprecation warnings
     event = { "BufReadPre", "BufNewFile" },
     opts = {
         editor_type = "split", -- split or floating

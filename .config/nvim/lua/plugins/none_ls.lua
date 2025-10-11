@@ -3,16 +3,46 @@ return {
   'nvimtools/none-ls.nvim',
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = { 'mason.nvim' },
-  opts = function()
+  config = function()
     local nls = require('null-ls')
-    return {
+
+    -- Completely suppress all none-ls notifications
+    local notify = vim.notify
+    vim.notify = function(msg, level, opts)
+      if msg:match("failed to run generator") or msg:match("code_action") or msg:match("null%-ls") then
+        return
+      end
+      notify(msg, level, opts)
+    end
+
+    nls.setup({
+      -- Disable all update messages
+      update_in_insert = false,
+      debug = false,
+      -- Suppress error notifications
+      on_init = function(client, _)
+        client.notify = function() end
+      end,
+      on_attach = function(client, bufnr)
+        -- Disable document formatting to avoid conflicts
+        client.server_capabilities.documentFormattingProvider = false
+        client.server_capabilities.documentRangeFormattingProvider = false
+        -- Disable code actions that cause spam
+        client.server_capabilities.codeActionProvider = false
+      end,
       root_dir = require('null-ls.utils').root_pattern('.null-ls-root', '.neoconf.json', 'Makefile', '.git'),
       sources = {
-        -- Go
-        nls.builtins.diagnostics.golangci_lint,
-        nls.builtins.diagnostics.staticcheck,
-        nls.builtins.code_actions.gomodifytags,
-        nls.builtins.code_actions.impl,
+        -- Go (conditional - only if tools are available)
+        nls.builtins.diagnostics.golangci_lint.with({
+          condition = function(utils)
+            return utils.root_has_file("go.mod")
+          end,
+        }),
+        nls.builtins.diagnostics.staticcheck.with({
+          condition = function(utils)
+            return utils.root_has_file("go.mod")
+          end,
+        }),
 
         -- Python (data science)
         -- nls.builtins.diagnostics.ruff, -- not available in none-ls
@@ -27,33 +57,45 @@ return {
         -- Shell
         -- nls.builtins.diagnostics.shellcheck, -- not available in none-ls
 
-        -- Docker
-        nls.builtins.diagnostics.hadolint,
-
-        -- YAML
-        nls.builtins.diagnostics.yamllint,
-
-        -- Ansible
-        -- nls.builtins.diagnostics.ansible_lint, -- not available in none-ls
-
-        -- Terraform
-        -- nls.builtins.diagnostics.tflint, -- not available in none-ls
-
-        -- Protocol Buffers
-        nls.builtins.diagnostics.protolint,
-
-        -- SQL
-        nls.builtins.diagnostics.sqlfluff.with({
-          extra_args = { '--dialect', 'postgres' },
+        -- Docker (conditional)
+        nls.builtins.diagnostics.hadolint.with({
+          condition = function(utils)
+            return utils.root_has_file("Dockerfile")
+          end,
         }),
 
-        -- Markdown
-        nls.builtins.diagnostics.markdownlint,
+        -- YAML (conditional)
+        nls.builtins.diagnostics.yamllint.with({
+          condition = function(utils)
+            return utils.root_has_file(".yamllint") or utils.root_has_file(".yamllint.yaml")
+          end,
+        }),
 
-        -- General
+        -- Protocol Buffers (conditional)
+        nls.builtins.diagnostics.protolint.with({
+          condition = function(utils)
+            return utils.root_has_file(".protolint.yaml")
+          end,
+        }),
+
+        -- SQL (conditional)
+        nls.builtins.diagnostics.sqlfluff.with({
+          extra_args = { '--dialect', 'postgres' },
+          condition = function(utils)
+            return utils.root_has_file(".sqlfluff")
+          end,
+        }),
+
+        -- Markdown (conditional)
+        nls.builtins.diagnostics.markdownlint.with({
+          condition = function(utils)
+            return utils.root_has_file(".markdownlint.json") or utils.root_has_file(".markdownlintrc")
+          end,
+        }),
+
+        -- General (always enabled, lightweight)
         nls.builtins.diagnostics.trail_space,
-        nls.builtins.code_actions.gitsigns,
       },
-    }
+    })
   end,
 }

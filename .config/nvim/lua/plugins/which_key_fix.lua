@@ -24,7 +24,8 @@ return {
     win = {
       border = "rounded", -- none, single, double, shadow, rounded
       position = "bottom", -- bottom, top
-      margin = { 1, 0, 1, 0 }, -- extra window margin [top, right, bottom, left]
+      -- margin removed - not supported in newer which-key versions
+      -- Use padding instead for spacing control
       padding = { 1, 2, 1, 2 }, -- extra window padding [top, right, bottom, left]
     },
     layout = {

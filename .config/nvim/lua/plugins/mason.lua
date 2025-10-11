@@ -44,7 +44,7 @@ return {
 
         -- Scripting & Dynamic Languages
         "bashls",            -- Bash
-        "ruby_lsp",          -- Ruby
+        "solargraph",        -- Ruby (stable LSP server)
         "elixirls",          -- Elixir
 
         -- Data & Config
@@ -58,7 +58,7 @@ return {
         "yamlls", "helm_ls", "terraformls", "ansiblels",
 
         -- Protocols & APIs
-        "buf-language-server", -- Protocol Buffers
+        "buf_ls",            -- Protocol Buffers (correct name is buf_ls, not buf-language-server)
         "graphql",
 
         -- Documentation

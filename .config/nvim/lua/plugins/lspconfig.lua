@@ -142,8 +142,15 @@ return {
       -- Kotlin LSP
       kotlin_language_server = {},
 
-      -- Ruby LSP
-      ruby_lsp = {},
+      -- Ruby LSP (use solargraph as it's more stable)
+      solargraph = {
+        settings = {
+          solargraph = {
+            diagnostics = true,
+            formatting = true,
+          },
+        },
+      },
 
       -- Elixir LSP
       elixirls = {},
@@ -277,7 +284,7 @@ return {
         },
       },
 
-      -- R for data science
+      -- R for data science (Note: install via Mason as 'r_language_server')
       r_language_server = {},
 
       -- JSON
