@@ -23,16 +23,7 @@ return {
     },
     win = {
       border = "rounded", -- none, single, double, shadow, rounded
-      position = "bottom", -- bottom, top
-      -- margin removed - not supported in newer which-key versions
-      -- Use padding instead for spacing control
       padding = { 1, 2, 1, 2 }, -- extra window padding [top, right, bottom, left]
-    },
-    layout = {
-      height = { min = 4, max = 25 }, -- min and max height of the columns
-      width = { min = 20, max = 50 }, -- min and max width of the columns
-      spacing = 3, -- spacing between columns
-      align = "left", -- align columns left, center or right
     },
     icons = {
       breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
@@ -48,9 +39,10 @@ return {
       { "<leader>e", group = "explorer" },
       { "<leader>ee", desc = "Toggle file explorer" },
       { "<leader>fe", desc = "Find file in explorer" },
-      { "<leader>t", group = "terminal" },
-      { "<leader>tt", desc = "Toggle horizontal terminal" },
-      { "<leader>tf", desc = "Toggle floating terminal" },
+      { "<leader>T", group = "terminal" },
+      { "<leader>Tt", desc = "Terminal horizontal" },
+      { "<leader>Tf", desc = "Terminal floating" },
+      { "<leader>Tv", desc = "Terminal vertical" },
       { "<leader>q", group = "session" },
       { "<leader>qs", desc = "Restore session for current dir" },
       { "<leader>ql", desc = "Restore last session" },
@@ -90,7 +82,12 @@ return {
       { "<leader>gt", desc = "Go: Run tests" },
       { "<leader>gT", desc = "Go: Run test file" },
       { "<leader>gc", desc = "Go: Test coverage" },
+      { "<leader>gcv", desc = "Go: Load coverage" },
+      { "<leader>gch", desc = "Go: Hide coverage" },
+      { "<leader>gcs", desc = "Go: Coverage summary" },
       { "<leader>gd", desc = "Go: Debug test" },
+      { "<leader>gdt", desc = "Go: Debug test (DAP)" },
+      { "<leader>gdl", desc = "Go: Debug last test" },
       { "<leader>gb", desc = "Go: Build" },
       { "<leader>gr", desc = "Go: Run" },
       { "<leader>gi", desc = "Go: Install deps" },
@@ -149,6 +146,20 @@ return {
       { "<leader>rt", desc = "Rust: Testables", mode = "n" },
 
       -- Gitsigns hunks
+      -- AI CodeCompanion
+      { "<leader>a", group = "ai" },
+      { "<leader>aa", desc = "AI: Actions" },
+      { "<leader>ac", desc = "AI: Toggle Chat" },
+      { "<leader>aA", desc = "AI: Add to Chat", mode = "v" },
+      { "<leader>ai", desc = "AI: Inline Prompt" },
+      { "<leader>ae", desc = "AI: Explain Code" },
+      { "<leader>af", desc = "AI: Fix Code" },
+      { "<leader>at", desc = "AI: Generate Tests" },
+      { "<leader>ad", desc = "AI: Generate Docs" },
+      { "<leader>ar", desc = "AI: Refactor", mode = "v" },
+      { "<leader>ab", desc = "AI: Ask about Buffer" },
+      { "<leader>al", desc = "AI: Ask about LSP" },
+
       { "<leader>h", group = "git hunk", mode = { "n", "v" } },
       { "<leader>hs", desc = "Git: Stage Hunk" },
       { "<leader>hr", desc = "Git: Reset Hunk" },
@@ -157,8 +168,10 @@ return {
       { "<leader>hR", desc = "Git: Reset Buffer" },
       { "<leader>hp", desc = "Git: Preview Hunk" },
       { "<leader>hb", desc = "Git: Blame Line" },
+      { "<leader>hB", desc = "Git: Toggle Blame Line" },
       { "<leader>hd", desc = "Git: Diff This" },
       { "<leader>hD", desc = "Git: Diff This ~" },
+      { "<leader>hx", desc = "Git: Toggle Deleted" },
       { "]c", desc = "Git: Next Hunk" },
       { "[c", desc = "Git: Prev Hunk" },
     })

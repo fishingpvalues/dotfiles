@@ -1,10 +1,9 @@
--- nvim-lspconfig: LSP configuration with comprehensive Golang setup
+-- Native LSP configuration using vim.lsp.config (Neovim 0.11+)
 return {
   'neovim/nvim-lspconfig',
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {},
   config = function()
-    local lspconfig = require('lspconfig')
 
     -- Get capabilities from blink.cmp if available
     local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -110,13 +109,11 @@ return {
       vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
     end
 
-    -- LSP Server configurations
+    -- LSP Server configurations using new vim.lsp.config API
+    -- NOTE: Rust LSP (rust_analyzer) is handled by rustaceanvim plugin
     local servers = {
-      -- NOTE: Rust LSP (rust_analyzer) is handled by rustaceanvim plugin
-      -- Do not configure it here to avoid conflicts
-
       -- C/C++ LSP
-      clangd = {
+      { 'clangd', {
         cmd = {
           'clangd',
           '--background-index',
@@ -131,41 +128,28 @@ return {
           completeUnimported = true,
           clangdFileStatus = true,
         },
-      },
+      }},
 
       -- Zig LSP
-      zls = {},
+      { 'zls' },
 
       -- Java LSP
-      jdtls = {},
+      { 'jdtls' },
 
       -- Kotlin LSP
-      kotlin_language_server = {},
-
-      -- Ruby LSP (use solargraph as it's more stable)
-      solargraph = {
-        settings = {
-          solargraph = {
-            diagnostics = true,
-            formatting = true,
-          },
-        },
-      },
-
-      -- Elixir LSP
-      elixirls = {},
+      { 'kotlin_language_server' },
 
       -- Tailwind CSS
-      tailwindcss = {},
+      { 'tailwindcss' },
 
       -- Svelte
-      svelte = {},
+      { 'svelte' },
 
       -- Vue
-      vuels = {},
+      { 'vuels' },
 
       -- Go LSP with comprehensive configuration
-      gopls = {
+      { 'gopls', {
         settings = {
           gopls = {
             gofumpt = true,
@@ -203,10 +187,10 @@ return {
             buildFlags = { "-tags", "integration" },
           },
         },
-      },
+      }},
 
       -- Lua LSP for Neovim config
-      lua_ls = {
+      { 'lua_ls', {
         settings = {
           Lua = {
             runtime = {
@@ -224,10 +208,10 @@ return {
             },
           },
         },
-      },
+      }},
 
       -- TypeScript/JavaScript
-      ts_ls = {
+      { 'ts_ls', {
         settings = {
           typescript = {
             inlayHints = {
@@ -241,10 +225,10 @@ return {
             },
           },
         },
-      },
+      }},
 
       -- Python (primary)
-      pyright = {
+      { 'pyright', {
         settings = {
           python = {
             analysis = {
@@ -255,10 +239,10 @@ return {
             },
           },
         },
-      },
+      }},
 
       -- Python (alternative with more features)
-      pylsp = {
+      { 'pylsp', {
         settings = {
           pylsp = {
             plugins = {
@@ -273,32 +257,29 @@ return {
             },
           },
         },
-      },
+      }},
 
       -- Ruff LSP (fast Python linter/formatter)
-      ruff = {
+      { 'ruff', {
         init_options = {
           settings = {
             args = { "--line-length=88" },
           },
         },
-      },
-
-      -- R for data science (Note: install via Mason as 'r_language_server')
-      r_language_server = {},
+      }},
 
       -- JSON
-      jsonls = {
+      { 'jsonls', {
         settings = {
           json = {
             schemas = require('schemastore').json.schemas(),
             validate = { enable = true },
           },
         },
-      },
+      }},
 
       -- YAML
-      yamlls = {
+      { 'yamlls', {
         settings = {
           yaml = {
             schemaStore = {
@@ -308,47 +289,57 @@ return {
             schemas = require('schemastore').yaml.schemas(),
           },
         },
-      },
+      }},
 
       -- DevOps & Infrastructure
-      dockerls = {},
-      docker_compose_language_service = {},
-      terraformls = {},
-      helm_ls = {},
-      ansiblels = {},
+      { 'dockerls' },
+      { 'docker_compose_language_service' },
+      { 'terraformls' },
+      { 'helm_ls' },
+      { 'ansiblels' },
 
       -- Protocols & Data Formats
-      buf_ls = {},  -- Protocol Buffers
-      graphql = {},
-      taplo = {},  -- TOML
+      { 'buf_ls' },  -- Protocol Buffers
+      { 'graphql' },
+      { 'taplo' },  -- TOML
 
       -- HTML
-      html = {
+      { 'html', {
         filetypes = { 'html', 'templ' },
-      },
+      }},
+
+      -- Emmet for HTML/CSS
+      { 'emmet_language_server', {
+        filetypes = { 'html', 'css', 'scss', 'javascript', 'javascriptreact', 'typescript', 'typescriptreact', 'vue', 'svelte' },
+      }},
 
       -- CSS
-      cssls = {},
+      { 'cssls' },
 
       -- Shell
-      bashls = {},
+      { 'bashls' },
 
       -- Documentation & Config
-      marksman = {},
-      lemminx = {},  -- XML
+      { 'marksman' },
+      { 'lemminx' },  -- XML
 
       -- Database
-      sqlls = {},
+      { 'sqlls' },
     }
 
-    -- Setup each server
-    for server, config in pairs(servers) do
+    -- Setup each server using new vim.lsp.config API
+    for _, lsp in ipairs(servers) do
+      local name, config = lsp[1], lsp[2]
+
+      -- Set default configuration with capabilities and on_attach
       local server_config = vim.tbl_deep_extend('force', {
         capabilities = capabilities,
         on_attach = on_attach,
-      }, config)
+      }, config or {})
 
-      lspconfig[server].setup(server_config)
+      -- Configure and enable the LSP server
+      vim.lsp.config(name, server_config)
+      vim.lsp.enable(name)
     end
   end,
 }

@@ -6,15 +6,6 @@ return {
   config = function()
     local nls = require('null-ls')
 
-    -- Completely suppress all none-ls notifications
-    local notify = vim.notify
-    vim.notify = function(msg, level, opts)
-      if msg:match("failed to run generator") or msg:match("code_action") or msg:match("null%-ls") then
-        return
-      end
-      notify(msg, level, opts)
-    end
-
     nls.setup({
       -- Disable all update messages
       update_in_insert = false,

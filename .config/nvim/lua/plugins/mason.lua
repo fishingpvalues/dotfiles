@@ -41,14 +41,13 @@ return {
         "tailwindcss",       -- Tailwind CSS
         "svelte",            -- Svelte
         "vuels",             -- Vue
+        "emmet_language_server", -- Emmet for HTML/CSS
 
         -- Scripting & Dynamic Languages
         "bashls",            -- Bash
-        "solargraph",        -- Ruby (stable LSP server)
-        "elixirls",          -- Elixir
+        "lua_ls",            -- Lua for Neovim config
 
         -- Data & Config
-        "r_language_server", -- R for data analysis
         "taplo",             -- TOML
         "lemminx",           -- XML
         "sqls",              -- SQL
@@ -62,7 +61,6 @@ return {
         "graphql",
 
         -- Documentation
-        "lua_ls",            -- Lua for Neovim config
         "marksman",          -- Markdown
       }
     })
@@ -114,13 +112,15 @@ return {
             "protolint",     -- Protocol Buffers linter
 
             -- General linters
-            "eslint_d",      -- JS/TS
+            "eslint_d",      -- JS/TS (faster than eslint)
             "shellcheck",    -- Shell
             "hadolint",      -- Dockerfile
             "yamllint",      -- YAML
             "jsonlint",      -- JSON
             "markdownlint",  -- Markdown
             "sqlfluff",      -- SQL formatter/linter
+            "cbfmt",         -- Format code blocks in markdown
+            "luacheck",      -- Lua linter (alternative to lua-language-server diagnostics)
 
             -- DAP adapters
             "delve",         -- Go debugger

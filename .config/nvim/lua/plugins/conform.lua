@@ -54,9 +54,6 @@ return {
       -- Data formats
       sql = { 'sqlfluff' },
       proto = { 'buf' },
-
-      -- R
-      r = { 'styler' },
     },
     format_on_save = {
       timeout_ms = 500,

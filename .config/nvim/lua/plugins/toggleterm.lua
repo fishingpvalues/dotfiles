@@ -24,8 +24,9 @@ return {
   },
   config = function(_, opts)
     require("toggleterm").setup(opts)
-    -- Keymaps for horizontal and floating terminals
-    vim.keymap.set("n", "<leader>tt", ":ToggleTerm direction=horizontal<CR>", { desc = "Toggle horizontal terminal" })
-    vim.keymap.set("n", "<leader>tf", ":ToggleTerm direction=float<CR>", { desc = "Toggle floating terminal" })
+    -- Keymaps for terminals (moved to <leader>T to avoid conflict with neotest)
+    vim.keymap.set("n", "<leader>Tt", ":ToggleTerm direction=horizontal<CR>", { desc = "Terminal horizontal" })
+    vim.keymap.set("n", "<leader>Tf", ":ToggleTerm direction=float<CR>", { desc = "Terminal floating" })
+    vim.keymap.set("n", "<leader>Tv", ":ToggleTerm direction=vertical size=80<CR>", { desc = "Terminal vertical" })
   end,
 } 
