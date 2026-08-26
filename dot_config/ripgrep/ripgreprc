@@ -1,0 +1,33 @@
+# ripgrep. Only read if RIPGREP_CONFIG_PATH points here - there is no default
+# location, and without the env var every line below is silently ignored.
+
+# A minified bundle or a lockfile is one enormous line; without this a single
+# match floods the terminal.
+--max-columns=180
+--max-columns-preview
+
+--smart-case
+--hidden
+--follow
+
+# Directories that are never the answer.
+--glob=!.git/
+--glob=!node_modules/
+--glob=!.venv/
+--glob=!venv/
+--glob=!__pycache__/
+--glob=!target/
+--glob=!dist/
+--glob=!build/
+--glob=!.next/
+--glob=!.terraform/
+--glob=!*.lock
+--glob=!*.min.js
+--glob=!*.min.css
+
+--colors=match:fg:black
+--colors=match:bg:yellow
+--colors=match:style:bold
+--colors=path:fg:green
+--colors=path:style:bold
+--colors=line:fg:blue

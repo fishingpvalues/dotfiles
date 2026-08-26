@@ -1,0 +1,34 @@
+# atuin: shell history as a database.
+#
+# Not synced to atuin.sh. This history contains ssh commands, hostnames and the
+# occasional secret pasted by accident; it stays on the machine. `atuin login`
+# would change that, so do not run it without deciding that first.
+auto_sync = false
+update_check = false
+
+search_mode = "fuzzy"
+# Start scoped to this host, because "what did I run on THIS box" is the
+# question 90% of the time. Ctrl-r cycles to global.
+filter_mode = "host"
+# ...except inside a git repo, where the useful scope is the project.
+workspaces = true
+
+style = "compact"
+inline_height = 25
+show_preview = true
+show_help = false
+
+# Enter runs the command, Tab puts it on the command line to edit. The reverse
+# is the default and it is a good way to run the wrong thing.
+enter_accept = true
+
+# Commands that are pure noise in a history search, or that would leak.
+history_filter = [
+  "^ ",           # a leading space means "do not record", as in bash
+  "^(ls|ll|la|cd|clear|exit|pwd)$",
+  "--password",
+  "^export .*(TOKEN|SECRET|KEY|PASSWORD)",
+]
+
+[stats]
+common_subcommands = ["docker", "git", "systemctl", "chezmoi", "pacman", "kubectl"]

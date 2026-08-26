@@ -1,0 +1,50 @@
+#!/bin/bash
+# Install the toolchain these dotfiles configure.
+#
+# run_onchange_: chezmoi re-runs this only when the file's contents change, and
+# the package list is IN the file, so adding a tool below is what triggers a
+# reinstall. The hash line makes that explicit.
+#
+# packages hash: {{ include ".chezmoiscripts/run_onchange_before_10-packages.sh.tmpl" | sha256sum }}
+set -euo pipefail
+
+command -v pacman >/dev/null || { echo "not an Arch system, skipping"; exit 0; }
+
+# Everything here is in the official CachyOS/Arch repos - checked, not assumed.
+# carapace is the one that is not, and it is deliberately omitted rather than
+# pulling in an AUR helper for a single completion engine.
+packages=(
+    # shell + prompt
+    fish starship atuin zoxide fzf direnv
+    # the replacements
+    eza bat ripgrep fd dust duf procs sd bottom btop
+    # git
+    git-delta lazygit gitui difftastic
+    # files, search, navigation
+    yazi broot television serpl dysk fclones ouch
+    # network
+    xh dog gping trippy
+    # dev
+    neovim helix tmux jq yq glow hyperfine tokei mise navi tealdeer
+    # containers
+    lazydocker
+    # fonts + clipboard, needed by the above on wayland
+    ttf-jetbrains-mono-nerd wl-clipboard
+)
+
+missing=()
+for p in "${packages[@]}"; do
+    pacman -Qq "$p" &>/dev/null || missing+=("$p")
+done
+
+if [ ${#missing[@]} -eq 0 ]; then
+    echo "all ${#packages[@]} packages already installed"
+    exit 0
+fi
+
+echo "installing ${#missing[@]} packages: ${missing[*]}"
+sudo pacman -S --needed --noconfirm "${missing[@]}"
+
+# tldr pages are useless until the cache is built, and the first `tldr foo`
+# after a fresh install otherwise just errors.
+command -v tldr >/dev/null && tldr --update >/dev/null 2>&1 || true

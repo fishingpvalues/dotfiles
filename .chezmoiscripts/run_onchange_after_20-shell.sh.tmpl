@@ -1,0 +1,18 @@
+#!/bin/bash
+# Make fish the login shell, once.
+# hash: {{ include ".chezmoiscripts/run_onchange_after_20-shell.sh.tmpl" | sha256sum }}
+set -euo pipefail
+
+fish_path="$(command -v fish || true)"
+[ -n "$fish_path" ] || exit 0
+
+# /etc/shells must list it or chsh refuses, and that refusal is easy to miss.
+grep -qx "$fish_path" /etc/shells || echo "$fish_path" | sudo tee -a /etc/shells >/dev/null
+
+current="$(getent passwd "$USER" | cut -d: -f7)"
+if [ "$current" != "$fish_path" ]; then
+    echo "setting login shell: $current -> $fish_path"
+    sudo chsh -s "$fish_path" "$USER"
+else
+    echo "login shell already fish"
+fi

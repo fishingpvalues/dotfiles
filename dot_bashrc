@@ -1,0 +1,16 @@
+# Minimal bash. fish is the login shell; this exists for scripts, for `ssh host
+# command`, and for the rescue case where fish will not start.
+[[ $- != *i* ]] && return
+
+export EDITOR=nvim
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/ripgreprc"
+PS1='\[\e[1;32m\]\w\[\e[0m\]$ '
+
+command -v eza >/dev/null && alias ls='eza --group-directories-first --icons'
+command -v bat >/dev/null && alias cat='bat'
+alias ll='ls -l'
+alias la='ls -la'
+
+command -v starship >/dev/null && eval "$(starship init bash)"
+command -v zoxide >/dev/null && eval "$(zoxide init bash --cmd cd)"
+command -v atuin >/dev/null && eval "$(atuin init bash --disable-up-arrow)"

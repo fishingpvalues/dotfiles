@@ -1,0 +1,28 @@
+gui:
+  nerdFontsVersion: "3"
+  showFileTree: true
+  showCommandLog: false
+  mainPanelSplitMode: flexible
+  language: en
+  timeFormat: "2006-01-02 15:04"
+  authorColors:
+    "*": "#89b4fa"
+git:
+  paging:
+    colorArg: always
+    pager: delta --dark --paging=never
+  commit:
+    signOff: false
+  autoFetch: true
+  autoRefresh: true
+  # A force-push that would clobber someone else's commit fails instead.
+  overrideGpg: false
+  fetchAll: false
+os:
+  editPreset: nvim
+keybinding:
+  universal:
+    quit: q
+    return: <esc>
+promptToReturnFromSubprocess: false
+disableStartupPopups: true

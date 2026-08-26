@@ -1,0 +1,14 @@
+# Global ignores for fd. Applied on top of .gitignore, never instead of it.
+.git/
+node_modules/
+__pycache__/
+.venv/
+venv/
+target/
+dist/
+build/
+.next/
+.terraform/
+*.pyc
+.DS_Store
+.cache/

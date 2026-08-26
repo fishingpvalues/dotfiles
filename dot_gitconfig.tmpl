@@ -1,0 +1,83 @@
+# Identity comes from the chezmoi init prompts, so this file is safe to commit.
+[user]
+    name = {{ .name }}
+    email = {{ .email }}
+
+[init]
+    defaultBranch = main
+
+[core]
+    editor = nvim
+    pager = delta
+    # Treat these as binary so a stray CRLF never turns into a whole-file diff.
+    autocrlf = input
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true          # n / N jump between files in the diff
+    line-numbers = true
+    side-by-side = false     # on a laptop this is too narrow to help
+    hyperlinks = true
+    syntax-theme = Catppuccin Mocha
+
+[merge]
+    conflictstyle = zdiff3   # shows the common ancestor: the useful one
+    tool = nvimdiff
+
+[diff]
+    algorithm = histogram    # noticeably better hunks than the default myers
+    colorMoved = default     # moved code shown as moved, not add+delete
+    renames = copies
+
+[push]
+    default = simple
+    autoSetupRemote = true   # no more "set upstream" dance on a new branch
+    followTags = true
+
+[pull]
+    ff = only                # never a surprise merge commit
+
+[fetch]
+    prune = true
+    pruneTags = true
+
+[rebase]
+    autoStash = true
+    autoSquash = true
+    updateRefs = true
+
+[rerere]
+    enabled = true           # remembers how you resolved a conflict last time
+    autoUpdate = true
+
+[branch]
+    sort = -committerdate    # most recent first, which is what you want
+
+[log]
+    date = iso
+
+[status]
+    showUntrackedFiles = all
+
+[transfer]
+    fsckObjects = true
+
+[alias]
+    # Deliberately short. Anything longer belongs in a fish function.
+    st = status --short --branch
+    lg = log --oneline --graph --decorate -20
+    lga = log --oneline --graph --decorate --all -30
+    last = log -1 HEAD --stat
+    unstage = restore --staged
+    # Undo the last commit but keep the work in the index.
+    undo = reset --soft HEAD~1
+    amend = commit --amend --no-edit
+    # What actually landed on this branch that is not on main.
+    mine = log --oneline main..HEAD
+    # Every branch, most recently touched first, with its upstream.
+    branches = branch -vv --sort=-committerdate
+
+[includeIf "gitdir:~/work/"]
+    path = ~/.config/git/work.inc

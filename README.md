@@ -1,189 +1,60 @@
-# Modern Dotfiles (SOTA 2025)
+# dotfiles
 
-A complete, state-of-the-art configuration for modern command-line tools with vim-style keybindings and GitHub Dark theme.
+CachyOS + Hyprland laptop (`sweetpotato`). Managed with
+[chezmoi](https://chezmoi.io). Shell is **fish**.
 
-## Overview
+    pacman -S --needed chezmoi
+    chezmoi init --apply fishingpvalues/dotfiles
 
-This repository contains carefully crafted configurations for 15+ modern CLI tools, all designed to work together seamlessly with a consistent vim-centric approach and unified color scheme.
+## What this owns, and what it does not
 
-### What's Included
+It owns the **shell and the terminal toolchain**: fish, starship, atuin, git,
+neovim, and the config of every CLI tool below.
 
-**Editor & Multiplexer:**
-- **Neovim** - 60+ plugins, LSP, debugging, testing
-- **Tmux** - Session management with vim integration
-- **Helix** - Post-modern editor alternative
+It does **not** own the desktop. Hyprland, waybar, rofi, swaync, quickshell,
+matugen, waypaper and wlogout stay with
+[ML4W](https://github.com/mylinuxforwork/dotfiles), which is what installed and
+maintains them here. Two things managing the same file is how a working desktop
+gets broken on a Tuesday; `.chezmoiignore` keeps chezmoi out of that tree.
 
-**Shell & Navigation:**
-- **Starship** - Fast, minimal prompt with vim mode
-- **Atuin** - Magical shell history with sync
-- **Zoxide** - Smart directory jumping
+## Layout
 
-**File Operations:**
-- **Bat** - Cat with syntax highlighting
-- **Fd** - Fast file finding
-- **Ripgrep** - Lightning-fast search
-- **Yazi** - Terminal file manager
+    .chezmoi.toml.tmpl        prompts for git identity on first init
+    .chezmoiscripts/          package install, re-run when the list changes
+    dot_config/fish/          config.fish + conf.d/ + functions/
+    dot_config/nvim/          neovim, lazy.nvim, lsp via nvim 0.11+ API
+    dot_config/<tool>/        one directory per CLI tool
+    dot_gitconfig.tmpl        identity comes from the init prompts
 
-**Git & Docker:**
-- **Lazygit** - Git TUI with vim keys
-- **Lazydocker** - Docker TUI
-- **Delta** - Beautiful git diffs
+## The tools, and why each one
 
-**System:**
-- **Btop** - System monitor
-- **Zellij** - Modern tmux alternative
+Replacements for things that ship with the system:
 
-## Features
+| instead of | use | why |
+|---|---|---|
+| `ls` | `eza` | git status per file, tree mode, sane colours |
+| `cat` | `bat` | syntax highlighting, git gutter, paging |
+| `grep` | `rg` | respects .gitignore, orders of magnitude faster |
+| `find` | `fd` | same, plus a sane default syntax |
+| `du` | `dust` | shows where the space actually went |
+| `df` | `duf` | readable, groups by device type |
+| `ps` | `procs` | tree view, colours, searches by anything |
+| `top` | `btop` / `btm` | btop for eyeballing, btm for a quick look |
+| `sed -i` | `sd` | literal strings by default, no escaping puzzles |
+| `cd` | `zoxide` | jumps to a directory by any part of its name |
+| `ctrl-r` | `atuin` | history as a searchable database, not a text file |
+| `diff` | `difft` | compares syntax trees, not lines |
 
-- **Vim-centric**: All tools use vim-style keybindings (hjkl navigation)
-- **Consistent theme**: GitHub Dark theme across all tools
-- **Modern & Fast**: Rust-based tools for performance
-- **Well-documented**: Every config file has detailed comments
-- **Cross-platform**: Works on Mac, Linux, and WSL
-- **Integrated**: Tools work seamlessly together
+Terminal UIs: `lazygit`, `lazydocker`, `yazi` (files), `gitui`, `broot`,
+`serpl` (find and replace), `television` (fuzzy picker), `dysk` (disks).
 
-## Quick Start
+## Conventions
 
-```bash
-# Clone repository
-git clone <your-repo-url> ~/.dotfiles
-cd ~/.dotfiles
+Fish **abbreviations**, not aliases, for anything short. An abbreviation expands
+in place before it runs, so what you see in your history is the real command -
+which matters the day you paste it into a script or into a machine that does
+not have these dotfiles.
 
-# Read installation guide
-cat INSTALL.md
-
-# Symlink configs
-ln -sf ~/.dotfiles/.config ~/.config
-
-# Install tools for your platform (see INSTALL.md)
-```
-
-## Documentation
-
-- **[INSTALL.md](INSTALL.md)** - Complete installation guide
-- **[CLAUDE.md](CLAUDE.md)** - Repository architecture for AI assistants
-- **[.config/README.md](.config/README.md)** - Tool configurations overview
-
-## Configuration Philosophy
-
-### SOTA (State of the Art) 2025
-- Modern plugin managers (lazy.nvim, TPM)
-- Performance optimizations
-- Security best practices
-- Latest tool versions
-
-### Vim-Centric Design
-- Consistent hjkl navigation
-- Modal editing patterns
-- Muscle memory friendly
-- Minimal learning curve
-
-### Integration Focus
-- Tools complement each other
-- Shared color scheme
-- Cross-tool workflows
-- Unified experience
-
-## Screenshots
-
-```
-# Neovim with LSP, debugging, and file tree
-┌─────────────────────────────────────┐
-│ NeoTree │ Code with LSP hints      │
-│          │ + line numbers           │
-│          │ + git changes            │
-│          │ + syntax highlighting    │
-└─────────────────────────────────────┘
-
-# Lazygit with GitHub Dark theme
-┌─────────────────────────────────────┐
-│ Status │ Commits │ Files │ Branches │
-│ Vim-style navigation + git visual   │
-└─────────────────────────────────────┘
-
-# Tmux with multiple panes
-┌─────────────────────────────────────┐
-│ Neovim        │ Terminal            │
-├───────────────┼─────────────────────┤
-│ Lazygit       │ Btop                │
-└─────────────────────────────────────┘
-```
-
-## Tool Integration Examples
-
-```bash
-# Search with ripgrep, view with bat
-rg "function" --json | bat
-
-# Find files with fd, open in yazi
-fd ".rs" | xargs yazi
-
-# Jump to directory, open lazygit
-z project && lazygit
-
-# Use yazi with zoxide integration
-# Press 'z' in yazi to use zoxide
-```
-
-## Keybinding Quick Reference
-
-All tools share vim-style navigation:
-
-| Key | Action | Works In |
-|-----|--------|----------|
-| `h/j/k/l` | Navigate | All tools |
-| `gg` | Go to top | Neovim, Yazi, Btop |
-| `G` | Go to bottom | Neovim, Yazi, Btop |
-| `/` | Search | Most tools |
-| `?` | Help | Most tools |
-| `q` | Quit | Most tools |
-| `Ctrl+R` | History search | Atuin (in shell) |
-| `Ctrl+a` | Tmux prefix | Tmux |
-| `Alt+` | Zellij prefix | Zellij |
-
-## Customization
-
-Each config file includes:
-- Detailed comments explaining options
-- SOTA notes on best practices
-- Platform-specific sections
-- Integration tips
-
-Edit configs in `~/.config/` to customize.
-
-## Requirements
-
-- Modern terminal with true color support
-- Nerd Font for icons
-- Git for version control
-- Internet for initial plugin/tool downloads
-
-## Platform Support
-
-- ✅ macOS (primary)
-- ✅ Linux (tested on Ubuntu, Arch)
-- ✅ WSL2 (Windows Subsystem for Linux)
-- ⚠️ Windows native (limited, use WSL2)
-
-## Contributing
-
-This is a personal dotfiles repository, but feel free to:
-- Fork and adapt to your needs
-- Open issues for questions
-- Share improvements via PRs
-
-## License
-
-MIT License - Use freely, no attribution required.
-
-## Acknowledgments
-
-Built on the shoulders of giants:
-- kickstart.nvim by TJ DeVries
-- Modern CLI tools community
-- Vim philosophy
-- SOTA 2025 best practices
-
----
-
-**Note**: These configurations are opinionated and vim-centric. If you prefer different keybindings or themes, they're easy to customize - all configs are well-documented and modular.
+Functions are for anything that takes an argument or needs logic. They live one
+per file in `dot_config/fish/functions/` and are autoloaded, so they cost
+nothing at startup.

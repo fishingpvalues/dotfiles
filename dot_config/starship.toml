@@ -1,0 +1,84 @@
+# starship prompt.
+#
+# Two lines on purpose: the context line can grow without ever pushing the
+# cursor to the right, so a long path or a busy git state never leaves you
+# typing in the last 20 columns of the terminal.
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$directory$git_branch$git_status$git_state\
+$python$rust$golang$nodejs$lua\
+$docker_context$kubernetes\
+$cmd_duration$status
+$character"""
+
+add_newline = true
+command_timeout = 1000
+
+[character]
+success_symbol = '[>](bold green)'
+error_symbol = '[>](bold red)'
+vimcmd_symbol = '[<](bold yellow)'
+
+[directory]
+style = 'bold cyan'
+truncation_length = 4
+truncate_to_repo = true
+truncation_symbol = '.../'
+read_only = ' ro'
+
+[git_branch]
+format = ' [$branch]($style)'
+style = 'bold purple'
+
+[git_status]
+format = '[$all_status$ahead_behind]($style)'
+style = 'bold yellow'
+conflicted = ' conflict'
+ahead = ' ^${count}'
+behind = ' v${count}'
+diverged = ' ^${ahead_count}v${behind_count}'
+untracked = ' ?${count}'
+stashed = ' *${count}'
+modified = ' !${count}'
+staged = ' +${count}'
+renamed = ' r${count}'
+deleted = ' x${count}'
+
+[git_state]
+format = ' [$state($progress_current/$progress_total)]($style)'
+style = 'bold red'
+
+# Only shown when the directory actually contains that language, so the prompt
+# stays empty in a plain shell.
+[python]
+format = ' [py $version$virtualenv]($style)'
+style = 'yellow'
+[rust]
+format = ' [rs $version]($style)'
+[golang]
+format = ' [go $version]($style)'
+[nodejs]
+format = ' [node $version]($style)'
+[lua]
+format = ' [lua $version]($style)'
+
+[docker_context]
+format = ' [docker $context]($style)'
+only_with_files = true
+
+[kubernetes]
+format = ' [k8s $context($namespace)]($style)'
+disabled = false
+
+# Anything slower than 2s gets its duration printed. Below that you knew it was
+# quick and the number is clutter.
+[cmd_duration]
+min_time = 2000
+format = ' [took $duration]($style)'
+style = 'bold yellow'
+
+[status]
+disabled = false
+format = ' [exit $status]($style)'
+style = 'bold red'

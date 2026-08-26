@@ -1,0 +1,13 @@
+[flags]
+temperature_type = "c"
+rate = 1000
+group_processes = true
+tree = true
+mem_as_value = true
+hide_table_gap = true
+battery = true
+
+[colors]
+high_battery_color = "green"
+medium_battery_color = "yellow"
+low_battery_color = "red"

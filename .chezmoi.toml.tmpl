@@ -1,0 +1,16 @@
+# chezmoi config template. Rendered once on `chezmoi init`, then lives at
+# ~/.config/chezmoi/chezmoi.toml and is NOT tracked (it holds the answers).
+{{- $name := promptStringOnce . "name" "Git author name" "fishingpvalues" -}}
+{{- $email := promptStringOnce . "email" "Git author email" "dfischer9966@gmail.com" -}}
+
+[data]
+    name = {{ $name | quote }}
+    email = {{ $email | quote }}
+
+[diff]
+    command = "delta"
+    args = ["--paging=never"]
+
+[merge]
+    command = "nvim"
+    args = ["-d", "{{ "{{ .Destination }}" }}", "{{ "{{ .Source }}" }}", "{{ "{{ .Target }}" }}"]

@@ -1,0 +1,14 @@
+# bat. The file really is called `config`, with no extension.
+--theme="Catppuccin Mocha"
+--style="numbers,changes,header-filename"
+--wrap=auto
+--italic-text=always
+--paging=auto
+
+# Files whose name gives bat no clue what they are.
+--map-syntax "*.conf:INI"
+--map-syntax ".env*:Bash"
+--map-syntax "*.jenkinsfile:Groovy"
+--map-syntax "**/Dockerfile*:Dockerfile"
+--map-syntax "**/.gitconfig:INI"
+--map-syntax "*.kdl:JavaScript"
