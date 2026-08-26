@@ -11,11 +11,11 @@ set -euo pipefail
 
 command -v fish >/dev/null || exit 0
 
-# fzf.fish rebinds ctrl-r. atuin also rebinds ctrl-r, and atuin is the one we
-# want, so its init must run AFTER fisher's generated conf.d - which it does,
-# because conf.d files are sourced in lexical order and fzf.fish installs as
-# conf.d/fzf.fish, before our 10-init.fish. Verify with `bind ctrl-r` if a
-# history search ever looks wrong.
+# fzf.fish rebinds ctrl-r and it WINS over atuin, which is the opposite of what
+# you want. conf.d is sourced in lexical order and fzf.fish sorts after
+# 10-init.fish, so the plugin's binding lands last. conf.d/zz-keybinds.fish
+# sorts after both and puts atuin back. Check with `bind ctrl-r` - it must say
+# _atuin_search, not _fzf_search_history.
 fish -c '
     if not functions -q fisher
         curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish |
