@@ -33,6 +33,12 @@ packages=(
     # rustfmt and goimports are deliberately absent: they arrive with rustup and
     # the go toolchain, which mise manages per project rather than system-wide.
     stylua shfmt ruff prettier taplo
+
+    # tree-sitter CLI. nvim-treesitter's main branch shells out to it to
+    # COMPILE each parser; without it every install fails with
+    # `ENOENT ... 'tree-sitter'` and you get zero parsers, no highlighting, and
+    # a re-download attempt on every startup - all of it silent.
+    tree-sitter-cli
     # containers
     lazydocker dive
 

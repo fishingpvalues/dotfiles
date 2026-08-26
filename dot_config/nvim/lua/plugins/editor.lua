@@ -5,13 +5,48 @@ return {
     branch = "main",
     lazy = false,
     config = function()
-      require("nvim-treesitter").setup()
-      require("nvim-treesitter").install({
+      local ts = require("nvim-treesitter")
+      ts.setup()
+
+      local wanted = {
         "lua", "vim", "vimdoc", "bash", "fish", "python", "rust", "go",
         "javascript", "typescript", "json", "yaml", "toml", "markdown",
         "markdown_inline", "dockerfile", "sql", "diff", "git_config",
-      })
+      }
+
+      -- Install only what is MISSING. The first version of this called
+      -- install(wanted) unconditionally on every startup, which meant every
+      -- single `nvim` re-downloaded 19 parsers - and, because install() is
+      -- async and `nvim --headless +qa` exits immediately, none of them ever
+      -- finished. The result was 19 downloads per start and zero parsers on
+      -- disk, with no error unless you went looking.
+      local installed = {}
+      for _, lang in ipairs(ts.get_installed()) do
+        installed[lang] = true
+      end
+      local missing = vim.tbl_filter(function(lang)
+        return not installed[lang]
+      end, wanted)
+
+      if #missing > 0 then
+        -- This needs the tree-sitter CLI. Without it every compile fails with
+        -- `ENOENT ... 'tree-sitter'` and the parser is silently not installed,
+        -- so say so once rather than failing 19 times into a log nobody reads.
+        if vim.fn.executable("tree-sitter") == 0 then
+          vim.notify(
+            "treesitter: the `tree-sitter` CLI is missing, parsers cannot be "
+              .. "compiled. Install tree-sitter-cli.",
+            vim.log.levels.WARN
+          )
+        else
+          ts.install(missing)
+        end
+      end
+
+      -- Start the parser for any buffer that has one. pcall because a filetype
+      -- with no installed parser is normal, not an error worth a message.
       vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("treesitter_start", { clear = true }),
         callback = function(ev)
           pcall(vim.treesitter.start, ev.buf)
         end,

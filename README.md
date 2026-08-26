@@ -32,7 +32,7 @@ Abbreviated as `cmd`, `cma`, `cme`, `cmu`, `cm`.
 ## The toolchain
 
 Every package the install script puts on the machine, and why it is there.
-59 in total; all are in the official CachyOS/Arch repos. `rustfmt` and
+60 in total; all are in the official CachyOS/Arch repos. `rustfmt` and
 `goimports` are deliberately absent - they arrive with rustup and the go
 toolchain, which `mise` manages per project rather than system-wide.
 
@@ -118,6 +118,7 @@ toolchain, which `mise` manages per project rather than system-wide.
 | `tokei` | counts code by language, fast, for "how big is this actually" |
 | `navi` | a cheatsheet you can execute, for commands you use twice a year |
 | `tealdeer` | `tldr` pages. Examples instead of a man page, when you want the common case |
+| `tree-sitter-cli` | compiles neovim's treesitter parsers. Without it every parser install fails silently and you get no highlighting |
 | `stylua`, `shfmt`, `ruff`, `prettier`, `taplo` | formatters. conform.nvim calls these on save; without them format-on-save silently does nothing for that filetype |
 | `just` | a command runner for per-project tasks, where make would be lying about being a build system |
 
