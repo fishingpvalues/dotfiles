@@ -1,15 +1,19 @@
-# chezmoi config template. Rendered once on `chezmoi init`, then lives at
-# ~/.config/chezmoi/chezmoi.toml and is NOT tracked (it holds the answers).
-{{- $name := promptStringOnce . "name" "Git author name" "fishingpvalues" -}}
-{{- $email := promptStringOnce . "email" "Git author email" "dfischer9966@gmail.com" -}}
-
+# chezmoi's own config. Rendered on `chezmoi init` to
+# ~/.config/chezmoi/chezmoi.toml.
+#
+# No prompts. promptStringOnce needs a TTY and dies with "could not open a new
+# TTY" whenever chezmoi runs without one - over ssh, from a script, from CI -
+# and --promptString does not reliably answer it because it matches on the
+# prompt TEXT, not the field name. This repo has exactly one user, whose git
+# identity is already in every commit here, so there is nothing to ask.
 [data]
-    name = {{ $name | quote }}
-    email = {{ $email | quote }}
+    name = "fishingpvalues"
+    email = "dfischer9966@gmail.com"
 
 [diff]
     command = "delta"
     args = ["--paging=never"]
+    exclude = ["scripts"]
 
 [merge]
     command = "nvim"
