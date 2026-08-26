@@ -6,6 +6,15 @@ set -euo pipefail
 fish_path="$(command -v fish || true)"
 [ -n "$fish_path" ] || exit 0
 
+# Same reasoning as the package script: never let a missing sudo abort the
+# whole apply. Being on bash for one more session is not worth losing the
+# dotfiles over.
+if ! sudo -n true 2>/dev/null && ! sudo -v 2>/dev/null && [ "$(id -u)" -ne 0 ]; then
+    echo "WARNING: cannot escalate; login shell unchanged." >&2
+    echo "    sudo chsh -s $fish_path $USER" >&2
+    exit 0
+fi
+
 # /etc/shells must list it or chsh refuses, and that refusal is easy to miss.
 grep -qx "$fish_path" /etc/shells || echo "$fish_path" | sudo tee -a /etc/shells >/dev/null
 

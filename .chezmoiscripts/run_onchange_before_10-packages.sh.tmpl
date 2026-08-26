@@ -43,7 +43,21 @@ if [ ${#missing[@]} -eq 0 ]; then
 fi
 
 echo "installing ${#missing[@]} packages: ${missing[*]}"
-sudo pacman -S --needed --noconfirm "${missing[@]}"
+
+# Fail SOFT if we cannot escalate. `chezmoi apply` runs this before it writes a
+# single file, so a hard exit here means no dotfiles at all - on a machine where
+# the only thing wrong is that this user cannot sudo right now. Print what to
+# run and carry on; the configs are still worth having without every binary.
+if sudo -n true 2>/dev/null || sudo -v 2>/dev/null; then
+    sudo pacman -S --needed --noconfirm "${missing[@]}"
+elif [ "$(id -u)" -eq 0 ]; then
+    pacman -S --needed --noconfirm "${missing[@]}"
+else
+    echo "WARNING: cannot escalate, skipping package install." >&2
+    echo "Run this yourself, then re-run chezmoi apply:" >&2
+    echo "    sudo pacman -S --needed ${missing[*]}" >&2
+    exit 0
+fi
 
 # tldr pages are useless until the cache is built, and the first `tldr foo`
 # after a fresh install otherwise just errors.
