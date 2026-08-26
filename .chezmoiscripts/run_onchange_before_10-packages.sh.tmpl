@@ -25,7 +25,14 @@ packages=(
     # network
     xh dog gping trippy
     # dev
-    neovim helix tmux jq yq glow hyperfine tokei mise navi tealdeer
+    neovim helix tmux jq yq glow hyperfine tokei mise navi tealdeer just
+
+    # Formatters that conform.nvim calls on save. Without these, format-on-save
+    # silently does nothing for those filetypes - conform falls through to the
+    # LSP and, where there is no LSP formatter, to nothing at all. No error.
+    # rustfmt and goimports are deliberately absent: they arrive with rustup and
+    # the go toolchain, which mise manages per project rather than system-wide.
+    stylua shfmt ruff prettier taplo
     # containers
     lazydocker dive
 
@@ -37,8 +44,10 @@ packages=(
 
     # sops: potatostack's .env is SOPS+age encrypted and this laptop
     # administers it. age was already here, sops was not, so `make sops-decrypt`
-    # could not run from this machine at all.
-    sops
+    # could not run from this machine at all. age is listed explicitly rather
+    # than relied on as a dependency - sops without it is inert, and "already
+    # installed on the one machine I tested" is not a package list.
+    sops age
 
     # git-absorb: takes staged changes and amends each one into the commit that
     # introduced the line, instead of a pile of "fix review comment" commits.
