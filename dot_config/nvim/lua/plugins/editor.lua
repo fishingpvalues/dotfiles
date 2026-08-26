@@ -71,6 +71,14 @@ return {
       { "<leader><leader>", "<cmd>FzfLua files<cr>", desc = "Find files" },
     },
     opts = { "default-title", winopts = { height = 0.85, width = 0.85, preview = { layout = "vertical" } } },
+    config = function(_, opts)
+      local fzf = require("fzf-lua")
+      fzf.setup(opts)
+      -- Route vim.ui.select through fzf-lua. Without this every code action and
+      -- every "choose one" prompt falls back to the numbered list at the bottom
+      -- of the screen, and snacks' health check flags the gap.
+      fzf.register_ui_select()
+    end,
   },
 
   {
@@ -130,7 +138,27 @@ return {
       indent = { enabled = true },
       input = { enabled = true },
       lazygit = { enabled = true },
+      -- Off explicitly, not by omission. snacks' health check inspects every
+      -- module whether or not you configured it, so leaving these unset
+      -- produced three hard ERRORs for tools this machine will never have
+      -- (ghostscript, pdflatex, mmdc) plus a complaint that the terminal does
+      -- not speak the kitty graphics protocol. Inline image rendering is not
+      -- wanted; saying so silences the lot.
+      image = { enabled = false },
+      -- fzf-lua is the picker here. Two pickers is one too many.
+      picker = { enabled = false },
+      dashboard = { enabled = false },
+      scroll = { enabled = false },
     },
+    config = function(_, opts)
+      local snacks = require("snacks")
+      snacks.setup(opts)
+      -- snacks.setup() does NOT hook vim.ui.input by itself - measured:
+      -- config.input.enabled was true while vim.ui.input was still the stock
+      -- one, which is exactly what its health check reports as an ERROR.
+      -- enable() is the module's own entry point for this.
+      pcall(function() snacks.input.enable() end)
+    end,
     keys = {
       { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
       { "<leader>gb", function() Snacks.git.blame_line() end, desc = "Blame line" },

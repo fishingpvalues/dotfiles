@@ -30,6 +30,9 @@ require("lazy").setup({
   install = { colorscheme = { "catppuccin" } },
   checker = { enabled = true, notify = false },
   change_detection = { notify = false },
+  -- No plugin here needs luarocks, and lazy's own health check says so. Left
+  -- on, it reports a hard ERROR for a hererocks install that will never exist.
+  rocks = { enabled = false },
   performance = {
     rtp = {
       -- Startup time is mostly spent sourcing these. None is wanted.
