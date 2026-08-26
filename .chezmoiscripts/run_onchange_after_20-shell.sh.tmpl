@@ -6,25 +6,28 @@ set -euo pipefail
 fish_path="$(command -v fish || true)"
 [ -n "$fish_path" ] || exit 0
 
-# Same reasoning as the package script: never let a missing sudo abort the
-# whole apply. Being on bash for one more session is not worth losing the
-# dotfiles over.
+# Decide whether there is anything to do BEFORE asking for privileges. The
+# order matters: checking sudo first means a machine that cannot escalate warns
+# on every apply about a shell that was already correct.
+#
+# Resolve both sides. /bin is a symlink to /usr/bin on Arch, so passwd saying
+# /bin/fish and `command -v` saying /usr/bin/fish is the same binary, and a
+# string compare would report "needs changing" forever.
+current="$(getent passwd "$USER" | cut -d: -f7)"
+if [ "$(readlink -f "$current" 2>/dev/null)" = "$(readlink -f "$fish_path")" ]; then
+    echo "login shell already fish"
+    exit 0
+fi
+
 if ! sudo -n true 2>/dev/null && ! sudo -v 2>/dev/null && [ "$(id -u)" -ne 0 ]; then
     echo "WARNING: cannot escalate; login shell unchanged." >&2
     echo "    sudo chsh -s $fish_path $USER" >&2
     exit 0
 fi
 
-# /etc/shells must list it or chsh refuses, and that refusal is easy to miss.
+# chsh refuses a shell that is not in /etc/shells, and that refusal is easy to
+# miss in a long apply.
 grep -qx "$fish_path" /etc/shells || echo "$fish_path" | sudo tee -a /etc/shells >/dev/null
 
-# Compare RESOLVED paths. /bin is a symlink to /usr/bin on Arch, so passwd
-# saying /bin/fish and `command -v` saying /usr/bin/fish is the same binary -
-# a string compare reports "needs changing" on every single apply, forever.
-current="$(getent passwd "$USER" | cut -d: -f7)"
-if [ "$(readlink -f "$current" 2>/dev/null)" != "$(readlink -f "$fish_path")" ]; then
-    echo "setting login shell: $current -> $fish_path"
-    sudo chsh -s "$fish_path" "$USER"
-else
-    echo "login shell already fish"
-fi
+echo "setting login shell: $current -> $fish_path"
+sudo chsh -s "$fish_path" "$USER"
