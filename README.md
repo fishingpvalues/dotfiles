@@ -45,8 +45,19 @@ Replacements for things that ship with the system:
 | `ctrl-r` | `atuin` | history as a searchable database, not a text file |
 | `diff` | `difft` | compares syntax trees, not lines |
 
-Terminal UIs: `lazygit`, `lazydocker`, `yazi` (files), `gitui`, `broot`,
-`serpl` (find and replace), `television` (fuzzy picker), `dysk` (disks).
+Terminal UIs: `lazygit`, `lazydocker`, `dive` (image layers), `yazi` (files),
+`gitui`, `broot`, `serpl` (find and replace), `television` (fuzzy picker),
+`dysk` (disks).
+
+Laptop hardware, because Hyprland ships no settings panel: `impala` (wifi),
+`bluetui` (bluetooth), `wiremix` (pipewire). Without these, changing a wifi
+network or an audio sink means `nmcli`/`wpctl` from memory.
+
+Two that are here for a specific job rather than as a general upgrade:
+`sops`, because potatostack's `.env` is SOPS+age encrypted and this laptop
+administers it; and `ast-grep`, which matches the syntax tree rather than the
+text - ripgrep cannot express "this call, but only when the second argument is
+a literal".
 
 ## Conventions
 

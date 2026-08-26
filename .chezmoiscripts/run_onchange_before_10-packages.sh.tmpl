@@ -27,7 +27,25 @@ packages=(
     # dev
     neovim helix tmux jq yq glow hyperfine tokei mise navi tealdeer
     # containers
-    lazydocker
+    lazydocker dive
+
+    # Laptop hardware, because Hyprland ships no settings panel. impala and
+    # bluetui are Omarchy's picks for exactly this reason; wiremix is the
+    # pipewire mixer. Without these, changing wifi or an audio sink means
+    # nmcli/wpctl incantations from memory.
+    impala bluetui wiremix
+
+    # sops: potatostack's .env is SOPS+age encrypted and this laptop
+    # administers it. age was already here, sops was not, so `make sops-decrypt`
+    # could not run from this machine at all.
+    sops
+
+    # git-absorb: takes staged changes and amends each one into the commit that
+    # introduced the line, instead of a pile of "fix review comment" commits.
+    # ast-grep: structural search and replace over the syntax tree. Complements
+    # ripgrep rather than duplicating it - rg cannot match "this call, but only
+    # when the second argument is a literal".
+    git-absorb ast-grep
     # fonts + clipboard, needed by the above on wayland
     ttf-jetbrains-mono-nerd wl-clipboard
 )

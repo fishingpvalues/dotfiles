@@ -1,0 +1,26 @@
+#!/bin/bash
+# Install the fish plugins listed in fish_plugins.
+#
+# fisher was already on this machine but nothing recorded WHICH plugins were
+# installed, so the set was unreproducible - a fresh machine got fisher and no
+# plugins, and nobody could tell what was missing. The list is now a tracked
+# file and this script reconciles to it.
+#
+# plugins: {{ include "dot_config/fish/fish_plugins" | sha256sum }}
+set -euo pipefail
+
+command -v fish >/dev/null || exit 0
+
+# fzf.fish rebinds ctrl-r. atuin also rebinds ctrl-r, and atuin is the one we
+# want, so its init must run AFTER fisher's generated conf.d - which it does,
+# because conf.d files are sourced in lexical order and fzf.fish installs as
+# conf.d/fzf.fish, before our 10-init.fish. Verify with `bind ctrl-r` if a
+# history search ever looks wrong.
+fish -c '
+    if not functions -q fisher
+        curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish |
+            source
+        and fisher install jorgebucaran/fisher
+    end
+    fisher update
+' 2>&1 | tail -5
