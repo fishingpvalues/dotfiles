@@ -18,8 +18,11 @@ fi
 # /etc/shells must list it or chsh refuses, and that refusal is easy to miss.
 grep -qx "$fish_path" /etc/shells || echo "$fish_path" | sudo tee -a /etc/shells >/dev/null
 
+# Compare RESOLVED paths. /bin is a symlink to /usr/bin on Arch, so passwd
+# saying /bin/fish and `command -v` saying /usr/bin/fish is the same binary -
+# a string compare reports "needs changing" on every single apply, forever.
 current="$(getent passwd "$USER" | cut -d: -f7)"
-if [ "$current" != "$fish_path" ]; then
+if [ "$(readlink -f "$current" 2>/dev/null)" != "$(readlink -f "$fish_path")" ]; then
     echo "setting login shell: $current -> $fish_path"
     sudo chsh -s "$fish_path" "$USER"
 else
