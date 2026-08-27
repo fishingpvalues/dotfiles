@@ -22,7 +22,9 @@ return {
           inverse = { match_paren = true },
           darken = {
             floats = true,
-            sidebars = { enabled = true },
+            -- `enable`, not `enabled`. The plugin accepts the wrong spelling and
+            -- prints a deprecation notice on every startup instead of failing.
+            sidebars = { enable = true },
           },
         },
       })
