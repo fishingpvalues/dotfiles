@@ -18,7 +18,7 @@ set -q XDG_CACHE_HOME; or set -gx XDG_CACHE_HOME $HOME/.cache
 # path - miss this and rg silently ignores every setting in ripgreprc.
 set -gx RIPGREP_CONFIG_PATH $XDG_CONFIG_HOME/ripgrep/ripgreprc
 
-set -gx BAT_THEME 'Catppuccin Mocha'
+set -gx BAT_THEME "Visual Studio Dark+"
 set -gx SYSTEMD_PAGER ''               # systemctl in a pager is a menace
 
 # fzf: use fd (respects .gitignore) and preview with bat/eza.

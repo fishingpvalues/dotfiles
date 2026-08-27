@@ -27,7 +27,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
   spec = { { import = "plugins" } },
-  install = { colorscheme = { "catppuccin" } },
+  install = { colorscheme = { "github_dark_default" } },
   checker = { enabled = true, notify = false },
   change_detection = { notify = false },
   -- No plugin here needs luarocks, and lazy's own health check says so. Left

@@ -1,5 +1,10 @@
 # bat. The file really is called `config`, with no extension.
---theme="Catppuccin Mocha"
+# bat ships 28 themes and GitHub Dark is not one of them - its built-in
+# "GitHub" is the LIGHT theme. bat also exits 0 on an unknown theme name and
+# silently falls back to the default, so the previous "Catppuccin Mocha" here
+# was doing nothing at all and looked fine. "Visual Studio Dark+" is the
+# closest valid match to GitHub's dark palette.
+--theme="Visual Studio Dark+"
 --style="numbers,changes,header-filename"
 --wrap=auto
 --italic-text=always
